@@ -20,6 +20,10 @@ Patch=$(Find "Patch")
 Name=$(Find "Name")
 
 
+# Const
+P="  "
+
+
 # Modes
 Hello() {
   echo "Qamio Builder"
@@ -27,25 +31,92 @@ Hello() {
   echo
 }
 
-Build() {
-	for file in $(bash Sources/Pkg.conf $1); do
-    # Parse Name
-		filename=$(basename "$file")
+Dispo() {
+  echo "! Dispo"
 
-    # Package Time
-		echo "> $filename"
-      bash "Sources/$file/Maker.sh"
-      echo
-	done
+  echo "${P}# Unmount files" 
+  ls Mount | while read file; do
+    run sudo umount Mount/"$file"
+    run sudo rm -r Mount/"$file"
+  done
+
+  echo
+  echo "${P}# Dispose loops"
+  if [ -f "Temp/Loop.list" ]; then
+    run sudo losetup -d $(cat "Temp/Loop.list")
+    run rm "Temp/Loop.list"
+  fi
+  echo
+}
+
+Clean() {
+  Dispo
+
+  echo "! Clean"
+
+    echo "${P}rm -rf Images/*"
+  rm -rf "Images/"*
+
+    echo "${P}find Core -type f -exec rm {} \;"
+  find Core -type f -exec rm {} \;
+
+    echo "${P}rm -rf Logs/*"
+  rm -rf "Logs/"*
+
+    echo "${P}rm -rf Temp/*"
+  rm -rf "Temp/"*
+
+  echo
+}
+
+Pack() {
+  echo "! Pack"
+
+  echo "${P}# Syncing images"
+  run sync
+
+  # Images
+  echo "${P}# Compressing images"
+  ls ./Images | while read file; do
+    run xz -k "Images/$file"
+    echo -n $(sha256sum "Images/$file" | cut -d' ' -f1) >> "Images/$file°sha256"
+  done
+
+  echo
+}
+
+Flash() {
+  echo "! Flash"
+
+  false
+  # Fix it
+  echo -n "${P}Device path: $WDev"
+  #read WDev
+  echo
+
+  # Disk reset
+  run sudo dd if=/dev/zero of="$WDev" bs=2048 count=1 conv=notrunc status=none
+
+  run sudo parted "$WDev" mklabel gpt -s
+
+  # Parts
+  run sudo parted "$WDev" mkpart primary 2048s 1230847s -s
+  run sudo parted "$WDev" mkpart primary 1230848s 9615359s -s
+  run sudo parted "$WDev" mkpart primary 9615360s 60086271s -s
+
+  echo
 }
 
 Start() {
+  echo "! Sync"
   run sync
 
-  Build "Dispo"
+  Dispo
 
+
+  echo "! Start"
   # full-screen=on
-  qemu-system-x86_64 \
+  run qemu-system-x86_64 \
   -enable-kvm \
   -m 4G \
   -smp 8 \
@@ -56,6 +127,8 @@ Start() {
   -vga std -display sdl,gl=on \
   -append "root=/dev/sda rw init=/bin/bash console=ttyS0 vga=788" \
   -serial stdio
+
+  echo
 }
 
 Help() {
@@ -71,6 +144,47 @@ Help() {
   echo "  .s .start    # Start with Qemu"
   echo "  .h .help     # Show this page"
   echo "  .v .version  # Print version"
+
+  echo
+}
+
+Build() {
+  Clean
+
+  echo "! Creating Images"
+  cat Config/DiskTable.tbl | cut -d' ' -f1 | while read disk; do
+    Part=$disk
+    WDir="Mount/"$Part
+
+    echo "${P}# $Part"
+    # Create Disk
+    DiskSize=$(cat Config/DiskTable.tbl | grep "$Part" | cut -d' ' -f2)
+    run truncate -s $DiskSize "Images/$Part.img"
+    run mkfs.ext4 -q "Images/$Part.img"
+    
+    # Push Loop
+    CLoop=$(sudo losetup -f)
+    echo "${CLoop}" >> "Temp/Loop.list"
+    
+    # Mount Disk
+    run sudo losetup ${CLoop} "Images/$Part.img"
+    run mkdir "$WDir"
+    run sudo mount ${CLoop} "$WDir"
+    run sudo chown -R $(whoami) "$WDir"
+    echo
+  done
+
+  
+  echo "! Build"
+	for file in $(bash Sources/Pkg.conf $1); do
+    # Parse Name
+		filename=$(basename "$file")
+
+    # Package Time
+		echo "> $filename"
+      bash "Sources/$file/Maker.sh"
+      echo
+	done
 }
 
 
@@ -80,22 +194,6 @@ case "$1" in
     Hello
     Build "Build"
     ;;
-  .d|.dispo)
-    Hello
-    Build "Dispo"
-    ;;
-  .c|.clean)
-    Hello
-    Build "Clean"
-    ;;
-  .p|.pack)
-    Hello
-    Build "Pack"
-    ;;
-  .f|.flash)
-    Hello
-    Build "Flash"
-    ;;
   .k|.kernel)
     Hello
     Build "Kernel"
@@ -103,6 +201,22 @@ case "$1" in
   .m|.modules)
     Hello
     Build "Modules"
+    ;;
+  .d|.dispo)
+    Hello
+    Dispo
+    ;;
+  .c|.clean)
+    Hello
+    Clean
+    ;;
+  .p|.pack)
+    Hello
+    Pack
+    ;;
+  .f|.flash)
+    Hello
+    Flash
     ;;
   .s|.start)
     Hello

@@ -21,26 +21,6 @@ run() {
 
 # Modes
 build() {
-  echo "${P}# Creating disk" 
-  # Create Disk
-  DiskSize=$(cat Config/DiskTable.tbl | grep "$Part" | cut -d' ' -f2)
-  run truncate -s $DiskSize "Images/$Part.img"
-  run mkfs.ext4 -q "Images/$Part.img"
-  
-  # Push Loop
-  CLoop=$(sudo losetup -f)
-  echo "${CLoop}" >> "Temp/Loop.list"
-  
-  # Mount Disk
-  run sudo losetup ${CLoop} "Images/$Part.img"
-  run mkdir "$WDir"
-  run sudo mount ${CLoop} "$WDir"
-  run sudo chown -R $(whoami) "$WDir"
-
-
-  echo
-  echo "${P}# Basic Linux"
-
     echo "${P}mkdir {Initrd}/{usr,usr/bin,usr/lib,usr/lib64,usr/libexec,usr/etc}"
   mkdir "$WDir"/{usr,usr/bin,usr/lib,usr/lib64,usr/libexec,usr/etc}
 
