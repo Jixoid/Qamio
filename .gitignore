@@ -1,0 +1,25 @@
+# Bin Folders
+Images
+Logs
+Temp
+Core
+*Repo
+
+# Linux
+Other
+
+# Parts
+Mount
+
+# Syncthing
+.stfolder
+.stignore
+
+# Code
+.vscode
+
+# Other
+Todo
+
+# Resources
+Resources

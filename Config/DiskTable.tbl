@@ -1,0 +1,4 @@
+Kernel 100M 0 0
+Initrd 100M 0 0
+System 1G 0 0 
+User 10G 0 0
