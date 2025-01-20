@@ -110,6 +110,7 @@ Flash() {
 Start() {
   echo "! Sync"
   run sync
+  echo
 
   Dispo
 
@@ -123,9 +124,9 @@ Start() {
   -drive file=Images/Initrd.img,format=raw \
   -drive file=Images/System.img,format=raw \
   -initrd Images/Initrd.img \
-  -kernel Resources/vmlinuz-6.12.8.img \
-  -vga std -display sdl,gl=on \
-  -append "root=/dev/sda rw init=/bin/bash console=ttyS0 vga=788" \
+  -kernel Resources/Linux_6.12.9.img \
+  -vga std -display sdl \
+  -append "root=/dev/sda ro init=/bin/bash console=ttyS0 vga=788" \
   -serial stdio
 
   echo
@@ -177,11 +178,8 @@ Build() {
   
   echo "! Build"
 	for file in $(bash Sources/Pkg.conf $1); do
-    # Parse Name
-		filename=$(basename "$file")
-
     # Package Time
-		echo "> $filename"
+		echo "> $file"
       bash "Sources/$file/Maker.sh"
       echo
 	done

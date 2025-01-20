@@ -1,25 +1,20 @@
-# Bin Folders
+# General
 Images
+Mount
 Logs
 Temp
 Core
-*Repo
 
-# Linux
-Other
+# Binarys
+*.elf
+*.so
+*.o
+*.a
 
-# Parts
-Mount
-
-# Syncthing
+# Helpers
 .stfolder
 .stignore
-
-# Code
 .vscode
 
 # Other
 Todo
-
-# Resources
-Resources

@@ -27,12 +27,12 @@ Mach=$(Find "Architecture")
 
 # Modes
 build() {
-  run GCC -shared "$Self/Src/Screen.c" -o Temp/qaos-Screen.so
+  run GCC -shared "$Self/Src/Screen.c" -o Temp/qaos.Screen.so
 
-  moq .n "qaos-Screen"
-  moq .a "qaos-Screen" Nuc Temp/qaos-Screen.so
-  moq .p "qaos-Screen"
-  run moq .i "qaos-Screen"
+  moq .n "qaos.Screen"
+  moq .a "qaos.Screen" Nuc Temp/qaos.Screen.so
+  moq .p "qaos.Screen"
+  run moq .i "qaos.Screen"
 }
 
 

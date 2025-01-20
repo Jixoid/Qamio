@@ -18,11 +18,11 @@ Add() {
 Pack() {
   rm -f "Temp/$1".moq
 
-  echo -n $(cd "Temp/$1"; 7z a ../"$1".moq * ) >> /dev/null
+  echo -n $(cd "Temp/$1"; zip -0qr ../"$1".moq * )
 }
 
 Install() {
-  cp "Temp/$1".moq  "Mount/System/Packages"
+  cp "Temp/$1".moq  "Mount/System/Moq"
 }
 
 

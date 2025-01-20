@@ -21,16 +21,10 @@ run() {
 
 # Modes
 build() {
-    echo "${P}mkdir {Initrd}/{usr,usr/bin,usr/lib,usr/lib64,usr/libexec,usr/etc}"
-  mkdir "$WDir"/{usr,usr/bin,usr/lib,usr/lib64,usr/libexec,usr/etc}
+  run sudo chown -R alforce:alforce Mount/Initrd
+  run sudo chmod -R 777 Mount/Initrd/
 
-  ln -s usr/bin "$WDir"/bin
-  ln -s usr/lib "$WDir"/lib
-  ln -s usr/lib64 "$WDir"/lib64
-  ln -s usr/etc "$WDir"/etc
-
-    echo "${P}cp {Pkg}/usr/etc/* {Initrd}/usr/etc"
-  cp "$(dirname "$0")"/usr/etc/* "$WDir"/usr/etc
+  run mkdir "$WDir"/new_root
 }
 
 
