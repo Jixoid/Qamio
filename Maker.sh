@@ -9,7 +9,7 @@ run() {
   "$@"
 }
 Find () {
-  echo "$(cat Config/Compile.conf | grep "$1" | cut -d' ' -f2)"
+  echo "$(cat Config/Compile.conf | grep -w "$1" | cut -d' ' -f2)"
 }
 
 
@@ -159,6 +159,7 @@ Build() {
 
     echo "${P}# $Part"
     # Create Disk
+
     DiskSize=$(cat Config/DiskTable.tbl | grep "$Part" | cut -d' ' -f2)
     run truncate -s $DiskSize "Images/$Part.img"
     run mkfs.ext4 -q "Images/$Part.img"

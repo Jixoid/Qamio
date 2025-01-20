@@ -75,13 +75,52 @@ err MountNewRoot(string Device) {
   return err::Ok;
 }
 
+err SwitchRoot() {
+
+  if (umount("/dev") != 0)
+    return err::UMoun;
+
+
+  if (mount("/new_root", "/new_root", NULL, MS_BIND, NULL) != 0)
+    return err::Moun;
+
+  // Change Root
+  if (chdir("/new_root") != 0)
+    return err::Unkwn;
+
+  // Pivot Root
+  if (pivot_root(".", "old_root") != 0)
+    return err::Unkwn;
+
+
+  if (umount("/old_root/new_root") != 0)
+    return err::UMoun;
+
+
+  if (mount("none","/dev","devtmpfs", 0, NULL) != 0)
+    return err::Moun;
+
+  if (mount("none","/proc","proc", 0, NULL) != 0)
+    return err::Moun;
+
+  if (mount("none","/sys","sysfs", 0, NULL) != 0)
+    return err::Moun;
+
+
+  if (mount("ramfs", "/Pkg", "ramfs", 0, NULL) != 0)
+    return err::Moun;
+  
+
+  return err::Ok;
+}
+
 err MountKernel() {
   char* path;  
 
   #pragma region  GetPath
   {
 
-  FILE *file = fopen("/new_root/Conf/Kernel.go", "r");
+  FILE *file = fopen("/Conf/Kernel.go", "r");
   if (file == NULL)
     return err::NF;
 
@@ -106,8 +145,11 @@ err MountKernel() {
   }
   #pragma endregion
 
+  string Path(path);
+  free(path);
 
-  if (mkdir(("/new_root/Pkg/" +string(path)).c_str(), 0700))
+
+  if (!filesystem::create_directory("/Pkg/"+Path))
     return err::New;
   
   if (system("/sbin/modprobe fuse") != 0)
@@ -116,31 +158,12 @@ err MountKernel() {
   // control /proc/modules
   system("ls /dev/fuse");
 
-  if (system(("fuse-zip /new_root/Moq/"+string(path)+".moq /new_root/Pkg/"+string(path)+" -o allow_other").c_str()) != 0)
+  if (system(("archivemount /Moq/"+Path+".moq /Pkg/"+Path+" -o readonly,allow_other").c_str()) != 0)
     return err::Unkwn;
 
 
   return err::Ok;
 };
-
-err SwitchRoot() {
-  if (mount("/new_root", "/new_root", NULL, MS_BIND, NULL) != 0)
-    return err::Unkwn;
-
-  // Change Root
-  if (chdir("/new_root") != 0)
-    return err::Unkwn;
-
-  // Pivot Root
-  if (!filesystem::create_directory("old_root"))
-    return err::New;
-
-  if (pivot_root(".", "old_root") != 0)
-    return err::Unkwn;
-  
-
-  return err::Ok;
-}
 
 
 
@@ -155,11 +178,11 @@ int main(){
   Check(MountNewRoot(RootDevice))
     escape(Err, "New root device not mounted! [device: "+RootDevice+"]");
 
-  Check(MountKernel())
-    escape(Err, "Kernel not mounted\n");
-
   Check(SwitchRoot())
     escape(Err, "Root not switched\n");
+
+  Check(MountKernel())
+    escape(Err, "Kernel not mounted\n");
 
 
 

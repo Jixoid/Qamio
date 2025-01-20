@@ -4,6 +4,8 @@ Mount
 Logs
 Temp
 Core
+Last
+Repo
 
 # Binarys
 *.elf

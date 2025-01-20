@@ -21,10 +21,15 @@ run() {
 
 # Modes
 build() {
-    echo "${P}mkdir {System}/{Moq,Qap,Pkg,Conf,Linux}"
-  mkdir "$WDir"/{Moq,Qap,Pkg,Conf,Linux,Linux/etc}
+    echo "${P}mkdir {System}/{Moq,Qap,Pkg,Conf,old_root,dev,proc,sys}"
+  mkdir "$WDir"/{Moq,Qap,Pkg,Conf,old_root,dev,proc,sys}
 
-  ln -s Linux/etc "$WDir"/etc
+  ln -s /old_root/etc   "$WDir"/etc
+  ln -s /old_root/usr   "$WDir"/usr
+  ln -s /old_root/lib   "$WDir"/lib
+  ln -s /old_root/lib64 "$WDir"/lib64
+  ln -s /old_root/bin   "$WDir"/bin
+  ln -s /old_root/sbin  "$WDir"/sbin
 
   #  echo "${P}cp -r {Pkg}/Linux/* {Initrd}/Linux"
   #cp -r "$(dirname "$0")"/Linux/* "$WDir"/Linux

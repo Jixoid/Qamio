@@ -16,6 +16,8 @@ namespace jix {
     NF    = 4,  // Not found
     New   = 5,  // Failed New Obj
     Dis   = 6,  // Failed Dispose Obj
+    Moun  = 7,  // Not Mounted
+    UMoun = 8,  // Not Unmounted
   };
 
   const string __errs[] = {
@@ -26,6 +28,8 @@ namespace jix {
     "Object not found",   // err::NF
     "Failed New Obj",     // err::New
     "Failed Dispose Obj", // err::Dis
+    "Not Mounted",        // err::Moun
+    "Not Unmounted",      // err::UMoun
   };
 
   const string ErrToStr(err Err) {

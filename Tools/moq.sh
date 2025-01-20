@@ -18,7 +18,7 @@ Add() {
 Pack() {
   rm -f "Temp/$1".moq
 
-  echo -n $(cd "Temp/$1"; zip -0qr ../"$1".moq * )
+  echo -n $(cd "Temp/$1"; tar -cf ../"$1".moq * )
 }
 
 Install() {

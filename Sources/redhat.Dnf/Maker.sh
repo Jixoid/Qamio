@@ -21,6 +21,7 @@ Mach=$(Find "Architecture")
 
 # Modes
 build() {
+  #cp $(find Mount/Initrd/ -type f -name "*.rpm") Repo/
   #run sudo dnf install --installroot=$(pwd)/Mount/Initrd --use-host-config $(cat Sources/Extra.list)
 
     echo "${P}sudo dnf install -y --installroot=$(pwd)/Mount/Initrd Repo/*"

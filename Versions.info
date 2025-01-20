@@ -1,3 +1,11 @@
+v0.2:4 [PreAlpha]
+  + Added: /dev /proc /sys
+  + Fixed: Multiple boot errors
+  + Fixed: Kernel.moq mount 
+  + Added: ArchiveMount
+  + Uses:  Moq -> tar
+
+
 v0.2:3 [PreAlpha] 
   > Qiniter basically works
 
