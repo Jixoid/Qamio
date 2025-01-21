@@ -9,7 +9,7 @@ run() {
   "$@"
 }
 Find () {
-  echo "$(cat Config/Compile.conf | grep -w "$1" | cut -d' ' -f2)"
+  echo "$(cat Conf/Compile.conf | grep -w "$1" | cut -d' ' -f2)"
 }
 
 
@@ -35,16 +35,16 @@ Dispo() {
   echo "! Dispo"
 
   echo "${P}# Unmount files" 
-  ls Mount | while read file; do
-    run sudo umount Mount/"$file"
-    run sudo rm -r Mount/"$file"
+  ls Dev/Mount | while read file; do
+    run sudo umount Dev/Mount/"$file"
+    run sudo rm -r Dev/Mount/"$file"
   done
 
   echo
   echo "${P}# Dispose loops"
-  if [ -f "Temp/Loop.list" ]; then
-    run sudo losetup -d $(cat "Temp/Loop.list")
-    run rm "Temp/Loop.list"
+  if [ -f "Dev/Temp/Loop.list" ]; then
+    run sudo losetup -d $(cat "Dev/Temp/Loop.list")
+    run rm "Dev/Temp/Loop.list"
   fi
   echo
 }
@@ -54,17 +54,14 @@ Clean() {
 
   echo "! Clean"
 
-    echo "${P}rm -rf Images/*"
-  rm -rf "Images/"*
+    echo "${P}rm -rf Dev/Images/*"
+  rm -rf "Dev/Images/"*
 
-    echo "${P}find Core -type f -exec rm {} \;"
-  find Core -type f -exec rm {} \;
+    echo "${P}rm -rf Dev/Logs/*"
+  rm -rf "Dev/Logs/"*
 
-    echo "${P}rm -rf Logs/*"
-  rm -rf "Logs/"*
-
-    echo "${P}rm -rf Temp/*"
-  rm -rf "Temp/"*
+    echo "${P}rm -rf Dev/Temp/*"
+  rm -rf "Dev/Temp/"*
 
   echo
 }
@@ -77,9 +74,10 @@ Pack() {
 
   # Images
   echo "${P}# Compressing images"
-  ls ./Images | while read file; do
-    run xz -k "Images/$file"
-    echo -n $(sha256sum "Images/$file" | cut -d' ' -f1) >> "Images/$file°sha256"
+  ls Dev/Images | while read file; do
+    run xz -k "Dev/Images/$file"
+
+    echo -n $(sha256sum "Dev/Images/$file" | cut -d' ' -f1) >> "Dev/Images/$file°sha256"
   done
 
   echo
@@ -121,12 +119,11 @@ Start() {
   -enable-kvm \
   -m 4G \
   -smp 8 \
-  -drive file=Images/Initrd.img,format=raw \
-  -drive file=Images/System.img,format=raw \
-  -initrd Images/Initrd.img \
-  -kernel Resources/Linux_6.12.9.img \
+  -drive file=Dev/Images/Initrd.img,format=raw \
+  -drive file=Dev/Images/System.img,format=raw \
+  -kernel Res/Linux_6.12.9.img \
   -vga std -display sdl \
-  -append "root=/dev/sda ro init=/bin/bash console=ttyS0 vga=788" \
+  -append "root=/dev/sda ro init=/Qiniter.elf console=ttyS0 vga=788" \
   -serial stdio
 
   echo
@@ -153,23 +150,23 @@ Build() {
   Clean
 
   echo "! Creating Images"
-  cat Config/DiskTable.tbl | cut -d' ' -f1 | while read disk; do
+  cat Conf/DiskTable.tbl | cut -d' ' -f1 | while read disk; do
     Part=$disk
-    WDir="Mount/"$Part
+    WDir="Dev/Mount/"$Part
 
     echo "${P}# $Part"
     # Create Disk
 
-    DiskSize=$(cat Config/DiskTable.tbl | grep "$Part" | cut -d' ' -f2)
-    run truncate -s $DiskSize "Images/$Part.img"
-    run mkfs.ext4 -q "Images/$Part.img"
+    DiskSize=$(cat Conf/DiskTable.tbl | grep "$Part" | cut -d' ' -f2)
+    run truncate -s $DiskSize "Dev/Images/$Part.img"
+    run mkfs.ext4 -q "Dev/Images/$Part.img"
     
     # Push Loop
     CLoop=$(sudo losetup -f)
-    echo "${CLoop}" >> "Temp/Loop.list"
+    echo "${CLoop}" >> "Dev/Temp/Loop.list"
     
     # Mount Disk
-    run sudo losetup ${CLoop} "Images/$Part.img"
+    run sudo losetup ${CLoop} "Dev/Images/$Part.img"
     run mkdir "$WDir"
     run sudo mount ${CLoop} "$WDir"
     run sudo chown -R $(whoami) "$WDir"
@@ -177,11 +174,20 @@ Build() {
   done
 
   
-  echo "! Build"
-	for file in $(bash Sources/Pkg.conf $1); do
+  echo "! Build Basic"
+	for file in $(bash Src/Pkg.conf $1); do
     # Package Time
 		echo "> $file"
-      bash "Sources/$file/Maker.sh"
+      bash "Src/$file/Maker.sh"
+      echo
+	done
+
+
+  echo "! Build Package"
+	for file in $(bash Pkg/Pkg.conf $1); do
+    # Package Time
+		echo "> $file"
+      bash "Pkg/$file/Maker.sh"
       echo
 	done
 }

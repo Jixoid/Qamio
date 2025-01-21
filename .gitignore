@@ -1,11 +1,5 @@
 # General
-Images
-Mount
-Logs
-Temp
-Core
-Last
-Repo
+/Dev
 
 # Binarys
 *.elf
@@ -17,6 +11,3 @@ Repo
 .stfolder
 .stignore
 .vscode
-
-# Other
-Todo

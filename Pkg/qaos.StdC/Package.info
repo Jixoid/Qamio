@@ -1,0 +1,7 @@
+[Root]
+Package = qaos.StdC
+Provider = jixoid
+Thanks = GNU
+
+[Depency]
+ListC = 0

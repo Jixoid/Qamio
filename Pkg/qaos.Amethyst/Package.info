@@ -1,0 +1,8 @@
+[Root]
+Package = qaos.Amethyst
+Provider = jixoid
+
+[Depency]
+ListC = 2
+List_1 = qaos.StdC
+List_2 = qaos.Screen

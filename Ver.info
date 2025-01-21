@@ -1,0 +1,30 @@
+v0.2:5 [PreAlpha]
+  + Uses:  C exception
+  + Added: Amethyst modules
+  + Added: Moq depency
+  + Reorganized: Basics
+  - Remov: Kernel static modules
+
+
+v0.2:4 [PreAlpha]
+  + Added: /dev /proc /sys
+  + Fixed: Multiple boot errors
+  + Fixed: Kernel.moq mount 
+  + Added: ArchiveMount
+  + Uses:  Moq -> tar
+
+
+v0.2:3 [PreAlpha] 
+  > Qiniter basically works
+
+  + Added Fuse
+  + Kernel updated to 6.12.9
+  + Added Dnf
+  + Added Error.hpp
+  + Particaly Moved to C++
+  + Reorganized System
+  + Added Qiniter
+
+
+v0.2:2 [PreAlpha]
+  + packages reorganized

@@ -1,0 +1,7 @@
+[Root]
+Package = qaos.Wedling
+Provider = jixoid
+
+[Depency]
+ListC = 1
+List_1 = qaos.StdC

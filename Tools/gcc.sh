@@ -5,7 +5,7 @@ set -o pipefail
 
 # Lib
 Find () {
-  echo "$(cat Config/Compile.conf | grep "$1" | cut -d' ' -f2)"
+  echo "$(cat Conf/Compile.conf | grep -w "$1" | cut -d' ' -f2)"
 }
 
 
@@ -26,5 +26,5 @@ fi
 
 
 $Comp \
-"-I./Interfaces" $PicC "-std=$(Find GCC_Std)" -lc -lstdc++ "-O$(Find Optimized)" $* \
-$(cat Config/Definition.conf | grep -E 'Yes' | sed 's/: Yes$//' | sed 's/^/-D/' | tr '\n' ' ' )
+"-I./Inc" $PicC "-std=$(Find GCC_Std)" -lc -lstdc++ "-O$(Find Optimized)" $* \
+$(cat Conf/Definition.conf | grep -E 'Yes' | sed 's/: Yes$//' | sed 's/^/-D/' | tr '\n' ' ' )

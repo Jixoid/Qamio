@@ -2,27 +2,27 @@
 # Modes
 New() {
   # Clear
-  rm -rf "Temp/$1"
+  rm -rf "Dev/Temp/$1"
 
   # New
-  mkdir "Temp/$1"
+  mkdir "Dev/Temp/$1"
 
 }
 
 Add() {
-  mkdir -p "Temp/$1/$2"
+  mkdir -p "Dev/Temp/$1/$2"
 
-  cp $3 "Temp/$1/$2"
+  cp -r $3 "Dev/Temp/$1/$2"
 }
 
 Pack() {
-  rm -f "Temp/$1".moq
+  rm -f "Dev/Temp/$1".moq
 
-  echo -n $(cd "Temp/$1"; tar -cf ../"$1".moq * )
+  echo -n $(cd "Dev/Temp/$1"; tar -cf ../"$1".moq * )
 }
 
 Install() {
-  cp "Temp/$1".moq  "Mount/System/Moq"
+  cp "Dev/Temp/$1".moq  "Dev/Mount/System/Moq"
 }
 
 
