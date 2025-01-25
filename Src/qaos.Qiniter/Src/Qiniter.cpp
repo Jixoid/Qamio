@@ -2,7 +2,6 @@
 #include <filesystem>
 #include <vector>
 
-#include "Error.hpp"
 #include "Terminal.cpp"
 
 extern "C" {
@@ -37,117 +36,112 @@ void SysCtl_Shutdown() {
   exit(0);
 }
 
-void escape(err Err, string Msg) {
-  #ifdef Debug
-  if (Err == err::Ok)
-    cerr << "Design Error" << endl;
-  #endif
 
-  cerr << "Error: " << ErrToStr(Err) << endl;
-  cerr << "Msg: " << Msg << endl;
-
-  cout << "Qiniter Panic!" << endl;
-  cout << "System is stoping" << endl;
-  
-  reboot(LINUX_REBOOT_CMD_POWER_OFF);
-  exit(1);
-}
-
-
-err MountMoq(string Pkg) {
+void MountMoq(string Pkg) {
 
   cout << "[ PEND ] Mounting: " << Pkg << endl;
 
 
-  err Err;
+  try {
+    if (!filesystem::create_directory("/Pkg/"+Pkg))
+      throw runtime_error("Can not create: /Pkg/"+Pkg);
 
-  if (!filesystem::create_directory("/Pkg/"+Pkg)) {
-    Err = err::New;
-    goto _l_Error;
+    if (system(("/bin/archivemount /Moq/"+Pkg+".moq /Pkg/"+Pkg+" -o readonly,allow_other").c_str()) != 0)
+      throw runtime_error("Can not mount: "+Pkg);
   }
+  catch (runtime_error e) {
+    term::Up();
+    cout << "[ FAIL ] Mounting: " << Pkg << endl;
 
-  if (system(("/bin/archivemount /Moq/"+Pkg+".moq /Pkg/"+Pkg+" -o readonly,allow_other").c_str()) != 0) {
-    Err = err::Unkwn;
-    goto _l_Error;
+    throw e;
   }
 
 
   term::Up();
   cout << "[  OK  ] Mounting: " << Pkg << endl;
-
-  return err::Ok;
-
-
-  _l_Error:
-    term::Up();
-    cout << "[ FAIL ] Mounting: " << Pkg << endl;
-
-    return Err;
 }
 
 
 // Local actions
 string Kernel_Pkg;
 
-err MountNewRoot(string Device) {
-  // Mount NewRoot
+void MountNewRoot(string Device) {
+  
   if (mount(Device.c_str(), "/new_root", "ext4", 0, "") != 0)
-    return err::Unkwn;
+    throw runtime_error("Can not mount /new_root");
 
-  return err::Ok;
 }
 
-err LoadLinuxNuc() {
+void LoadLinuxNuc() {
+  
   if (system("/sbin/modprobe fuse") != 0)
-    return err::Unkwn;
+    throw runtime_error("Can not load module: fuse");
 
   // control /proc/modules
   system("ls /dev/fuse");
 
 
-  return err::Ok;
+  
+  if (system("/sbin/modprobe drm") != 0)
+    throw runtime_error("Can not load module: drm");
+  
+  if (system("/sbin/modprobe drm_kms_helper") != 0)
+    throw runtime_error("Can not load module: drm_kms_helper");
+  
+  if (system("/sbin/modprobe i915") != 0)
+    throw runtime_error("Can not load module: i915");
+
+  if (system("/sbin/modprobe amdgpu") != 0)
+    throw runtime_error("Can not load module: amdgpu");
+
+  if (system("/sbin/modprobe nouveau") != 0)
+    throw runtime_error("Can not load module: nouveau");
+
+  if (system("/sbin/modprobe vmwgfx") != 0)
+    throw runtime_error("Can not load module: vmwgfx");
+
+  if (system("/sbin/modprobe virtio_gpu") != 0)
+    throw runtime_error("Can not load module: virtio_gpu");
+
 }
 
-err SwitchRoot() {
+void SwitchRoot() {
 
   if (umount("/dev") != 0)
-    return err::UMoun;
+    throw runtime_error("Can not umount /dev");
 
 
   if (mount("/new_root", "/new_root", NULL, MS_BIND, NULL) != 0)
-    return err::Moun;
+    throw runtime_error("Can not mount /new_root");
 
   // Change Root
-  if (chdir("/new_root") != 0)
-    return err::Unkwn;
+  chdir("/new_root");
 
   // Pivot Root
   if (pivot_root(".", "old_root") != 0)
-    return err::Unkwn;
+    throw runtime_error("Can not pivot root");
 
 
   if (umount("/old_root/new_root") != 0)
-    return err::UMoun;
+    throw runtime_error("Can not umount /old_root/new_root");
 
 
   if (mount("none","/dev","devtmpfs", 0, NULL) != 0)
-    return err::Moun;
+    throw runtime_error("Can not mount /dev");
 
   if (mount("none","/proc","proc", 0, NULL) != 0)
-    return err::Moun;
+    throw runtime_error("Can not mount /proc");
 
   if (mount("none","/sys","sysfs", 0, NULL) != 0)
-    return err::Moun;
+    throw runtime_error("Can not mount /sys");
 
 
   if (mount("ramfs", "/Pkg", "ramfs", 0, NULL) != 0)
-    return err::Moun;
+    throw runtime_error("Can not mount /Pkg");
   
-
-  return err::Ok;
 }
 
-err PrepareKernel() {
+void PrepareKernel() {
   char* path;  
 
   #pragma region  GetPath
@@ -155,7 +149,7 @@ err PrepareKernel() {
 
   FILE *file = fopen("/Conf/Kernel.go", "r");
   if (file == NULL)
-    return err::NF;
+    throw runtime_error("Can not open /Conf/Kernel.go");
 
   fseek(file, 0, SEEK_END);
   long file_size = ftell(file);
@@ -165,7 +159,7 @@ err PrepareKernel() {
   path = (char*)malloc(file_size +1);
   if (path == NULL) {
     fclose(file);
-    return err::Mem;    
+    throw runtime_error("Can not alloc mem");
   }
   
   fread(path, 1, file_size, file);
@@ -180,18 +174,15 @@ err PrepareKernel() {
   Kernel_Pkg.assign(path);
   free(path);
 
-
-  return err::Ok;
 };
 
-err Resolver(string Pkg) {
+void Resolver(string Pkg) {
 
   if (filesystem::exists("/Pkg/"+Pkg))
-    return err::Ok;
+    return;
   
 
-  if (err Err = MountMoq(Pkg))
-    return Err;
+  MountMoq(Pkg);
 
 
   mINI::INIFile file("/Pkg/"+Pkg+"/Package.info");
@@ -202,12 +193,9 @@ err Resolver(string Pkg) {
 
   int ListC = stoi(ini["Depency"]["ListC"]);
 
-  for (int i = 1; i <= ListC; i++) {
-    if (err Err = MountMoq(ini["Depency"]["List_"+to_string(i)]))
-      return Err;
-  }
-  
-  return err::Ok;
+  for (int i = 1; i <= ListC; i++)
+    MountMoq(ini["Depency"]["List_"+to_string(i)]);
+
 }
 
 
@@ -220,27 +208,20 @@ int main(){
 
   printf("Qiniter Started!\n");
 
-  err Err;
-
   
-  Check(MountNewRoot(RootDevice))
-    escape(Err, "New root device not mounted! [device: "+RootDevice+"]");
+  MountNewRoot(RootDevice);
 
-  Check(LoadLinuxNuc())
-    escape(Err, "Linux Modules not loaded");
+  LoadLinuxNuc();
 
-  Check(SwitchRoot())
-    escape(Err, "Root not switched");
+  SwitchRoot();
 
-  Check(PrepareKernel())
-    escape(Err, "Kernel not Founded");
+  PrepareKernel();
+
 
 
   term::Clear();
 
-  Check(Resolver(Kernel_Pkg))
-    escape(Err, "Kernel depency not resolved");
-
+  Resolver(Kernel_Pkg);
 
 
   string Srg0 = "/Pkg/"+Kernel_Pkg+"/Bin/Main.elf";

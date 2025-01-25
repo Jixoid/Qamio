@@ -1,3 +1,11 @@
+v0.2:6 [PreAlpha]
+  + Worked: DRM
+  + Update: Kernel to 6.12.10
+  + Added: Basic Graphics Engine
+  + Added: Nucleol Com
+  + Moved: Completely to C++
+
+
 v0.2:5 [PreAlpha]
   + Uses:  C exception
   + Added: Amethyst modules

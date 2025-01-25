@@ -122,8 +122,8 @@ Start() {
   -drive file=Dev/Images/Initrd.img,format=raw \
   -drive file=Dev/Images/System.img,format=raw \
   -kernel Res/Linux_6.12.9.img \
-  -vga std -display sdl \
-  -append "root=/dev/sda ro init=/Qiniter.elf console=ttyS0 vga=788" \
+  -vga virtio -display gtk,gl=on \
+  -append "root=/dev/sda ro init=/Qiniter.elf console=ttyS0" \
   -serial stdio
 
   echo

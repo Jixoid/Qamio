@@ -26,5 +26,5 @@ fi
 
 
 $Comp \
-"-I./Inc" $PicC "-std=$(Find GCC_Std)" -lc -lstdc++ "-O$(Find Optimized)" $* \
+"-I./Inc" "-I./Nucs" $PicC "-std=$(Find GCC_Std)" -lc -lstdc++ "-O$(Find Optimized)" $* \
 $(cat Conf/Definition.conf | grep -E 'Yes' | sed 's/: Yes$//' | sed 's/^/-D/' | tr '\n' ' ' )

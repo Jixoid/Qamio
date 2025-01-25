@@ -3,7 +3,7 @@
 #include <vector>
 
 #include "JBasic.hpp"
-#include "Error.hpp"
+#include "Nucleol.hpp"
 #include "Terminal.cpp"
 
 extern "C" {
@@ -78,6 +78,7 @@ class cNucMng {
 
   }
 
+
   void Check() {
 
     for (auto &Pkg: Nucleols) {
@@ -108,6 +109,70 @@ class cNucMng {
 
   }
 
+
+  void Push(sNucCom Com) {
+
+    for (auto &Pkg: Nucleols) {
+
+      cout << "[ PEND ] Pushing: " << Pkg.Package << endl;
+      
+      // Load
+      nucPush NucPush = (nucPush)dlsym(Pkg.Handle, "NucPush");
+      if (!NucPush && Pkg.Essential) {
+        term::Up();
+        cout << "[ FAIL ]" << endl;
+        
+        throw runtime_error("NucPush not found");
+      }
+
+      try {
+        NucPush(Com);
+      }
+      catch(exception e) {
+        term::Up();
+        cout << "[ FAIL ]" << endl;
+        
+        throw runtime_error("NucPush not worked");
+      }
+
+      term::Up();
+      cout << "[  OK  ]" << endl;
+    }
+
+  }
+
+  void Pop() {
+
+    for (auto &Pkg: Nucleols) {
+
+      cout << "[ PEND ] Poping: " << Pkg.Package << endl;
+      
+      // Load
+      nucPop NucPop = (nucPop)dlsym(Pkg.Handle, "NucPop");
+      if (!NucPop && Pkg.Essential) {
+        term::Up();
+        cout << "[ FAIL ]" << endl;
+        
+        throw runtime_error("NucPop not found");
+      }
+
+      try {
+        NucPop();
+      }
+      catch(exception e) {
+        term::Up();
+        cout << "[ FAIL ]" << endl;
+        
+        throw runtime_error("NucPop not worked");
+      }
+
+      term::Up();
+      cout << "[  OK  ]" << endl;
+    }
+
+  }
+
+
   void Load() {
 
     for (auto &Pkg: Nucleols) {
@@ -132,6 +197,32 @@ class cNucMng {
     }
 
   }
+
+  void Unload() {
+
+    for (auto &Pkg: Nucleols) {
+      
+      // Unload
+      nucUnload NucUnload = (nucUnload)dlsym(Pkg.Handle, "NucUnload");
+      if (!NucUnload && Pkg.Essential) {
+        cout << "[ FAIL ] Unloading: " << Pkg.Package << endl;
+        
+        throw runtime_error("NucUnload not found");
+      }
+
+      try {
+        NucUnload();
+      }
+      catch(exception e) {
+        cout << "[ FAIL ] Unloading: " << Pkg.Package << endl;
+        
+        throw runtime_error("NucUnload not worked");
+      }
+
+    }
+
+  }
+
 
   void Start() {
 
@@ -191,31 +282,6 @@ class cNucMng {
 
       term::Up();
       cout << "[  OK  ]" << endl;
-    }
-
-  }
-
-  void Unload() {
-
-    for (auto &Pkg: Nucleols) {
-      
-      // Unload
-      nucUnload NucUnload = (nucUnload)dlsym(Pkg.Handle, "NucUnload");
-      if (!NucUnload && Pkg.Essential) {
-        cout << "[ FAIL ] Unloading: " << Pkg.Package << endl;
-        
-        throw runtime_error("NucUnload not found");
-      }
-
-      try {
-        NucUnload();
-      }
-      catch(exception e) {
-        cout << "[ FAIL ] Unloading: " << Pkg.Package << endl;
-        
-        throw runtime_error("NucUnload not worked");
-      }
-
     }
 
   }

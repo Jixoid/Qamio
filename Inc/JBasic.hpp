@@ -19,6 +19,8 @@ namespace jix {
   typedef __uint128_t  int128u;
 
 
+  typedef int32u   uid;
+  typedef int32u   gid;
 
   typedef size_t   ohid;
   typedef char*    point;
@@ -27,9 +29,9 @@ namespace jix {
   typedef int8u   byte;
 
 
-  typedef struct{
+  struct data {
     size  Size;
     point Point;
-  } data;
+  };
 
 }

@@ -27,7 +27,7 @@ Mach=$(Find "Architecture")
 
 # Modes
 build() {
-  run GCC -shared "$Self/Dev/Main.cpp" -o "$Self/Bin/Main.so"
+  run GCC -shared "$Self/Dev/Main.cpp" -o "$Self/Lib/Main.so"
 
   moq .n $(basename $Self)
   moq .a $(basename $Self)  "/" "$Self/Package.info"
@@ -36,6 +36,17 @@ build() {
   moq .a $(basename $Self)  "/" "$Self/Res"
   moq .p $(basename $Self)
   run moq .i $(basename $Self)
+
+
+  Nucs="Dev/Mount/System/Conf/Nucleol.conf"
+
+  ListC=$(crudini --get $Nucs Root ListC)
+  ListC=$((ListC + 1))
+  crudini --set $Nucs Root ListC $ListC
+  
+  run crudini --set $Nucs Root List_$ListC $(basename $Self)
+
+  crudini --set $Nucs $(basename $Self) Essential 1
 }
 
 

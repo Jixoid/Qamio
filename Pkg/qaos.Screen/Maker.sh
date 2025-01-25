@@ -27,7 +27,7 @@ Mach=$(Find "Architecture")
 
 # Modes
 build() {
-  run GCC -shared "$Self/Dev/Main.cpp" -o "$Self/Lib/Main.so"
+  run GCC -shared "$Self/Dev/Main.cpp" -o "$Self/Lib/Main.so" -I/usr/include/libdrm -ldrm
 
   moq .n $(basename $Self)
   moq .a $(basename $Self)  "/" "$Self/Package.info"
