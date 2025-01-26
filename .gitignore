@@ -6,6 +6,7 @@
 *.so
 *.o
 *.a
+*.bmp
 
 # Helpers
 .stfolder
