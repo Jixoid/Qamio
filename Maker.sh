@@ -57,9 +57,6 @@ Clean() {
     echo "${P}rm -rf Dev/Images/*"
   rm -rf "Dev/Images/"*
 
-    echo "${P}rm -rf Dev/Logs/*"
-  rm -rf "Dev/Logs/"*
-
     echo "${P}rm -rf Dev/Temp/*"
   rm -rf "Dev/Temp/"*
 
@@ -121,7 +118,7 @@ Start() {
   -smp 8 \
   -drive file=Dev/Images/Initrd.img,format=raw \
   -drive file=Dev/Images/System.img,format=raw \
-  -kernel Res/Linux_6.12.9.img \
+  -kernel Res/Linux_6.12.10.img \
   -vga virtio -display gtk,gl=on \
   -append "root=/dev/sda ro init=/Qiniter.elf console=ttyS0" \
   -serial stdio
@@ -150,14 +147,13 @@ Build() {
   Clean
 
   echo "! Creating Images"
-  cat Conf/DiskTable.tbl | cut -d' ' -f1 | while read disk; do
-    Part=$disk
+  DiskC=$(crudini --get "Dev/Device.conf" Disk ListC)
+  for ((i=1; i<=DiskC; i++)); do
+    Part=$(crudini --get "Dev/Device.conf" Disk "List_$i")
+    DiskSize=$(crudini --get "Dev/Device.conf" "Disk.$Part" Size)
     WDir="Dev/Mount/"$Part
 
     echo "${P}# $Part"
-    # Create Disk
-
-    DiskSize=$(cat Conf/DiskTable.tbl | grep "$Part" | cut -d' ' -f2)
     run truncate -s $DiskSize "Dev/Images/$Part.img"
     run mkfs.ext4 -q "Dev/Images/$Part.img"
     

@@ -5,8 +5,6 @@
 #include "Nucleol.hpp"
 #include "Wedling.hpp"
 #include "Terminal.cpp"
-  #include "Graphic.hpp"
-  #include "Screen.hpp"
 
 extern "C" {
   #include <sys/reboot.h>
@@ -94,48 +92,8 @@ void Main() {
   usleep(300);
 
 
+  sleep(5);
 
-  #pragma region Test
-
-  Graphic::PopNuc(NucCom);
-  Screen::PopNuc(NucCom);
-
-
-  // Gpu
-  Screen::Screen_GpuFind();
-  int32u GpuC = Screen::Screen_GpuCount();
-  
-  if (0 == GpuC)
-    throw runtime_error("Not found a Gpu");
-  
-  Screen::Screen_GpuOpen(0);
-
-
-  // Scr
-  Screen::Screen_ScrFind(0);
-  int32u Scrs = Screen::Screen_ScrCount(0);
-
-  if (0 == Scrs)
-    throw runtime_error("Not found a Scr");
-  
-  Screen::Screen_ScrOpen(0,0);
-
-
-  // Mode
-  auto Scr = Screen::Screen_ScrGet(0,0);
-  cout << "Screen: " << Scr.Mode.Width << "x" << Scr.Mode.Height << "@" << Scr.Mode.Refresh << endl;
-  
-
-
-  sleep(3);
-
-
-
-  Screen::Screen_ScrClose(0,0);
-  
-  #pragma endregion
-
-  
   
   NucMng.Stop();
   NucMng.Unload();

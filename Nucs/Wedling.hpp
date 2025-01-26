@@ -18,12 +18,12 @@ namespace jix {
   typedef point  secon;
 
   enum eSecPerm: int8u {
-    R  = 1,   // Read
-    W  = 2,   // Write
-    X  = 4,   // Execute
-    D  = 8,   // Delete
-    S  = 16,  // See
-    A  = 32,  // Auth Share
+    Read     = 1,
+    Write    = 2,
+    Execute  = 4,
+    Delete   = 8,
+    See      = 16,
+    AuthS    = 32,
   };
   
 

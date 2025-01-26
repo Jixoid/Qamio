@@ -1,6 +1,18 @@
+v0.2:7 [PreAlpha]
+  > First screen draw
+
+  + Fixed: Window's Surface
+  + Added: Device.conf
+  + Fixed: Bugs
+  + Update: Completely Kernel to 6.12.10
+  + Added: Graphics wedling user
+  + Added: Wedling root
+  + Added: Screen window
+
+
 v0.2:6 [PreAlpha]
   + Worked: DRM
-  + Update: Kernel to 6.12.10
+  + Update: Kernel to 6.12.10 (Broken)
   + Added: Basic Graphics Engine
   + Added: Nucleol Com
   + Moved: Completely to C++

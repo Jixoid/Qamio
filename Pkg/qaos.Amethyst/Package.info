@@ -3,8 +3,9 @@ Package = qaos.Amethyst
 Provider = jixoid
 
 [Depency]
-ListC = 4
+ListC = 5
 List_1 = qaos.StdC
 List_2 = qaos.Wedling
 List_3 = qaos.Screen
 List_4 = qaos.Graphic
+List_5 = qaos.BootAnim

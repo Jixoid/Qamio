@@ -43,9 +43,10 @@ int32u  Screen_ScrCount(int32u GPU)
 
 sScreen Screen_ScrGet(int32u GPU, int32u SCR) {
   return {
-    .ID = DrmMng->GPUs[GPU].Screens[SCR].ID,
+    .ID     = DrmMng->GPUs[GPU].Screens[SCR].ID,
     .Window = DrmMng->GPUs[GPU].Screens[SCR].Window,
-    .Mode = DrmMng->GPUs[GPU].Screens[SCR].Mode,
+    .Active = (DrmMng->GPUs[GPU].Screens[SCR].Con != NULL),
+    .Mode   = DrmMng->GPUs[GPU].Screens[SCR].Mode,
   }; 
 }
 
@@ -57,6 +58,9 @@ void    Screen_ScrOpen(int32u GPU, int32u SCR)
 
 void    Screen_ScrClose(int32u GPU, int32u SCR)
   {DrmMng->Scr_Close(GPU, SCR); }
+
+void    Screen_ScrSwap(int32u GPU, int32u SCR)
+  {DrmMng->Scr_Swap(GPU, SCR); }
 
 int32u  Screen_ScrModeCount(int32u GPU, int32u SCR)
   {return DrmMng->Scr_ModeCount(GPU, SCR); }
@@ -89,6 +93,7 @@ extern "C" void NucPush(sNucCom Com) {
   ComSet(Screen_ScrFind);
   ComSet(Screen_ScrOpen);
   ComSet(Screen_ScrClose);
+  ComSet(Screen_ScrSwap);
   ComSet(Screen_ScrModeCount);
   ComSet(Screen_ScrModeGet);
 }

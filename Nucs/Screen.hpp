@@ -26,6 +26,7 @@ namespace jix {
   struct sScreen {
     int32u   ID;
     window2  Window;
+    bool     Active;
 
     sMode  Mode;
   };
@@ -47,6 +48,7 @@ namespace jix {
   typedef void    (*screen_ScrFind)     (int32u GPU);
   typedef void    (*screen_ScrOpen)     (int32u GPU, int32u SCR);
   typedef void    (*screen_ScrClose)    (int32u GPU, int32u SCR);
+  typedef void    (*screen_ScrSwap)     (int32u GPU, int32u SCR);
   typedef int32u  (*screen_ScrModeCount)(int32u GPU, int32u SCR);
   typedef sMode   (*screen_ScrModeGet)  (int32u GPU, int32u SCR, int32u Index);
   
@@ -64,6 +66,7 @@ namespace jix {
     screen_ScrFind       Screen_ScrFind;
     screen_ScrOpen       Screen_ScrOpen;
     screen_ScrClose      Screen_ScrClose;
+    screen_ScrSwap       Screen_ScrSwap;
     screen_ScrModeCount  Screen_ScrModeCount;
     screen_ScrModeGet    Screen_ScrModeGet;
 
@@ -80,6 +83,7 @@ namespace jix {
       ComGet(Screen_ScrFind,      screen_ScrFind);
       ComGet(Screen_ScrOpen,      screen_ScrOpen);
       ComGet(Screen_ScrClose,     screen_ScrClose);
+      ComGet(Screen_ScrSwap,      screen_ScrSwap);
       ComGet(Screen_ScrModeCount, screen_ScrModeCount);
       ComGet(Screen_ScrModeGet,   screen_ScrModeGet);
     }

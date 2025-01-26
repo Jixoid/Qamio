@@ -3,5 +3,6 @@ Package = qaos.Render
 Provider = jixoid
 
 [Depency]
-ListC = 1
+ListC = 2
 List_1 = qaos.StdC
+List_2 = qaos.Wedling

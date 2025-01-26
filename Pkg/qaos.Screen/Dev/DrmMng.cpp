@@ -241,11 +241,20 @@ struct sDrmMng {
 
       memset(Scr.Buf[i].Map, 0, Scr.Buf[i].Size);
     }
-
     
     if (drmModeSetCrtc(Card.Handle, Scr.Crt->crtc_id, Scr.Buf[0].FbId, 0, 0, &ConID, 1, &Mode) < 0)
       throw runtime_error("Failed to open Scr: set CRTC");
+
+
+    // Window
+    Scr.Window = Graphic::Window2_New(0, Scr.Mode.Width, Scr.Mode.Height);
     
+    // Assign new buffer
+    free(Graphic::Surface2_Ass(0, Graphic::Window2_Sur(0, Scr.Window), (point)Scr.Buf[0].Map));
+    free(Graphic::Surface2_Ass(0, Graphic::Window2_Buf(0, Scr.Window), (point)Scr.Buf[1].Map));
+
+
+    Graphic::Window2_Swp(0, Scr.Window);
   }
 
   void   Scr_Close(int32u GPU, int32u SCR) {
@@ -258,15 +267,41 @@ struct sDrmMng {
       throw runtime_error("Failed to close Scr: Not opened");
 
     
+    // Free Buffer
     drmModeRmFB(Card.Handle, Scr.Buf[0].FbId);
     drmModeRmFB(Card.Handle, Scr.Buf[1].FbId);
     munmap(Scr.Buf[0].Map, Scr.Buf[0].Size);
     munmap(Scr.Buf[1].Map, Scr.Buf[1].Size);
 
 
+    // Free Window
+    Graphic::Surface2_Ass(0, Graphic::Window2_Sur(0, Scr.Window), NULL);
+    Graphic::Surface2_Ass(0, Graphic::Window2_Buf(0, Scr.Window), NULL);
+
+    Graphic::Window2_Dis(0, Scr.Window);
+
+
+    // Free Screen
     drmModeFreeConnector(Scr.Con); Scr.Con = NULL;
     drmModeFreeEncoder(Scr.Enc); Scr.Enc = NULL;
     drmModeFreeCrtc(Scr.Crt); Scr.Crt = NULL;
+  }
+
+  void   Scr_Swap(int32u GPU, int32u SCR) {
+
+    // Swap Buffer
+    __sBuf Cac = Scr.Buf[0];
+    Scr.Buf[0] = Scr.Buf[1];
+    Scr.Buf[1] = Cac;
+
+
+    // Write to screen
+    int32u ConID = Scr.Con->connector_id;
+    drmModeModeInfo Mode = Scr.Con->modes[0];
+
+    if (drmModeSetCrtc(Card.Handle, Scr.Crt->crtc_id, Scr.Buf[0].FbId, 0, 0, &ConID, 1, &Mode) < 0)
+      throw runtime_error("Failed to open Scr: set CRTC");
+
   }
 
   int32u Scr_ModeCount(int32u GPU, int32u SCR) {

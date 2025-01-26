@@ -113,14 +113,11 @@ class cNucMng {
   void Push(sNucCom Com) {
 
     for (auto &Pkg: Nucleols) {
-
-      cout << "[ PEND ] Pushing: " << Pkg.Package << endl;
       
       // Load
       nucPush NucPush = (nucPush)dlsym(Pkg.Handle, "NucPush");
       if (!NucPush && Pkg.Essential) {
-        term::Up();
-        cout << "[ FAIL ]" << endl;
+        cout << "[ FAIL ] Pushing: " << Pkg.Package << endl;
         
         throw runtime_error("NucPush not found");
       }
@@ -129,14 +126,11 @@ class cNucMng {
         NucPush(Com);
       }
       catch(exception e) {
-        term::Up();
-        cout << "[ FAIL ]" << endl;
+        cout << "[ FAIL ] Pushing: " << Pkg.Package << endl;
         
         throw runtime_error("NucPush not worked");
       }
-
-      term::Up();
-      cout << "[  OK  ]" << endl;
+      
     }
 
   }
@@ -144,14 +138,11 @@ class cNucMng {
   void Pop() {
 
     for (auto &Pkg: Nucleols) {
-
-      cout << "[ PEND ] Poping: " << Pkg.Package << endl;
       
       // Load
       nucPop NucPop = (nucPop)dlsym(Pkg.Handle, "NucPop");
       if (!NucPop && Pkg.Essential) {
-        term::Up();
-        cout << "[ FAIL ]" << endl;
+        cout << "[ FAIL ] Poping: " << Pkg.Package << endl;
         
         throw runtime_error("NucPop not found");
       }
@@ -160,14 +151,11 @@ class cNucMng {
         NucPop();
       }
       catch(exception e) {
-        term::Up();
-        cout << "[ FAIL ]" << endl;
+        cout << "[ FAIL ] Poping: " << Pkg.Package << endl;
         
         throw runtime_error("NucPop not worked");
       }
-
-      term::Up();
-      cout << "[  OK  ]" << endl;
+      
     }
 
   }

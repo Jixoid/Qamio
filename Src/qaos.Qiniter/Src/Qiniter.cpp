@@ -81,10 +81,14 @@ void LoadLinuxNuc() {
   system("ls /dev/fuse");
 
 
-  
+
   if (system("/sbin/modprobe drm") != 0)
     throw runtime_error("Can not load module: drm");
+
+  if (system("/sbin/modprobe virtio_gpu") != 0)
+    throw runtime_error("Can not load module: virtio_gpu");
   
+  /*
   if (system("/sbin/modprobe drm_kms_helper") != 0)
     throw runtime_error("Can not load module: drm_kms_helper");
   
@@ -99,10 +103,7 @@ void LoadLinuxNuc() {
 
   if (system("/sbin/modprobe vmwgfx") != 0)
     throw runtime_error("Can not load module: vmwgfx");
-
-  if (system("/sbin/modprobe virtio_gpu") != 0)
-    throw runtime_error("Can not load module: virtio_gpu");
-
+  */
 }
 
 void SwitchRoot() {

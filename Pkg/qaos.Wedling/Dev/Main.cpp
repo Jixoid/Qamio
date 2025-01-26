@@ -5,7 +5,6 @@
 #include "Nucleol.hpp"
 #include "Wedling.hpp"
 
-#define toSec(X) ((__secon*)(X))
 #define ComSet(X) NucCom.Set(#X, (point)X);
 
 
@@ -20,42 +19,42 @@ struct __secon {
 };
 
 
-secon Secon_New(uid nOwner) {
+__secon* Secon_New(uid Owner) {
 
-  __secon* result = new __secon;
+  __secon* Res = new __secon;
 
-  result->Owner = nOwner;
-  result->Other = 0;
+  Res->Owner = Owner;
+  Res->Other = 0;
 
-  return (point)result;
+  return Res;
 }
 
-bool  Secon_Dis(secon nSelf) {
+bool  Secon_Dis(__secon* Self) {
 
-  if (nSelf == NULL)
+  if (Self == NULL)
     return false;
 
 
-  delete toSec(nSelf);
+  delete Self;
 
   return true;
 }
 
-bool  Secon_Let(secon nSelf, uid nClient, int8u nPerm, bool Append) {
+bool  Secon_Let(__secon* Self, uid Client, int8u Perm, bool Append) {
 
-  if (nSelf == NULL)
+  if (Self == NULL)
     return false;
 
   // Owner
-  if (toSec(nSelf)->Owner == nClient)
+  if (Self->Owner == Client)
     return Append;
 
   // Other
-  if (nClient == 0) {
+  if (Client == 0) {
     if (Append)
-      toSec(nSelf)->Other |= nPerm;
+      Self->Other |= Perm;
     else
-      toSec(nSelf)->Other &= ~nPerm;
+      Self->Other &= ~Perm;
 
     return true;
   }
@@ -63,42 +62,46 @@ bool  Secon_Let(secon nSelf, uid nClient, int8u nPerm, bool Append) {
   // Members
   int8u Def;
 
-  auto it = toSec(nSelf)->Auths.find(nClient);
-  if (it != toSec(nSelf)->Auths.end()) 
+  auto it = Self->Auths.find(Client);
+  if (it != Self->Auths.end()) 
     Def = it->second;
   else
-    Def = toSec(nSelf)->Other;
+    Def = Self->Other;
 
 
   if (Append)
-    Def |= nPerm;
+    Def |= Perm;
   else
-    Def &= ~nPerm;
+    Def &= ~Perm;
 
   
-  toSec(nSelf)->Auths[nClient] = Def;
+  Self->Auths[Client] = Def;
 
   return true;
 }
 
-bool  Secon_Acc(secon nSelf, uid nClient, int8u nPerm) {
+bool  Secon_Acc(__secon* Self, uid Client, int8u Perm) {
 
-  if (nSelf == NULL)
+  if (Self == NULL)
     return false;
 
+  // Root
+  if (Client == 0)
+    return true;
+
   // Owner
-  if (toSec(nSelf)->Owner == nClient)
+  if (Self->Owner == Client)
     return true;
   
   // Find
-  auto it = toSec(nSelf)->Auths.find(nClient);
-  if (it != toSec(nSelf)->Auths.end()) {
+  auto it = Self->Auths.find(Client);
+  if (it != Self->Auths.end()) {
     // Members
-    return ((it->second & nPerm) != 0);
+    return ((it->second & Perm) != 0);
 
   } else {
     // Other
-    return ((toSec(nSelf)->Other & nPerm) != 0);    
+    return ((Self->Other & Perm) != 0);    
   }
 
 }
