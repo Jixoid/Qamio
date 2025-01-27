@@ -211,7 +211,7 @@ void      Surface2_Draw_bmp(uid Owner, __surface2* Self, string Path, location P
 
   FILE *file = fopen(Path.c_str(), "rb");
   if (!file)
-    throw runtime_error("Failed to open file");
+    throw runtime_error("Failed to open file: " +string(strerror(errno)));
 
 
   int8u Header[54];

@@ -1,0 +1,6 @@
+[Root]
+Package = qaos.Drm
+Provider = jixoid
+
+[Depency]
+ListC = 0

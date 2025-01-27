@@ -120,7 +120,7 @@ Start() {
   -drive file=Dev/Images/System.img,format=raw \
   -kernel Res/Linux_6.12.10.img \
   -vga virtio -display gtk,gl=on \
-  -append "root=/dev/sda ro init=/Qiniter.elf console=ttyS0" \
+  -append "root=/dev/sda ro init=/Qiniter.elf quiet console=ttyS0" \
   -serial stdio
 
   echo

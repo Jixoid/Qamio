@@ -66,7 +66,7 @@ point NucComGet(string Key) {
 
 void Main() {
 
-  term::Clear();
+  //term::Clear();
 
   // Assign NucCom
   sNucCom NucCom;
@@ -98,6 +98,8 @@ void Main() {
 
   NucMng.Start();
 
+  sleep(1);
+
   #ifdef BootAnim_Active
   BootAnim::BootAnim_Stop();
   #endif
@@ -121,7 +123,7 @@ int main() {
     cerr << "Error class: " << typeid(e).name() << endl;
     cerr << "Error message: " << e.what() << endl;
 
-    sleep(3);
+    sleep(1);
   }
 
   SysCtl_Shutdown();

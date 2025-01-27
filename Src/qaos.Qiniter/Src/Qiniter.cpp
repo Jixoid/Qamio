@@ -74,20 +74,20 @@ void MountNewRoot(string Device) {
 
 void LoadLinuxNuc() {
   
+  // for Moq
   if (system("/sbin/modprobe fuse") != 0)
     throw runtime_error("Can not load module: fuse");
 
-  // control /proc/modules
-  system("ls /dev/fuse");
 
-
-
+  // for Screen
   if (system("/sbin/modprobe drm") != 0)
     throw runtime_error("Can not load module: drm");
 
   if (system("/sbin/modprobe virtio_gpu") != 0)
     throw runtime_error("Can not load module: virtio_gpu");
   
+
+
   /*
   if (system("/sbin/modprobe drm_kms_helper") != 0)
     throw runtime_error("Can not load module: drm_kms_helper");
@@ -195,7 +195,7 @@ void Resolver(string Pkg) {
   int ListC = stoi(ini["Depency"]["ListC"]);
 
   for (int i = 1; i <= ListC; i++)
-    MountMoq(ini["Depency"]["List_"+to_string(i)]);
+    Resolver(ini["Depency"]["List_"+to_string(i)]);
 
 }
 
@@ -204,30 +204,66 @@ void Resolver(string Pkg) {
 
 const string RootDevice = "/dev/sdb";
 
-int main(){
+void Main(){
   term::Clear();
 
   printf("Qiniter Started!\n");
 
   
   MountNewRoot(RootDevice);
-
   LoadLinuxNuc();
-
   SwitchRoot();
-
   PrepareKernel();
 
+  //term::Clear();
 
-
-  term::Clear();
+  #pragma region Mk Symlink
+  symlink("/old_root/etc",   "/etc");
+  symlink("/old_root/usr",   "/usr");
+  symlink("/old_root/lib",   "/lib");
+  symlink("/old_root/lib64", "/lib64");
+  symlink("/old_root/bin",   "/bin");
+  symlink("/old_root/sbin",  "/sbin");
+  #pragma endregion
 
   Resolver(Kernel_Pkg);
 
+  #pragma region Rm Symlink
+  unlink("/etc");
+  unlink("/usr");
+  unlink("/lib");
+  unlink("/lib64");
+  unlink("/bin");
+  unlink("/sbin");
+  #pragma endregion
+  
 
-  string Srg0 = "/Pkg/"+Kernel_Pkg+"/Bin/Main.elf";
-  char*  Arg0 = (char*)Srg0.c_str();
 
-  execve(Arg0, (char* []){Arg0, NULL}, (char* []){"LD_LIBRARY_PATH=/Pkg", NULL});
-  return 1;
+  string Srg3 = "/Pkg/"+Kernel_Pkg+"/Bin/Main.elf";
+
+  char* Arg0 = "/Pkg/qaos.StdC/Lib/loader.so";
+  char* Arg1 = "--library-path";
+  char* Arg2 = "/Pkg/qaos.StdC/Lib";
+  char* Arg3 = (char*)Srg3.c_str();
+
+
+  execve(Arg0, (char* []){Arg0, Arg1, Arg2, Arg3, NULL}, NULL);
+  
+  throw runtime_error("Kernel not started");
+}
+
+int main() {
+
+  try {
+    Main();
+  } 
+  catch(exception &e) {
+    cerr << "An exception was encountered" << endl;
+    cerr << "Error class: " << typeid(e).name() << endl;
+    cerr << "Error message: " << e.what() << endl;
+
+    sleep(1);
+  }
+
+  SysCtl_Shutdown();
 }

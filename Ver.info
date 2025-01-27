@@ -1,3 +1,9 @@
+v0.2:10 [PreAlpha]
+  + Added: Qiniter moq recursive depency
+  + Added: Amethyst start with depency
+  - Remov: Initrd helper dir (bin,lib64,etc,usr)
+
+
 v0.2:9 [PreAlpha]
   > First Boot Screen
 
