@@ -5,6 +5,7 @@
 #include "JBasic.hpp"
 #include "Nucleol.hpp"
 #include "Terminal.cpp"
+#include "BootAnim.hpp"
 
 extern "C" {
   #include <dlfcn.h>
@@ -94,15 +95,12 @@ class cNucMng {
       try {
         if (!NucCheck(gnucVer))
           throw runtime_error(Pkg.Package+" is not compatible");
+      
       }
-      catch(runtime_error e){
-        cout << "[ FAIL ] Checking: " << Pkg.Package << endl;
-        throw e;
-      }
-      catch(exception e) {
+      catch(exception &e) {
         cout << "[ FAIL ] Checking: " << Pkg.Package << endl;
         
-        throw runtime_error("NucCheck not worked");
+        throw runtime_error("NucCheck not worked: "+string(e.what()));
       }
 
     }
@@ -125,10 +123,10 @@ class cNucMng {
       try {
         NucPush(Com);
       }
-      catch(exception e) {
+      catch(exception &e) {
         cout << "[ FAIL ] Pushing: " << Pkg.Package << endl;
         
-        throw runtime_error("NucPush not worked");
+        throw runtime_error("NucPush not worked: "+string(e.what()));
       }
       
     }
@@ -150,10 +148,10 @@ class cNucMng {
       try {
         NucPop();
       }
-      catch(exception e) {
+      catch(exception &e) {
         cout << "[ FAIL ] Poping: " << Pkg.Package << endl;
         
-        throw runtime_error("NucPop not worked");
+        throw runtime_error("NucPop not worked: "+string(e.what()));
       }
       
     }
@@ -176,10 +174,10 @@ class cNucMng {
       try {
         NucLoad();
       }
-      catch(exception e) {
+      catch(exception &e) {
         cout << "[ FAIL ] Loading: " << Pkg.Package << endl;
         
-        throw runtime_error("NucLoad not worked");
+        throw runtime_error("NucLoad not worked: "+string(e.what()));
       }
 
     }
@@ -201,10 +199,10 @@ class cNucMng {
       try {
         NucUnload();
       }
-      catch(exception e) {
+      catch(exception &e) {
         cout << "[ FAIL ] Unloading: " << Pkg.Package << endl;
         
-        throw runtime_error("NucUnload not worked");
+        throw runtime_error("NucUnload not worked: "+string(e.what()));
       }
 
     }
@@ -213,6 +211,8 @@ class cNucMng {
 
 
   void Start() {
+
+    int16u i = 0;
 
     for (auto &Pkg: Nucleols) {
 
@@ -230,15 +230,21 @@ class cNucMng {
       try {
         NucStart();
       }
-      catch(exception e) {
+      catch(exception &e) {
         term::Up();
         cout << "[ FAIL ]" << endl;
         
-        throw runtime_error("NucStart not worked");
+        throw runtime_error("NucStart not worked: "+string(e.what()));
       }
 
       term::Up();
       cout << "[  OK  ]" << endl;
+
+      i++;
+
+      #ifdef BootAnim_Progress
+      BootAnim::BootAnim_Prog(Nucleols.size(), i);
+      #endif
     }
 
   }
@@ -261,11 +267,11 @@ class cNucMng {
       try {
         NucStop();
       }
-      catch(exception e) {
+      catch(exception &e) {
         term::Up();
         cout << "[ FAIL ]" << endl;
         
-        throw runtime_error("NucStop not worked");
+        throw runtime_error("NucStop not worked: "+string(e.what()));
       }
 
       term::Up();

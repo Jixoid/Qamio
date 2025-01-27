@@ -45,9 +45,9 @@ build() {
 
   sed 's/\$Back/'$TBack'/g; s/\$Fore/'$TFore'/g; s/\$Color/#'$(crudini --get Dev/Device.conf Cover Color)'/g' $Self/Dev/Generic.svg > $Self/Res/Boot.svg
   
-  magick -density 512 $Self/Res/Boot.svg -resize 512x512 $Self/Res/Boot_512.bmp
-  magick -density 256 $Self/Res/Boot.svg -resize 256x256 $Self/Res/Boot_256.bmp
 
+  magick -density 480 $Self/Res/Boot.svg -resize 480x480 $Self/Res/Boot_480.bmp
+  
 
 
   # Create moq

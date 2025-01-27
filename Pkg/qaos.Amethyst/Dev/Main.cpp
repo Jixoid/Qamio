@@ -5,6 +5,7 @@
 #include "Nucleol.hpp"
 #include "Wedling.hpp"
 #include "Terminal.cpp"
+#include "BootAnim.hpp"
 
 extern "C" {
   #include <sys/reboot.h>
@@ -82,19 +83,29 @@ void Main() {
   NucMng.Check();
 
   NucMng.Push(NucCom);
-  usleep(300);
+
+  #ifdef BootAnim_Active
+  BootAnim::PopNuc(NucCom);
+  #endif
+
   NucMng.Pop();
-  usleep(300);
   
   NucMng.Load();
-  usleep(300);
+
+  #ifdef BootAnim_Active
+  BootAnim::BootAnim_Start();
+  #endif
+
   NucMng.Start();
-  usleep(300);
+
+  #ifdef BootAnim_Active
+  BootAnim::BootAnim_Stop();
+  #endif
 
 
-  sleep(5);
 
-  
+  sleep(1);
+
   NucMng.Stop();
   NucMng.Unload();
 }

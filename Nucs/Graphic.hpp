@@ -41,6 +41,12 @@ namespace jix {
     };
   };
   
+  struct location
+  {
+    int32u X;
+    int32u Y;
+  };
+
   typedef int32u  color;
   
 
@@ -54,7 +60,13 @@ namespace jix {
   typedef surface2 (*surface2_New)(uid Owner, int32u Width, int32u Height);
   typedef void     (*surface2_Dis)(uid Owner, surface2 Self);
   typedef point    (*surface2_Ass)(uid Owner, surface2 Self, point New);
+  typedef color    (*surface2_Get)(uid Owner, surface2 Self, location Point);
+
+  typedef void     (*surface2_Draw_Sur2)(uid Owner, surface2 Self, surface2 Src, location Point);
+  typedef void     (*surface2_Draw_bmp) (uid Owner, surface2 Self, string Path, location Point);
+  
   typedef void     (*surface2_RectF)(uid Owner, surface2 Self, rect Rect, color Color);
+  typedef void     (*surface2_RectS)(uid Owner, surface2 Self, rect Rect, color Color, int16u Width);
 
 
   namespace Graphic {
@@ -68,7 +80,15 @@ namespace jix {
     surface2_New  Surface2_New;
     surface2_Dis  Surface2_Dis;
     surface2_Ass  Surface2_Ass;
+    surface2_Get  Surface2_Get;
+
+    surface2_Draw_Sur2 Surface2_Draw_Sur2;
+    surface2_Draw_bmp  Surface2_Draw_bmp;
+
     surface2_RectF  Surface2_RectF;
+    surface2_RectS  Surface2_RectS;
+
+
 
     void PopNuc(sNucCom Com) {
       ComGet(Window2_New, window2_New);
@@ -80,7 +100,13 @@ namespace jix {
       ComGet(Surface2_New, surface2_New);
       ComGet(Surface2_Dis, surface2_Dis);
       ComGet(Surface2_Ass, surface2_Ass);
+      ComGet(Surface2_Get, surface2_Get);
+
+      ComGet(Surface2_Draw_Sur2, surface2_Draw_Sur2)
+      ComGet(Surface2_Draw_bmp,  surface2_Draw_bmp);
+
       ComGet(Surface2_RectF, surface2_RectF);
+      ComGet(Surface2_RectS, surface2_RectS);
     }
   }
 

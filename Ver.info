@@ -1,3 +1,10 @@
+v0.2:9 [PreAlpha]
+  > First Boot Screen
+
+  + Added: Kernel BootAnimation
+  + Fixed: Nucleol exception catch
+
+
 v0.2:8 [PreAlpha]
   + Fixed: bmp
 
