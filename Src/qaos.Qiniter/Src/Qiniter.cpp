@@ -51,14 +51,14 @@ void MountMoq(string Pkg) {
   }
   catch (runtime_error e) {
     term::Up();
-    cout << "[ FAIL ] Mounting: " << Pkg << endl;
+    cout << "[ FAIL ]" << endl;
 
     throw e;
   }
 
 
   term::Up();
-  cout << "[  OK  ] Mounting: " << Pkg << endl;
+  cout << "[  OK  ]" << endl;
 }
 
 
@@ -108,25 +108,25 @@ void LoadLinuxNuc() {
 
 void SwitchRoot() {
 
+  // Umount last
   if (umount("/dev") != 0)
     throw runtime_error("Can not umount /dev");
 
 
+  // Change root
   if (mount("/new_root", "/new_root", NULL, MS_BIND, NULL) != 0)
     throw runtime_error("Can not mount /new_root");
 
-  // Change Root
   chdir("/new_root");
 
-  // Pivot Root
-  if (pivot_root(".", "old_root") != 0)
+  if (pivot_root(".", "Initrd") != 0)
     throw runtime_error("Can not pivot root");
 
+  if (umount("/Initrd/new_root") != 0)
+    throw runtime_error("Can not umount /Initrd/new_root");
 
-  if (umount("/old_root/new_root") != 0)
-    throw runtime_error("Can not umount /old_root/new_root");
 
-
+  // Mount others
   if (mount("none","/dev","devtmpfs", 0, NULL) != 0)
     throw runtime_error("Can not mount /dev");
 
@@ -137,8 +137,10 @@ void SwitchRoot() {
     throw runtime_error("Can not mount /sys");
 
 
+
   if (mount("ramfs", "/Pkg", "ramfs", 0, NULL) != 0)
     throw runtime_error("Can not mount /Pkg");
+
   
 }
 
@@ -218,12 +220,12 @@ void Main(){
   //term::Clear();
 
   #pragma region Mk Symlink
-  symlink("/old_root/etc",   "/etc");
-  symlink("/old_root/usr",   "/usr");
-  symlink("/old_root/lib",   "/lib");
-  symlink("/old_root/lib64", "/lib64");
-  symlink("/old_root/bin",   "/bin");
-  symlink("/old_root/sbin",  "/sbin");
+  symlink("/Initrd/etc",   "/etc");
+  symlink("/Initrd/usr",   "/usr");
+  symlink("/Initrd/lib",   "/lib");
+  symlink("/Initrd/lib64", "/lib64");
+  symlink("/Initrd/bin",   "/bin");
+  symlink("/Initrd/sbin",  "/sbin");
   #pragma endregion
 
   Resolver(Kernel_Pkg);

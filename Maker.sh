@@ -8,8 +8,11 @@ run() {
   echo "${P}$*"
   "$@"
 }
-Find () {
+Find() {
   echo "$(cat Conf/Compile.conf | grep -w "$1" | cut -d' ' -f2)"
+}
+DevGet() {
+  echo $(crudini --get "Dev/Device.conf" "$1" "$2")
 }
 
 
@@ -116,8 +119,8 @@ Start() {
   -enable-kvm \
   -m 4G \
   -smp 8 \
-  -drive file=Dev/Images/Initrd.img,format=raw \
-  -drive file=Dev/Images/System.img,format=raw \
+  -drive file=Dev/Images/Initrd.img,format=raw,cache=none \
+  -drive file=Dev/Images/System.img,format=raw,cache=none \
   -kernel Res/Linux_6.12.10.img \
   -vga virtio -display gtk,gl=on \
   -append "root=/dev/sda ro init=/Qiniter.elf quiet console=ttyS0" \
@@ -147,25 +150,51 @@ Build() {
   Clean
 
   echo "! Creating Images"
-  DiskC=$(crudini --get "Dev/Device.conf" Disk ListC)
+  DiskC=$(DevGet Disk ListC)
   for ((i=1; i<=DiskC; i++)); do
-    Part=$(crudini --get "Dev/Device.conf" Disk "List_$i")
-    DiskSize=$(crudini --get "Dev/Device.conf" "Disk.$Part" Size)
+    # Get info
+    Part=$(DevGet Disk "List_$i")
+    DiskSize=$(DevGet "Disk.$Part" Size)
     WDir="Dev/Mount/"$Part
-
     echo "${P}# $Part"
+
+
+    # Create
     run truncate -s $DiskSize "Dev/Images/$Part.img"
     run mkfs.ext4 -q "Dev/Images/$Part.img"
     
+
+    # Encrypt
+    if [[ $(DevGet "Disk.$Part" Encrypt) == "Yes" ]] then
+        echo "${P}"tune2fs -O encrypt  "Dev/Images/$Part.img"
+      tune2fs -O encrypt  "Dev/Images/$Part.img" >/dev/null 2>&1
+    fi
+
+    # Casefold 1
+    if [[ $(DevGet "Disk.$Part" Casefold) == "Yes" ]] then
+        echo "${P}"tune2fs -O casefold  "Dev/Images/$Part.img"
+      tune2fs -O casefold  "Dev/Images/$Part.img" >/dev/null 2>&1
+    fi
+
+
     # Push Loop
     CLoop=$(sudo losetup -f)
     echo "${CLoop}" >> "Dev/Temp/Loop.list"
     
+
     # Mount Disk
     run sudo losetup ${CLoop} "Dev/Images/$Part.img"
     run mkdir "$WDir"
     run sudo mount ${CLoop} "$WDir"
     run sudo chown -R $(whoami) "$WDir"
+    rm -rf "$WDir"/*
+
+
+    # Casefold 2
+    if [[ $(DevGet "Disk.$Part" Casefold) == "Yes" ]] then
+      run chattr +F "$WDir"
+    fi
+    
     echo
   done
 

@@ -1,3 +1,13 @@
+v0.2:11 [PreAlpha]
+  + Changed: Root dir names
+  + Uses:  Graphic -> Cairo
+  + Added: WidgetSet struct
+  + Added: Login basic struct
+  + Fixed: Few thread sync error
+  + Added: Disk casefold property
+  + Fixed: Amethyst modules system
+
+
 v0.2:10 [PreAlpha]
   + Added: Qiniter moq recursive depency
   + Added: Amethyst start with depency

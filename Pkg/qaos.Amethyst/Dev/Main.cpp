@@ -1,11 +1,13 @@
 #include <iostream>
 #include <fstream>
+#include <thread>
 
 #include "JBasic.hpp"
 #include "Nucleol.hpp"
 #include "Wedling.hpp"
 #include "Terminal.cpp"
 #include "BootAnim.hpp"
+#include "Login.hpp"
 
 extern "C" {
   #include <sys/reboot.h>
@@ -68,6 +70,8 @@ void Main() {
 
   //term::Clear();
 
+  #pragma region Prepare
+
   // Assign NucCom
   sNucCom NucCom;
   NucCom.Set = NucComSet;
@@ -80,7 +84,14 @@ void Main() {
   NucMng.GetNucList();
   NucMng.LoadModules();
 
+  #pragma endregion
+  
+
   NucMng.Check();
+
+
+
+  #pragma region Publish
 
   NucMng.Push(NucCom);
 
@@ -88,8 +99,19 @@ void Main() {
   BootAnim::PopNuc(NucCom);
   #endif
 
+  #ifdef Login_Active
+  Login::PopNuc(NucCom);
+  #endif
+
+  #pragma endregion
+
+
   NucMng.Pop();
-  
+
+
+
+  #pragma region Wakeup
+
   NucMng.Load();
 
   #ifdef BootAnim_Active
@@ -98,15 +120,24 @@ void Main() {
 
   NucMng.Start();
 
-  sleep(1);
+  sleep(2);
 
   #ifdef BootAnim_Active
   BootAnim::BootAnim_Stop();
   #endif
 
+  #pragma endregion
 
 
-  sleep(1);
+
+  #ifdef Login_Active
+  Login::Login_ScrStart();
+
+  sleep(20);
+
+  Login::Login_ScrStop();
+  #endif
+
 
   NucMng.Stop();
   NucMng.Unload();

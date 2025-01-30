@@ -27,10 +27,16 @@ Mach=$(Find "Architecture")
 
 # Modes
 build() {
+  # Compile
   run GCC -shared "$Self/Dev/Main.cpp" -o "$Self/Lib/Main.so" \
-  -I/usr/include/libdrm -ldrm \
-  -Wl,-rpath=/Pkg/qaos.Drm/Lib
+  -I/usr/include/libdrm -ldrm
 
+
+  # Patch
+  run patchelf --set-rpath /Pkg/qaos.Drm/Lib "$Self/Lib/Main.so"
+
+
+  # Packing
   moq .n $(basename $Self)
   moq .a $(basename $Self)  "/" "$Self/Package.info"
   moq .a $(basename $Self)  "/" "$Self/Bin"

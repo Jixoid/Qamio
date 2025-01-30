@@ -11,7 +11,7 @@ extern "C" {
   #include <unistd.h>
   #include <xf86drm.h>
   #include <xf86drmMode.h>
-  #include <drm_fourcc.h>
+  #include <drm/drm_fourcc.h>
   #include <sys/mman.h>
   #include <string.h>
 }
@@ -247,14 +247,12 @@ struct sDrmMng {
 
 
     // Window
-    Scr.Window = Graphic::Window2_New(0, Scr.Mode.Width, Scr.Mode.Height);
-    
-    // Assign new buffer
-    free(Graphic::Surface2_Ass(0, Graphic::Window2_Sur(0, Scr.Window), (point)Scr.Buf[0].Map));
-    free(Graphic::Surface2_Ass(0, Graphic::Window2_Buf(0, Scr.Window), (point)Scr.Buf[1].Map));
+    Scr.Window = Graphic::Window2_NewWith(Scr.Mode.Width, Scr.Mode.Height,
+      (point)Scr.Buf[0].Map,
+      (point)Scr.Buf[1].Map
+    );
 
-
-    Graphic::Window2_Swp(0, Scr.Window);
+    Graphic::Window2_Swp(Scr.Window);
   }
 
   void   Scr_Close(int32u GPU, int32u SCR) {
@@ -275,16 +273,13 @@ struct sDrmMng {
 
 
     // Free Window
-    Graphic::Surface2_Ass(0, Graphic::Window2_Sur(0, Scr.Window), NULL);
-    Graphic::Surface2_Ass(0, Graphic::Window2_Buf(0, Scr.Window), NULL);
-
-    Graphic::Window2_Dis(0, Scr.Window);
+    Graphic::Window2_DisWith(Scr.Window);
 
 
     // Free Screen
-    drmModeFreeConnector(Scr.Con); Scr.Con = NULL;
-    drmModeFreeEncoder(Scr.Enc); Scr.Enc = NULL;
-    drmModeFreeCrtc(Scr.Crt); Scr.Crt = NULL;
+    drmModeFreeConnector(Scr.Con); Scr.Con = Nil;
+    drmModeFreeEncoder(Scr.Enc); Scr.Enc = Nil;
+    drmModeFreeCrtc(Scr.Crt); Scr.Crt = Nil;
   }
 
   void   Scr_Swap(int32u GPU, int32u SCR) {

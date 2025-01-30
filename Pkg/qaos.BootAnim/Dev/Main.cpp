@@ -76,35 +76,35 @@ void BootAnim_Start() {
       Scr.Size = Scr.Screen.Mode.Height;
     };
     
-    Scr.Image = Graphic::Surface2_New(0, Scr.Size, Scr.Size);
-    Graphic::Surface2_Draw_bmp(0, Scr.Image, "/Pkg/qaos.BootAnim/Res/Boot_"+to_string(Scr.Size)+".bmp", {0,0});
+    Scr.Image = Graphic::Surface2_New(Scr.Size, Scr.Size);
+    Graphic::Surface2_Draw_bmp(Scr.Image, "/Pkg/qaos.BootAnim/Res/Boot_"+to_string(Scr.Size)+".bmp", {0,0});
   }
   
 
   // Draw
   for (auto &Scr: Scrs) {
-    surface2 Sur = Graphic::Window2_Sur(0, Scr.Screen.Window);
+    surface2 Sur = Graphic::Window2_Sur(Scr.Screen.Window);
 
 
     // Back
-    Graphic::Surface2_RectF(0, Sur, {
+    Graphic::Surface2_RectF(Sur, {
         .L = 0, .T = 0,
-        .R = Scr.Screen.Mode.Width,
-        .B = Scr.Screen.Mode.Height,
+        .W = int32f(Scr.Screen.Mode.Width),
+        .H = int32f(Scr.Screen.Mode.Height),
       },
-      Graphic::Surface2_Get(0, Scr.Image, {0,0})
+      Graphic::Surface2_Get(Scr.Image, {0,0})
     );
 
 
     // Image
-    Graphic::Surface2_Draw_Sur2(0, Sur, Scr.Image, {
-      .X = (Scr.Screen.Mode.Width  -Scr.Size) /2,
-      .Y = (Scr.Screen.Mode.Height -Scr.Size) /2,
+    Graphic::Surface2_Draw_Sur2(Sur, Scr.Image, {
+      .X = int32f(Scr.Screen.Mode.Width  -Scr.Size) /2,
+      .Y = int32f(Scr.Screen.Mode.Height -Scr.Size) /2,
     });
 
 
     // Swap
-    Graphic::Window2_Swp(0, Scr.Screen.Window);
+    Graphic::Window2_Swp(Scr.Screen.Window);
     Screen::Screen_ScrSwap(Scr.Gpu, Scr.Scr);
   }
 
@@ -115,7 +115,7 @@ void BootAnim_Stop() {
   // Free Screen
   for (auto &Scr: Scrs) {
     
-    Graphic::Surface2_Dis(0, Scr.Image);
+    Graphic::Surface2_Dis(Scr.Image);
 
     Screen::Screen_ScrClose(Scr.Gpu, Scr.Scr);
   }
@@ -134,45 +134,46 @@ void BootAnim_Prog(int16u Max, int16u Val) {
 
   // Draw
   for (auto &Scr: Scrs) {
-    surface2 Sur = Graphic::Window2_Sur(0, Scr.Screen.Window);
+    surface2 Sur = Graphic::Window2_Sur(Scr.Screen.Window);
 
-
+    /*
     // Back
-    Graphic::Surface2_RectF(0, Sur, {
+    Graphic::Surface2_RectF(Sur, {
         .L = 0, .T = 0,
         .R = Scr.Screen.Mode.Width,
         .B = Scr.Screen.Mode.Height,
       },
-      Graphic::Surface2_Get(0, Scr.Image, {0,0})
+      Graphic::Surface2_Get(Scr.Image, {0,0})
     );
 
 
     // Image
-    Graphic::Surface2_Draw_Sur2(0, Sur, Scr.Image, {
+    Graphic::Surface2_Draw_Sur2(Sur, Scr.Image, {
       .X = (Scr.Screen.Mode.Width  -Scr.Size) /2,
       .Y = (Scr.Screen.Mode.Height -Scr.Size) /2,
     });
+    */
 
 
     // Prog
-    int32u BegX = (Scr.Screen.Mode.Height /9 *5), EndX = (Scr.Screen.Mode.Height /9 *7);
+    int32f BegX = (Scr.Screen.Mode.Height /9 *5), EndX = (Scr.Screen.Mode.Height /9 *7);
 
 
-    Graphic::Surface2_RectS(0, Sur, {
-      .L = BegX,  .T = (Scr.Screen.Mode.Height /3 *2),
-      .R = EndX,  .B = (Scr.Screen.Mode.Height /3 *2) +20,
-    }, 0xFFFFFFFF, 1);
+    Graphic::Surface2_RectB(Sur, {
+      .L = BegX,  .T = int32f(Scr.Screen.Mode.Height /3 *2),
+      .W = EndX -BegX,  .H = 20,
+    }, color(0x70FFFFFF), 1);
 
-    Graphic::Surface2_RectF(0, Sur, {
+    Graphic::Surface2_RectF(Sur, {
       .L = BegX +2,
-        .T = (Scr.Screen.Mode.Height /3 *2) +2,
-      .R = BegX +2 +((EndX -BegX -4) *Val /Max),
-        .B = (Scr.Screen.Mode.Height /3 *2) +18,
-    }, 0xFFFFFFFF);
+        .T = int32f(Scr.Screen.Mode.Height /3 *2) +2,
+      .W = 2 +((EndX -BegX -4) *Val /Max),
+        .H = 18,
+    }, color(0x70FFFFFF));
 
 
     // Swap
-    Graphic::Window2_Swp(0, Scr.Screen.Window);
+    Graphic::Window2_Swp(Scr.Screen.Window);
     Screen::Screen_ScrSwap(Scr.Gpu, Scr.Scr);
   }
 

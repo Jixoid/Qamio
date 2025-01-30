@@ -5,28 +5,33 @@
 using namespace std;
 
 
+
+#define Nil nullptr
+
+#define int8     __int8_t
+#define int8u    __uint8_t
+#define int16    __int16_t
+#define int16u   __uint16_t
+#define int32    __int32_t
+#define int32u   __uint32_t
+#define int64    __int64_t
+#define int64u   __uint64_t
+#define int128   __int128_t
+#define int128u  __uint128_t
+
+#define int32f   float
+#define int64f   double
+#define int128f  __float128
+
+
 namespace jix {
 
-  typedef __int8_t     int8;
-  typedef __uint8_t    int8u;
-  typedef __int16_t    int16;
-  typedef __uint16_t   int16u;
-  typedef __int32_t    int32;
-  typedef __uint32_t   int32u;
-  typedef __int64_t    int64;
-  typedef __uint64_t   int64u;
-  typedef __int128_t   int128;
-  typedef __uint128_t  int128u;
-
-
-  typedef int32u   uid;
-  typedef int32u   gid;
+  typedef uid_t   uid;
+  typedef gid_t   gid;
 
   typedef size_t   ohid;
   typedef char*    point;
   typedef size_t   size;
-
-  typedef int8u   byte;
 
 
   struct data {

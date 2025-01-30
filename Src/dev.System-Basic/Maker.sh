@@ -4,6 +4,7 @@ set -o pipefail
 
 
 # Const
+Self=$(dirname "$0")
 Part="System"
 P="  "
 
@@ -21,14 +22,20 @@ run() {
 
 # Modes
 build() {
-    echo "${P}mkdir {System}/{Moq,Qap,Pkg,Conf,old_root,dev,proc,sys}"
-  mkdir "$WDir"/{Moq,Qap,Pkg,Conf,old_root,dev,proc,sys}
+  
+    echo "${P}mkdir {System}/{Dev,Proc,Sys,Initrd}"
+  mkdir "$WDir"/{Dev,Proc,Sys,Initrd}
+
+
+    echo "${P}mkdir {System}/{Moq,Pkg,Conf,User}"
+  mkdir "$WDir"/{Moq,Pkg,Conf,User}
+
+
+    echo "${P}"cp {Pkg}/Dev/Device.conf {System}/Conf
+  cp Dev/Device.conf "$WDir"/Conf
 
 
   crudini --set Dev/Mount/System/Conf/Nucleol.conf Root ListC 0
-
-  #  echo "${P}cp -r {Pkg}/Linux/* {Initrd}/Linux"
-  #cp -r "$(dirname "$0")"/Linux/* "$WDir"/Linux
 }
 
 

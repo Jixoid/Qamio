@@ -27,8 +27,16 @@ Mach=$(Find "Architecture")
 
 # Modes
 build() {
-  run GCC -shared "$Self/Dev/Main.cpp" -o "$Self/Lib/Main.so"
+  # Compile
+  run GCC -shared "$Self/Dev/Main.cpp" -o "$Self/Lib/Main.so" \
+  -lcairo
 
+
+  # Patch
+  run patchelf --set-rpath /Pkg/qaos.Cairo/Lib "$Self/Lib/Main.so"
+
+
+  # Packing
   moq .n $(basename $Self)
   moq .a $(basename $Self)  "/" "$Self/Package.info"
   moq .a $(basename $Self)  "/" "$Self/Bin"

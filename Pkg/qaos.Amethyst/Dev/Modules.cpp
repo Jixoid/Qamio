@@ -63,18 +63,24 @@ class cNucMng {
       cout << "[ PEND ] Loading: " << Pkg.Package << endl;
 
       // Load
-      point Handle = (point)dlopen(("/Pkg/"+Pkg.Package+"/Lib/Main.so").c_str(), RTLD_NOW);
-      Pkg.Handle = Handle;
+      Pkg.Handle = (point)dlopen(("/Pkg/"+Pkg.Package+"/Lib/Main.so").c_str(), RTLD_NOW);
 
-      if (!Handle && Pkg.Essential) {
+      if (Pkg.Handle == NULL) {
         term::Up();
         cout << "[ FAIL ]" << endl;
         
-        throw runtime_error( dlerror() );
+        if (Pkg.Essential)
+          throw runtime_error( dlerror() );
+        else {
+          cerr << "@Amethyst: The package is not essential, it is ignored, " << dlerror() << endl;
+          continue;
+        }
+
+      } else { 
+        term::Up();
+        cout << "[  OK  ]" << endl;
       }
 
-      term::Up();
-      cout << "[  OK  ]" << endl;
     }
 
   }
@@ -83,52 +89,88 @@ class cNucMng {
   void Check() {
 
     for (auto &Pkg: Nucleols) {
+
+      // Skip
+      if (Pkg.Handle == NULL)
+        continue;
+
       
       // Check
       nucCheck NucCheck = (nucCheck)dlsym(Pkg.Handle, "NucCheck");
-      if (!NucCheck && Pkg.Essential) {
-        cout << "[ FAIL ] Checking: " << Pkg.Package << endl;
-        
-        throw runtime_error("NucCheck not found");
-      }
 
-      try {
-        if (!NucCheck(gnucVer))
-          throw runtime_error(Pkg.Package+" is not compatible");
-      
-      }
-      catch(exception &e) {
+      if (NucCheck == NULL) {
         cout << "[ FAIL ] Checking: " << Pkg.Package << endl;
         
-        throw runtime_error("NucCheck not worked: "+string(e.what()));
+        if (Pkg.Essential)
+          throw runtime_error("NucCheck not found");
+        else {
+          cerr << "@Amethyst: The package is not essential, it is ignored, NucCheck not found" << endl;
+          continue;
+        }
+
+      } else { 
+        try {
+          if (!NucCheck(gnucVer))
+            throw runtime_error(Pkg.Package+" is not compatible");
+        
+        }
+        catch(exception &e) {
+          cout << "[ FAIL ] Checking: " << Pkg.Package << endl;
+
+          if (Pkg.Essential)
+            throw runtime_error("NucCheck not worked: "+string(e.what()));
+          else {
+            cerr << "@Amethyst: The package is not essential, it is ignored, NucCheck not worked: " << e.what() << endl;
+            continue;
+          }
+          
+        }
       }
 
     }
-
+  
   }
 
 
   void Push(sNucCom Com) {
 
     for (auto &Pkg: Nucleols) {
+
+      // Skip
+      if (Pkg.Handle == NULL)
+        continue;
+
       
-      // Load
+      // Push
       nucPush NucPush = (nucPush)dlsym(Pkg.Handle, "NucPush");
-      if (!NucPush && Pkg.Essential) {
+
+      if (NucPush == NULL) {
         cout << "[ FAIL ] Pushing: " << Pkg.Package << endl;
         
-        throw runtime_error("NucPush not found");
+        if (Pkg.Essential)
+          throw runtime_error("NucPush not found");
+        else {
+          cerr << "@Amethyst: The package is not essential, it is ignored, NucPush not found" << endl;
+          continue;
+        }
+
+      } else { 
+        try {
+          NucPush(Com);
+        }
+        catch(exception &e) {
+          cout << "[ FAIL ] Pushing: " << Pkg.Package << endl;
+
+          if (Pkg.Essential)
+            throw runtime_error("NucPush not worked: "+string(e.what()));
+          else {
+            cerr << "@Amethyst: The package is not essential, it is ignored, NucPush not worked: " << e.what() << endl;
+            continue;
+          }
+          
+        }
       }
 
-      try {
-        NucPush(Com);
-      }
-      catch(exception &e) {
-        cout << "[ FAIL ] Pushing: " << Pkg.Package << endl;
-        
-        throw runtime_error("NucPush not worked: "+string(e.what()));
-      }
-      
     }
 
   }
@@ -136,24 +178,42 @@ class cNucMng {
   void Pop() {
 
     for (auto &Pkg: Nucleols) {
+
+      // Skip
+      if (Pkg.Handle == NULL)
+        continue;
+
       
-      // Load
+      // Pop
       nucPop NucPop = (nucPop)dlsym(Pkg.Handle, "NucPop");
-      if (!NucPop && Pkg.Essential) {
+
+      if (NucPop == NULL) {
         cout << "[ FAIL ] Poping: " << Pkg.Package << endl;
         
-        throw runtime_error("NucPop not found");
+        if (Pkg.Essential)
+          throw runtime_error("NucPop not found");
+        else {
+          cerr << "@Amethyst: The package is not essential, it is ignored, NucPop not found" << endl;
+          continue;
+        }
+
+      } else { 
+        try {
+          NucPop();
+        }
+        catch(exception &e) {
+          cout << "[ FAIL ] Poping: " << Pkg.Package << endl;
+
+          if (Pkg.Essential)
+            throw runtime_error("NucPop not worked: "+string(e.what()));
+          else {
+            cerr << "@Amethyst: The package is not essential, it is ignored, NucPop not worked: " << e.what() << endl;
+            continue;
+          }
+          
+        }
       }
 
-      try {
-        NucPop();
-      }
-      catch(exception &e) {
-        cout << "[ FAIL ] Poping: " << Pkg.Package << endl;
-        
-        throw runtime_error("NucPop not worked: "+string(e.what()));
-      }
-      
     }
 
   }
@@ -162,22 +222,40 @@ class cNucMng {
   void Load() {
 
     for (auto &Pkg: Nucleols) {
+
+      // Skip
+      if (Pkg.Handle == NULL)
+        continue;
+
       
       // Load
       nucLoad NucLoad = (nucLoad)dlsym(Pkg.Handle, "NucLoad");
-      if (!NucLoad && Pkg.Essential) {
-        cout << "[ FAIL ] Loading: " << Pkg.Package << endl;
-        
-        throw runtime_error("NucLoad not found");
-      }
 
-      try {
-        NucLoad();
-      }
-      catch(exception &e) {
+      if (NucLoad == NULL) {
         cout << "[ FAIL ] Loading: " << Pkg.Package << endl;
         
-        throw runtime_error("NucLoad not worked: "+string(e.what()));
+        if (Pkg.Essential)
+          throw runtime_error("NucLoad not found");
+        else {
+          cerr << "@Amethyst: The package is not essential, it is ignored, NucLoad not found" << endl;
+          continue;
+        }
+
+      } else { 
+        try {
+          NucLoad();
+        }
+        catch(exception &e) {
+          cout << "[ FAIL ] Loading: " << Pkg.Package << endl;
+
+          if (Pkg.Essential)
+            throw runtime_error("NucLoad not worked: "+string(e.what()));
+          else {
+            cerr << "@Amethyst: The package is not essential, it is ignored, NucLoad not worked: " << e.what() << endl;
+            continue;
+          }
+          
+        }
       }
 
     }
@@ -187,22 +265,40 @@ class cNucMng {
   void Unload() {
 
     for (auto &Pkg: Nucleols) {
+
+      // Skip
+      if (Pkg.Handle == NULL)
+        continue;
+
       
       // Unload
       nucUnload NucUnload = (nucUnload)dlsym(Pkg.Handle, "NucUnload");
-      if (!NucUnload && Pkg.Essential) {
-        cout << "[ FAIL ] Unloading: " << Pkg.Package << endl;
-        
-        throw runtime_error("NucUnload not found");
-      }
 
-      try {
-        NucUnload();
-      }
-      catch(exception &e) {
+      if (NucUnload == NULL) {
         cout << "[ FAIL ] Unloading: " << Pkg.Package << endl;
         
-        throw runtime_error("NucUnload not worked: "+string(e.what()));
+        if (Pkg.Essential)
+          throw runtime_error("NucUnload not found");
+        else {
+          cerr << "@Amethyst: The package is not essential, it is ignored, NucUnload not found" << endl;
+          continue;
+        }
+
+      } else { 
+        try {
+          NucUnload();
+        }
+        catch(exception &e) {
+          cout << "[ FAIL ] Unloading: " << Pkg.Package << endl;
+
+          if (Pkg.Essential)
+            throw runtime_error("NucUnload not worked: "+string(e.what()));
+          else {
+            cerr << "@Amethyst: The package is not essential, it is ignored, NucUnload not worked: " << e.what() << endl;
+            continue;
+          }
+          
+        }
       }
 
     }
@@ -212,39 +308,64 @@ class cNucMng {
 
   void Start() {
 
+    #ifdef BootAnim_Active
+    #ifdef BootAnim_Progress
     int16u i = 0;
+    #endif
+    #endif
 
     for (auto &Pkg: Nucleols) {
 
-      cout << "[ PEND ] Starting: " << Pkg.Package << endl;
+      // Skip
+      if (Pkg.Handle == NULL)
+        continue;
+
+
+      // Screen
+      #ifdef BootAnim_Active
+      #ifdef BootAnim_Progress
+      BootAnim::BootAnim_Prog(Nucleols.size(), i);
+      i++;
+      #endif
+      #endif
+
       
       // Start
-      nucStart NucStart = (nucStart)dlsym(Pkg.Handle, "NucStart");
-      if (!NucStart && Pkg.Essential) {
-        term::Up();
-        cout << "[ FAIL ]" << endl;
-        
-        throw runtime_error("NucStart not found");
-      }
+      cout << "[ PEND ] Starting: " << Pkg.Package << endl;
 
-      try {
-        NucStart();
-      }
-      catch(exception &e) {
+      nucStart NucStart = (nucStart)dlsym(Pkg.Handle, "NucStart");
+
+      if (NucStart == NULL) {
         term::Up();
         cout << "[ FAIL ]" << endl;
         
-        throw runtime_error("NucStart not worked: "+string(e.what()));
+        if (Pkg.Essential)
+          throw runtime_error("NucStart not found");
+        else {
+          cerr << "@Amethyst: The package is not essential, it is ignored, NucStart not found" << endl;
+          continue;
+        }
+
+      } else { 
+        try {
+          NucStart();
+        }
+        catch(exception &e) {
+          term::Up();
+          cout << "[ FAIL ]" << endl;
+
+          if (Pkg.Essential)
+            throw runtime_error("NucStart not worked: "+string(e.what()));
+          else {
+            cerr << "@Amethyst: The package is not essential, it is ignored, NucStart not worked: " << e.what() << endl;
+            continue;
+          }
+        }
+
       }
 
       term::Up();
       cout << "[  OK  ]" << endl;
-
-      i++;
-
-      #ifdef BootAnim_Progress
-      BootAnim::BootAnim_Prog(Nucleols.size(), i);
-      #endif
     }
 
   }
@@ -253,25 +374,43 @@ class cNucMng {
 
     for (auto &Pkg: Nucleols) {
 
-      cout << "[ PEND ] Stoping: " << Pkg.Package << endl;
+      // Skip
+      if (Pkg.Handle == NULL)
+        continue;
+
       
       // Stop
-      nucStop NucStop = (nucStop)dlsym(Pkg.Handle, "NucStop");
-      if (!NucStop && Pkg.Essential) {
-        term::Up();
-        cout << "[ FAIL ]" << endl;
-        
-        throw runtime_error("NucStop not found");
-      }
+      cout << "[ PEND ] Stoping: " << Pkg.Package << endl;
 
-      try {
-        NucStop();
-      }
-      catch(exception &e) {
+      nucStop NucStop = (nucStop)dlsym(Pkg.Handle, "NucStop");
+
+      if (NucStop == NULL) {
         term::Up();
         cout << "[ FAIL ]" << endl;
         
-        throw runtime_error("NucStop not worked: "+string(e.what()));
+        if (Pkg.Essential)
+          throw runtime_error("NucStop not found");
+        else {
+          cerr << "@Amethyst: The package is not essential, it is ignored, NucStop not found" << endl;
+          continue;
+        }
+
+      } else { 
+        try {
+          NucStop();
+        }
+        catch(exception &e) {
+          term::Up();
+          cout << "[ FAIL ]" << endl;
+
+          if (Pkg.Essential)
+            throw runtime_error("NucStop not worked: "+string(e.what()));
+          else {
+            cerr << "@Amethyst: The package is not essential, it is ignored, NucStop not worked: " << e.what() << endl;
+            continue;
+          }
+        }
+
       }
 
       term::Up();
@@ -279,6 +418,5 @@ class cNucMng {
     }
 
   }
-
 
 };

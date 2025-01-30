@@ -1,0 +1,8 @@
+[Root]
+Package = qaos.GL
+Provider = jixoid
+Thanks = GNU
+
+[Depency]
+ListC = 1
+List_1 = qaos.StdC
