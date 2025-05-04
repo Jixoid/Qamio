@@ -1,0 +1,18 @@
+menu "Login"
+
+
+choice
+  prompt "Style"
+  default Login_Style_Graphic
+
+
+config Login_Style_Graphic
+	bool "Graphic"
+
+config Login_Style_Console
+  bool "Console"
+
+endchoice
+
+
+endmenu

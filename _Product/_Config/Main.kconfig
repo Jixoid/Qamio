@@ -1,0 +1,8 @@
+
+menu "Product (Jix v1 [VPhone 1])"
+
+
+source _Product/_Config/Device.kconfig
+
+
+endmenu

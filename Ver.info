@@ -1,3 +1,22 @@
+v0.3.0:0 [PreAlpha]
+  > First input device control
+
+  + Uses: Binary -> LLVM Bytecode
+  + Uses: Maker -> Make
+  + Uses: Config -> KConfig
+  + Reorganized: Root, Package struct, Maker, Compile
+  + Added: Login (Only Console)
+  + Added: Treble (System, Vendor, Product)
+  + Added: Advanced exception catch
+  + Added: Window compositer
+  + Added: Input control module
+  + Added: Fonts
+  - Remove: Qiniter (Direct boot to Amethyst)
+  + Fixed: Thread synchronization
+  + Fixed: System stability
+  + Fixed: Known bugs fixed
+
+
 v0.2:11 [PreAlpha]
   + Changed: Root dir names
   + Uses:  Graphic -> Cairo

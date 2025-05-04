@@ -1,9 +1,0 @@
-[Root]
-Package = qaos.BootAnim
-Provider = jixoid
-
-[Depency]
-ListC = 3
-List_1 = qaos.StdC
-List_2 = qaos.Screen
-List_3 = qaos.Graphic

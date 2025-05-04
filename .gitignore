@@ -1,14 +1,24 @@
 # General
 /Dev
 
+# Out
+*@Out
+
 # Binarys
 *.elf
-*.so
+*.ko
+*.qo
+*.so*
 *.o
 *.a
 *.bmp
+*.bc
 
 # Helpers
-.stfolder
+.stfolder*
 .stignore
 .vscode
+
+# Config
+.config
+.config.old

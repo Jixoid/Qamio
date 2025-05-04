@@ -1,0 +1,28 @@
+menu "Device"
+
+
+config Dev_Brand
+  string "Brand"
+  default "Jix"
+
+config Dev_Model
+  string "Model"
+  default "v1"
+
+
+
+menu "Screen"
+
+config Dev_Screen_Width
+  int "Width"
+  default 1600
+
+config Dev_Screen_Height
+  int "Height"
+  default 900
+
+endmenu
+
+
+
+endmenu

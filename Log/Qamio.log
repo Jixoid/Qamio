@@ -1,0 +1,246 @@
+INFO {1,1} @com.qaos.amethyst (LoadModule) Loaded: /Product/Moq/com.jixoid.drm/Mod/drm_dma_helper.ko
+INFO {1,1} @com.qaos.amethyst (LoadModule) Loaded: /Product/Moq/com.jixoid.drm.virtio/Mod/virtio_dma.ko
+INFO {1,1} @com.qaos.amethyst (LoadModule) Loaded: /Product/Moq/com.jixoid.drm.virtio/Mod/virtio_gpu.ko
+INFO {1,1} @com.qaos.amethyst (GetNucList) /System/Conf/Nucleol.conf
+INFO {1,1} @com.qaos.amethyst (GetNucList) /Vendor/Conf/Nucleol.conf
+INFO {1,1} @com.qaos.amethyst (GetNucList) /Product/Conf/Nucleol.conf
+INFO [BEGIN] {1,1} @com.qaos.amethyst (LoadModules) com.qaos.bootanim
+INFO [ END ] {1,1} @com.qaos.amethyst (LoadModules) com.qaos.bootanim
+INFO [BEGIN] {1,1} @com.qaos.amethyst (LoadModules) com.qaos.login
+INFO [ END ] {1,1} @com.qaos.amethyst (LoadModules) com.qaos.login
+INFO [BEGIN] {1,1} @com.qaos.amethyst (LoadModules) com.qaos.wedling
+INFO [ END ] {1,1} @com.qaos.amethyst (LoadModules) com.qaos.wedling
+INFO [BEGIN] {1,1} @com.qaos.amethyst (LoadModules) com.qaos.window
+INFO [ END ] {1,1} @com.qaos.amethyst (LoadModules) com.qaos.window
+INFO [BEGIN] {1,1} @com.qaos.amethyst (LoadModules) com.jixui.widget
+INFO [ END ] {1,1} @com.qaos.amethyst (LoadModules) com.jixui.widget
+INFO [BEGIN] {1,1} @com.qaos.amethyst (LoadModules) com.jixoid.graphic
+INFO [ END ] {1,1} @com.qaos.amethyst (LoadModules) com.jixoid.graphic
+INFO [BEGIN] {1,1} @com.qaos.amethyst (LoadModules) com.jixoid.input
+INFO [ END ] {1,1} @com.qaos.amethyst (LoadModules) com.jixoid.input
+INFO [BEGIN] {1,1} @com.qaos.amethyst (LoadModules) com.jixoid.screen
+INFO [ END ] {1,1} @com.qaos.amethyst (LoadModules) com.jixoid.screen
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Check) com.qaos.bootanim
+INFO [ END ] {1,1} @com.qaos.amethyst (Check) com.qaos.bootanim
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Check) com.qaos.login
+INFO [ END ] {1,1} @com.qaos.amethyst (Check) com.qaos.login
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Check) com.qaos.wedling
+INFO [ END ] {1,1} @com.qaos.amethyst (Check) com.qaos.wedling
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Check) com.qaos.window
+INFO [ END ] {1,1} @com.qaos.amethyst (Check) com.qaos.window
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Check) com.jixui.widget
+INFO [ END ] {1,1} @com.qaos.amethyst (Check) com.jixui.widget
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Check) com.jixoid.graphic
+INFO [ END ] {1,1} @com.qaos.amethyst (Check) com.jixoid.graphic
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Check) com.jixoid.input
+INFO [ END ] {1,1} @com.qaos.amethyst (Check) com.jixoid.input
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Check) com.jixoid.screen
+INFO [ END ] {1,1} @com.qaos.amethyst (Check) com.jixoid.screen
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Push) com.qaos.bootanim
+INFO [ END ] {1,1} @com.qaos.amethyst (Push) com.qaos.bootanim
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Push) com.qaos.login
+INFO [ END ] {1,1} @com.qaos.amethyst (Push) com.qaos.login
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Push) com.qaos.wedling
+INFO [ END ] {1,1} @com.qaos.amethyst (Push) com.qaos.wedling
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Push) com.qaos.window
+INFO [ END ] {1,1} @com.qaos.amethyst (Push) com.qaos.window
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Push) com.jixui.widget
+INFO [ END ] {1,1} @com.qaos.amethyst (Push) com.jixui.widget
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Push) com.jixoid.graphic
+INFO [ END ] {1,1} @com.qaos.amethyst (Push) com.jixoid.graphic
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Push) com.jixoid.input
+INFO [ END ] {1,1} @com.qaos.amethyst (Push) com.jixoid.input
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Push) com.jixoid.screen
+INFO [ END ] {1,1} @com.qaos.amethyst (Push) com.jixoid.screen
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Pop) com.qaos.bootanim
+INFO [ END ] {1,1} @com.qaos.amethyst (Pop) com.qaos.bootanim
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Pop) com.qaos.login
+INFO [ END ] {1,1} @com.qaos.amethyst (Pop) com.qaos.login
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Pop) com.qaos.wedling
+INFO [ END ] {1,1} @com.qaos.amethyst (Pop) com.qaos.wedling
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Pop) com.qaos.window
+INFO [ END ] {1,1} @com.qaos.amethyst (Pop) com.qaos.window
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Pop) com.jixui.widget
+INFO [ END ] {1,1} @com.qaos.amethyst (Pop) com.jixui.widget
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Pop) com.jixoid.graphic
+INFO [ END ] {1,1} @com.qaos.amethyst (Pop) com.jixoid.graphic
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Pop) com.jixoid.input
+INFO [ END ] {1,1} @com.qaos.amethyst (Pop) com.jixoid.input
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Pop) com.jixoid.screen
+INFO [ END ] {1,1} @com.qaos.amethyst (Pop) com.jixoid.screen
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Load) com.qaos.bootanim
+INFO [ END ] {1,1} @com.qaos.amethyst (Load) com.qaos.bootanim
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Load) com.qaos.login
+INFO [ END ] {1,1} @com.qaos.amethyst (Load) com.qaos.login
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Load) com.qaos.wedling
+INFO [ END ] {1,1} @com.qaos.amethyst (Load) com.qaos.wedling
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Load) com.qaos.window
+INFO [ END ] {1,1} @com.qaos.amethyst (Load) com.qaos.window
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Load) com.jixui.widget
+INFO [ END ] {1,1} @com.qaos.amethyst (Load) com.jixui.widget
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Load) com.jixoid.graphic
+INFO [ END ] {1,1} @com.qaos.amethyst (Load) com.jixoid.graphic
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Load) com.jixoid.input
+INFO [ END ] {1,1} @com.qaos.amethyst (Load) com.jixoid.input
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Load) com.jixoid.screen
+INFO [BEGIN] {1,1} @com.jixoid.screen (_Reset) 
+INFO {1,1} @com.jixoid.screen (_Reset) Finded gpu: 1
+INFO {1,1} @com.jixoid.screen (_Reset) Finded screen [/dev/dri/card0]: 1
+INFO {1,1} @com.jixoid.screen (_Reset) Finded screen: 1
+INFO [ END ] {1,1} @com.jixoid.screen (_Reset) 
+INFO [ END ] {1,1} @com.qaos.amethyst (Load) com.jixoid.screen
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Main) BootAnim Start
+INFO [BEGIN] {1,1} @com.jixoid.screen (screen·Start) ScrSess: 676234640
+INFO {1,1} @com.jixoid.screen (screen·Connect) ScrSess: 676234640
+INFO [BEGIN] {1,1} @com.qaos.bootanim (_Start) BootAnimSess: 676122656, ScrSess: 676234640
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Start) com.qaos.bootanim
+INFO [ END ] {1,1} @com.qaos.amethyst (Start) com.qaos.bootanim
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Start) com.qaos.login
+INFO [ END ] {1,1} @com.qaos.amethyst (Start) com.qaos.login
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Start) com.qaos.wedling
+INFO [ END ] {1,1} @com.qaos.amethyst (Start) com.qaos.wedling
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Start) com.qaos.window
+INFO [ END ] {1,1} @com.qaos.amethyst (Start) com.qaos.window
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Start) com.jixui.widget
+INFO [ END ] {1,1} @com.qaos.amethyst (Start) com.jixui.widget
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Start) com.jixoid.graphic
+INFO [ END ] {1,1} @com.qaos.amethyst (Start) com.jixoid.graphic
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Start) com.jixoid.input
+INFO [ END ] {1,1} @com.qaos.amethyst (Start) com.jixoid.input
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Start) com.jixoid.screen
+INFO [ END ] {1,1} @com.qaos.amethyst (Start) com.jixoid.screen
+INFO [BEGIN] {1,1} @com.qaos.bootanim (bootAnimSession_Stop) BootAnimSess: 676122656, ScrSess: 676234640
+INFO {1,1} @com.jixoid.screen (screen·DisConnect) ScrSess: 676234640
+INFO [ END ] {1,1} @com.jixoid.screen (screen·Stop) ScrSess: 676234640
+INFO [ END ] {1,1} @com.qaos.amethyst (Main) BootAnim Stop
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Main) Login Start
+INFO [BEGIN] {1,1} @com.jixoid.screen (screen·Start) ScrSess: 676234640
+INFO {1,1} @com.jixoid.screen (screen·Connect) ScrSess: 676234640
+INFO [BEGIN] {1,1} @com.qaos.login (loginSession_Start) LoginSess: 676122656, ScrSess: 676234640
+INFO [BEGIN] {1,1} @com.qaos.window (windowSession_Start) WinSess: 676276064, ScrSess: 676234640
+INFO [BEGIN] {1,253} @com.qaos.window (Handler) Thread
+INFO {1,1} @com.qaos.login (loginSession_Stop) Form.Dis()
+INFO [ END ] {1,253} @com.qaos.window (Handler) Thread
+INFO {1,1} @com.qaos.amethyst (LoadModule) Loaded: /Product/Moq/com.jixoid.drm/Mod/drm_dma_helper.ko
+INFO {1,1} @com.qaos.amethyst (LoadModule) Loaded: /Product/Moq/com.jixoid.drm.virtio/Mod/virtio_dma.ko
+INFO {1,1} @com.qaos.amethyst (LoadModule) Loaded: /Product/Moq/com.jixoid.drm.virtio/Mod/virtio_gpu.ko
+INFO {1,1} @com.qaos.amethyst (GetNucList) /System/Conf/Nucleol.conf
+INFO {1,1} @com.qaos.amethyst (GetNucList) /Vendor/Conf/Nucleol.conf
+INFO {1,1} @com.qaos.amethyst (GetNucList) /Product/Conf/Nucleol.conf
+INFO [BEGIN] {1,1} @com.qaos.amethyst (LoadModules) com.qaos.bootanim
+INFO [ END ] {1,1} @com.qaos.amethyst (LoadModules) com.qaos.bootanim
+INFO [BEGIN] {1,1} @com.qaos.amethyst (LoadModules) com.qaos.login
+INFO [ END ] {1,1} @com.qaos.amethyst (LoadModules) com.qaos.login
+INFO [BEGIN] {1,1} @com.qaos.amethyst (LoadModules) com.qaos.wedling
+INFO [ END ] {1,1} @com.qaos.amethyst (LoadModules) com.qaos.wedling
+INFO [BEGIN] {1,1} @com.qaos.amethyst (LoadModules) com.qaos.window
+INFO [ END ] {1,1} @com.qaos.amethyst (LoadModules) com.qaos.window
+INFO [BEGIN] {1,1} @com.qaos.amethyst (LoadModules) com.jixui.widget
+INFO [ END ] {1,1} @com.qaos.amethyst (LoadModules) com.jixui.widget
+INFO [BEGIN] {1,1} @com.qaos.amethyst (LoadModules) com.jixoid.graphic
+INFO [ END ] {1,1} @com.qaos.amethyst (LoadModules) com.jixoid.graphic
+INFO [BEGIN] {1,1} @com.qaos.amethyst (LoadModules) com.jixoid.input
+INFO [ END ] {1,1} @com.qaos.amethyst (LoadModules) com.jixoid.input
+INFO [BEGIN] {1,1} @com.qaos.amethyst (LoadModules) com.jixoid.screen
+INFO [ END ] {1,1} @com.qaos.amethyst (LoadModules) com.jixoid.screen
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Check) com.qaos.bootanim
+INFO [ END ] {1,1} @com.qaos.amethyst (Check) com.qaos.bootanim
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Check) com.qaos.login
+INFO [ END ] {1,1} @com.qaos.amethyst (Check) com.qaos.login
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Check) com.qaos.wedling
+INFO [ END ] {1,1} @com.qaos.amethyst (Check) com.qaos.wedling
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Check) com.qaos.window
+INFO [ END ] {1,1} @com.qaos.amethyst (Check) com.qaos.window
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Check) com.jixui.widget
+INFO [ END ] {1,1} @com.qaos.amethyst (Check) com.jixui.widget
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Check) com.jixoid.graphic
+INFO [ END ] {1,1} @com.qaos.amethyst (Check) com.jixoid.graphic
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Check) com.jixoid.input
+INFO [ END ] {1,1} @com.qaos.amethyst (Check) com.jixoid.input
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Check) com.jixoid.screen
+INFO [ END ] {1,1} @com.qaos.amethyst (Check) com.jixoid.screen
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Push) com.qaos.bootanim
+INFO [ END ] {1,1} @com.qaos.amethyst (Push) com.qaos.bootanim
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Push) com.qaos.login
+INFO [ END ] {1,1} @com.qaos.amethyst (Push) com.qaos.login
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Push) com.qaos.wedling
+INFO [ END ] {1,1} @com.qaos.amethyst (Push) com.qaos.wedling
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Push) com.qaos.window
+INFO [ END ] {1,1} @com.qaos.amethyst (Push) com.qaos.window
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Push) com.jixui.widget
+INFO [ END ] {1,1} @com.qaos.amethyst (Push) com.jixui.widget
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Push) com.jixoid.graphic
+INFO [ END ] {1,1} @com.qaos.amethyst (Push) com.jixoid.graphic
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Push) com.jixoid.input
+INFO [ END ] {1,1} @com.qaos.amethyst (Push) com.jixoid.input
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Push) com.jixoid.screen
+INFO [ END ] {1,1} @com.qaos.amethyst (Push) com.jixoid.screen
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Pop) com.qaos.bootanim
+INFO [ END ] {1,1} @com.qaos.amethyst (Pop) com.qaos.bootanim
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Pop) com.qaos.login
+INFO [ END ] {1,1} @com.qaos.amethyst (Pop) com.qaos.login
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Pop) com.qaos.wedling
+INFO [ END ] {1,1} @com.qaos.amethyst (Pop) com.qaos.wedling
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Pop) com.qaos.window
+INFO [ END ] {1,1} @com.qaos.amethyst (Pop) com.qaos.window
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Pop) com.jixui.widget
+INFO [ END ] {1,1} @com.qaos.amethyst (Pop) com.jixui.widget
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Pop) com.jixoid.graphic
+INFO [ END ] {1,1} @com.qaos.amethyst (Pop) com.jixoid.graphic
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Pop) com.jixoid.input
+INFO [ END ] {1,1} @com.qaos.amethyst (Pop) com.jixoid.input
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Pop) com.jixoid.screen
+INFO [ END ] {1,1} @com.qaos.amethyst (Pop) com.jixoid.screen
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Load) com.qaos.bootanim
+INFO [ END ] {1,1} @com.qaos.amethyst (Load) com.qaos.bootanim
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Load) com.qaos.login
+INFO [ END ] {1,1} @com.qaos.amethyst (Load) com.qaos.login
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Load) com.qaos.wedling
+INFO [ END ] {1,1} @com.qaos.amethyst (Load) com.qaos.wedling
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Load) com.qaos.window
+INFO [ END ] {1,1} @com.qaos.amethyst (Load) com.qaos.window
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Load) com.jixui.widget
+INFO [ END ] {1,1} @com.qaos.amethyst (Load) com.jixui.widget
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Load) com.jixoid.graphic
+INFO [ END ] {1,1} @com.qaos.amethyst (Load) com.jixoid.graphic
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Load) com.jixoid.input
+INFO [ END ] {1,1} @com.qaos.amethyst (Load) com.jixoid.input
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Load) com.jixoid.screen
+INFO [BEGIN] {1,1} @com.jixoid.screen (_Reset) 
+INFO {1,1} @com.jixoid.screen (_Reset) Finded gpu: 1
+INFO {1,1} @com.jixoid.screen (_Reset) Finded screen [/dev/dri/card0]: 1
+INFO {1,1} @com.jixoid.screen (_Reset) Finded screen: 1
+INFO [ END ] {1,1} @com.jixoid.screen (_Reset) 
+INFO [ END ] {1,1} @com.qaos.amethyst (Load) com.jixoid.screen
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Main) BootAnim Start
+INFO [BEGIN] {1,1} @com.jixoid.screen (screen·Start) ScrSess: 433325456
+INFO {1,1} @com.jixoid.screen (screen·Connect) ScrSess: 433325456
+INFO [BEGIN] {1,1} @com.qaos.bootanim (_Start) BootAnimSess: 433213472, ScrSess: 433325456
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Start) com.qaos.bootanim
+INFO [ END ] {1,1} @com.qaos.amethyst (Start) com.qaos.bootanim
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Start) com.qaos.login
+INFO [ END ] {1,1} @com.qaos.amethyst (Start) com.qaos.login
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Start) com.qaos.wedling
+INFO [ END ] {1,1} @com.qaos.amethyst (Start) com.qaos.wedling
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Start) com.qaos.window
+INFO [ END ] {1,1} @com.qaos.amethyst (Start) com.qaos.window
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Start) com.jixui.widget
+INFO [ END ] {1,1} @com.qaos.amethyst (Start) com.jixui.widget
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Start) com.jixoid.graphic
+INFO [ END ] {1,1} @com.qaos.amethyst (Start) com.jixoid.graphic
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Start) com.jixoid.input
+INFO [ END ] {1,1} @com.qaos.amethyst (Start) com.jixoid.input
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Start) com.jixoid.screen
+INFO [ END ] {1,1} @com.qaos.amethyst (Start) com.jixoid.screen
+INFO [BEGIN] {1,1} @com.qaos.bootanim (bootAnimSession_Stop) BootAnimSess: 433213472, ScrSess: 433325456
+INFO {1,1} @com.jixoid.screen (screen·DisConnect) ScrSess: 433325456
+INFO [ END ] {1,1} @com.jixoid.screen (screen·Stop) ScrSess: 433325456
+INFO [ END ] {1,1} @com.qaos.amethyst (Main) BootAnim Stop
+INFO [BEGIN] {1,1} @com.qaos.amethyst (Main) Login Start
+INFO [BEGIN] {1,1} @com.jixoid.screen (screen·Start) ScrSess: 433325456
+INFO {1,1} @com.jixoid.screen (screen·Connect) ScrSess: 433325456
+INFO [BEGIN] {1,1} @com.qaos.login (loginSession_Start) LoginSess: 433213472, ScrSess: 433325456
+INFO [BEGIN] {1,1} @com.qaos.window (windowSession_Start) WinSess: 433360272, ScrSess: 433325456
+INFO [BEGIN] {1,256} @com.qaos.window (Handler) Thread
+INFO {1,1} @com.qaos.login (loginSession_Stop) Form.Dis()
+INFO [ END ] {1,256} @com.qaos.window (Handler) Thread

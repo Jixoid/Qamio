@@ -1,0 +1,7 @@
+menu "BootAnim"
+
+config BootAnim_Active
+	bool "Active"
+	default y
+
+endmenu
