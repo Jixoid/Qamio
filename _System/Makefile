@@ -27,6 +27,7 @@ Srcs = \
 	com.qaos.wedling \
 	com.qaos.window \
 	com.qaos.login \
+	com.qaos.system-ui \
 	\
 	com.qaos.font.noto \
 	com.qaos.font.noto-mono

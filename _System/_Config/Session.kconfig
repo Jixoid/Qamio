@@ -1,0 +1,15 @@
+
+# Session Mode
+choice
+  prompt "Session Mode"
+  default Session_Graphic
+
+
+  config Session_Graphic
+    bool "Graphic"
+
+  config Session_Console
+    bool "Console"
+
+endchoice
+

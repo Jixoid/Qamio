@@ -21,22 +21,32 @@ using namespace jix;
 // Global
 sNucCom NucCom;
 
-void jstring_Dis(jstring* Str)
+void JString_Dis(jstring* Str)
 {
   delete Str->Str;
 
   delete Str;
 }
 
-inline jstring* jstring_New(string Str)
+inline jstring* JString_New(string Str)
 {
   jstring *Ret = new jstring();
-  Ret->Dis = &jstring_Dis;
+  Ret->Dis = &JString_Dis;
   
   Ret->Str = strdup(Str.c_str());
 
   return Ret;
 }
+
+
+
+
+
+void Widget_Dis(qobject* Obj)
+{
+  delete (__widget*)Obj;
+}
+
 
 
 #pragma region NucCom
@@ -74,7 +84,7 @@ void Push(sNucCom Com)
 
       .TextGet = [](wVisual __Self)-> jstring* {
 
-        return jstring_New(Self->Text());
+        return JString_New(Self->Text());
       },
       .TextSet = [](wVisual __Self, const char* Text) {
         Self->Text(string(Text));
@@ -100,10 +110,7 @@ void Push(sNucCom Com)
       .New = []()-> wPaint
       {
         __wPaint *Ret = new __wPaint();
-        
-        Ret->Dis = [](qobject* Obj) {
-          delete (__wPaint*)Obj;
-        };
+        Ret->Dis = &Widget_Dis;
 
         return (wPaint)Ret;
       },
@@ -115,10 +122,7 @@ void Push(sNucCom Com)
       .New = []()-> wPanel
       {
         __wPanel *Ret = new __wPanel();
-        
-        Ret->Dis = [](qobject* Obj) {
-          delete (__wPanel*)Obj;
-        };
+        Ret->Dis = &Widget_Dis;
 
         return (wPanel)Ret;
       },
@@ -130,10 +134,7 @@ void Push(sNucCom Com)
       .New = []()-> wButton
       {
         __wButton *Ret = new __wButton();
-        
-        Ret->Dis = [](qobject* Obj) {
-          delete (__wButton*)Obj;
-        };
+        Ret->Dis = &Widget_Dis;
 
         return (wButton)Ret;
       },
@@ -145,10 +146,7 @@ void Push(sNucCom Com)
       .New = []()-> wLabel
       {
         __wLabel *Ret = new __wLabel();
-        
-        Ret->Dis = [](qobject* Obj) {
-          delete (__wLabel*)Obj;
-        };
+        Ret->Dis = &Widget_Dis;
 
         return (wLabel)Ret;
       },

@@ -34,7 +34,15 @@ struct form
 };
 
 
-struct __loginSession_Graphic: qsession
+
+struct __loginSession: qsession
+{
+  bool OK = false;
+  string User = "", Pass = "";
+};
+
+
+struct __loginSession_Graphic: __loginSession
 {
   screenSession ScrSession;
   windowSession WinSession;
@@ -46,7 +54,7 @@ struct __loginSession_Graphic: qsession
 };
 
 
-struct __loginSession_Console: qsession
+struct __loginSession_Console: __loginSession
 {
 
 };
@@ -114,15 +122,33 @@ bool PassOK(string nUser, string nPass)
 
 
 
+void JString_Dis(jstring* Str)
+{
+  delete Str->Str;
+
+  delete Str;
+}
+
+jstring* JString_New(string Str)
+{
+  jstring *Ret = new jstring();
+  Ret->Dis = &JString_Dis;
+  
+  Ret->Str = strdup(Str.c_str());
+
+  return Ret;
+}
+
+
+
 #pragma region Publish
 
 #define Session ((__loginSession_Graphic*)__Session)
 
 void  loginSession_Stop_Graphic(loginSession_Graphic __Session)
 {
-  //Log("Start");
-  //Session->Form.But->Dis(Session->Form.But);
-  Log("Form.Dis()");
+  Session->Form.But->Dis(Session->Form.But);
+  
   Session->WinSession->Stop(Session->WinSession);
 
 
@@ -146,7 +172,7 @@ loginSession_Graphic  loginSession_Start_Graphic(screenSession ScrSession)
   // Prepare
   Ret->ScrSession = ScrSession;
 
-  Ret->WinSession = Window.Start(ScrSession);
+  Ret->WinSession = Window.Start(Ret->ScrSession);
   
   Ret->Root = Window.Root(Ret->WinSession);
   
@@ -154,6 +180,7 @@ loginSession_Graphic  loginSession_Start_Graphic(screenSession ScrSession)
   size2d Size = Widget.WVisual.SizeGet(Ret->Root);
 
 
+  // Design
   Ret->Form.But = Widget.WButton.New();
   Widget.Widget.ParentSet(Ret->Form.But, Ret->Root);
 
@@ -240,10 +267,37 @@ loginSession_Console  loginSession_Start_Console()
   }
   
 
+  Ret->OK = true;
+  Ret->User = User;
+  Ret->Pass = Pass;
+
 
   // Return
   return (loginSession_Graphic)Ret;
 }
+
+
+
+
+
+#define Session ((__loginSession*)__Session)
+
+bool loginSession_PassOk(loginSession __Session)
+{
+  return Session->OK;
+}
+
+jstring* loginSession_GetUser(loginSession __Session)
+{
+  return JString_New(Session->User);
+}
+
+jstring* loginSession_GetPass(loginSession __Session)
+{
+  return JString_New(Session->Pass);
+}
+
+#undef Session
 
 #pragma endregion
 
@@ -264,6 +318,10 @@ void Push(sNucCom Com)
   {
     .Start_Graphic = &loginSession_Start_Graphic,
     .Start_Console = &loginSession_Start_Console,
+
+    .PassOk  = &loginSession_PassOk,
+    .GetUser = &loginSession_GetUser,
+    .GetPass = &loginSession_GetPass,
   };
 }
 

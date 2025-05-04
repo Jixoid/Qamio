@@ -22,4 +22,5 @@ namespace jix
   sWedling   Wedling;
   sWidget    Widget;
   sWindow    Window;
+  sSystemUI  SystemUI;
 }

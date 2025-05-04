@@ -1,3 +1,12 @@
+v0.3.1:0 [PreAlpha]
+feature/system-ui :1
+  > Ready for SystemUI
+
+  + Added: SystemUI Nucleol
+  + Added: Login return {User, Pass}
+  + Fixed: Widget dispose bug
+
+
 v0.3.0:0 [PreAlpha]
   > First input device control
 

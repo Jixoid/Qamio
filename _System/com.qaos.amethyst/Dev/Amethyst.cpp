@@ -197,31 +197,31 @@ void Main()
   
   #ifdef CONFIG_BootAnim_Active
 
-    Log2("BootAnim Start", lIBeg);
+  Log2("BootAnim", lIBeg);
 
-    PopNuc(BootAnim);
-    PopNuc(Screen);
+  PopNuc(BootAnim);
+  PopNuc(Screen);
 
 
-    for (u16 i = 0; i < Screen.Count(); i++)
+  for (u16 i = 0; i < Screen.Count(); i++)
+  {
+    screenSession Sess = Screen.Screen.Start(i);
+
+    if (! Screen.Screen.IsDevConnected(Sess))
     {
-      screenSession Sess = Screen.Screen.Start(i);
-
-      if (! Screen.Screen.IsDevConnected(Sess))
-      {
-        Sess->Stop(Sess);
-        continue;
-      }
-
-
-      Screen.Screen.Connect(Sess, 0);
-
-      Sessions.push_back({ Sess, Nil });
+      Sess->Stop(Sess);
+      continue;
     }
 
 
-    for (auto &X: Sessions)
-      X.second = BootAnim.Start(X.first);
+    Screen.Screen.Connect(Sess, 0);
+
+    Sessions.push_back({ Sess, Nil });
+  }
+
+
+  for (auto &X: Sessions)
+    X.second = BootAnim.Start(X.first);
 
 
   #endif
@@ -232,23 +232,36 @@ void Main()
 
   #ifdef CONFIG_BootAnim_Active
   
-    for (auto &X: Sessions)
-      X.second->Stop(X.second);
-      
-    for (auto &X: Sessions)
-      X.first->Stop(X.first);
+  for (auto &X: Sessions)
+    X.second->Stop(X.second);
+    
+  for (auto &X: Sessions)
+    X.first->Stop(X.first);
 
-    Sessions.clear();
+  Sessions.clear();
 
-    Log2("BootAnim Stop", lIEnd);
+  Log2("BootAnim", lIEnd);
 
   #endif
 
 
 
+  // Login
+  bool PassOk;
+  string User, Pass;
+
+
+  //#warning "Auto Login"
+  //PassOk = true;
+  //User = "alforce";
+  //Pass = "070824";
+
+  //goto _l_SkipLogin;
+
+  #pragma region Login
 
   #ifdef CONFIG_Login_Style_Graphic
-  Log2("Login Start", lIBeg);
+  Log2("Login", lIBeg);
 
 
   PopNuc(Login);
@@ -287,22 +300,89 @@ void Main()
   Sessions.clear();
 
 
-  Log2("Login Stop", lIEnd);
+  Log2("Login", lIEnd);
   #endif
+  
   #ifdef CONFIG_Login_Style_Console
-  Log2("Login Start", lIBeg);
+  {
+  Log2("Login", lIBeg);
 
 
   PopNuc(Login);
 
-  auto Sess = Login.Start_Console();
+  loginSession_Console Sess = Login.Start_Console();
+
+  PassOk = Login.PassOk(Sess);
+  if (PassOk)
+  {
+    jstring *Cac;
+    
+    Cac = Login.GetUser(Sess);
+    User = string(Cac->Str);
+    Cac->Dis(Cac);
+
+    Cac = Login.GetPass(Sess);
+    Pass = string(Cac->Str);
+    Cac->Dis(Cac);
+  } 
 
   Sess->Stop(Sess);
 
 
-  Log2("Login Stop", lIEnd);
+  Log2("Login", lIEnd);
+  }
   #endif
 
+  #pragma endregion
+
+  //_l_SkipLogin:
+
+
+
+  #ifdef CONFIG_Session_Graphic
+
+  Log2("SystemUI", lIBeg);
+
+  PopNuc(SystemUI);
+  PopNuc(Screen);
+
+
+  for (u16 i = 0; i < Screen.Count(); i++)
+  {
+    screenSession Sess = Screen.Screen.Start(i);
+
+    if (! Screen.Screen.IsDevConnected(Sess))
+    {
+      Sess->Stop(Sess);
+      continue;
+    }
+
+
+    Screen.Screen.Connect(Sess, 0);
+
+    Sessions.push_back({ Sess, Nil });
+  }
+
+  for (auto &X: Sessions)
+    X.second = SystemUI.Start(X.first);
+
+    
+  sleep(5);
+
+  for (auto &X: Sessions)
+    X.second->Stop(X.second);
+    
+  for (auto &X: Sessions)
+    X.first->Stop(X.first);
+
+  Sessions.clear();
+
+
+  Log2("SystemUI", lIEnd);
+
+  #endif
+  #ifdef CONFIG_Session_Console
+  #endif
 
 
   NucMng.Stop();

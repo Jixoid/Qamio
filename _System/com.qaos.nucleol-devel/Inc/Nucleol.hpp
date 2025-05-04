@@ -317,7 +317,7 @@ namespace jix
 
   struct sBootAnim
   {
-    bootAnimSession (*Start)(screenSession Screen);
+    bootAnimSession (*Start)(screenSession ScrSess);
   }
   extern BootAnim;
 
@@ -327,15 +327,22 @@ namespace jix
 
   #pragma region Login
 
-  using loginSession_Graphic = qsession*;
-  using loginSession_Console = qsession*;
+  using loginSession = qsession*;
+  
+  using loginSession_Graphic = loginSession;
+  using loginSession_Console = loginSession;
 
 
   struct sLogin
   {
-    loginSession_Graphic (*Start_Graphic)(screenSession Screen);
-    
+    loginSession_Graphic (*Start_Graphic)(screenSession ScrSess);
     loginSession_Console (*Start_Console)();
+
+
+    bool (*PassOk)(loginSession);
+
+    jstring* (*GetUser)(loginSession);
+    jstring* (*GetPass)(loginSession);
   }
   extern Login;
 
@@ -454,6 +461,22 @@ namespace jix
     wVisual  (*Root)(windowSession WinSess);
   }
   extern Window;
+
+  #pragma endregion
+
+
+
+  #pragma region SystemUI
+
+  using systemUISession = qsession*;
+
+
+  struct sSystemUI
+  {
+    systemUISession (*Start)(screenSession ScrSess);
+    
+  }
+  extern SystemUI;
 
   #pragma endregion
 
