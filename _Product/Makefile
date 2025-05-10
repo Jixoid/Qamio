@@ -7,6 +7,7 @@ Srcs = \
 	com.jixoid.screen \
 	com.jixoid.input \
 	com.jixoid.graphic \
+	com.jixoid.battery \
 	\
 	com.jixoid.drm \
 	com.jixoid.drm.virtio \

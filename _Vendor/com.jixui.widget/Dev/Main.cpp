@@ -56,57 +56,83 @@ void Push(sNucCom Com)
   PushNuc(Widget)
   {
     #define Self ((__widget*)__Self)
-    .Widget = {
-      .ParentGet = [](widget __Self)-> widget {
+    .Widget =
+    {
+      .ParentGet = [](widget __Self)-> widget
+      {
         return (widget)Self->Parent();
       },
-      .ParentSet = [](widget __Self, widget Parent) {
+      .ParentSet = [](widget __Self, widget Parent)
+      {
         Self->Parent((__widget*)Parent);
       },
     },
     #undef Self
 
     #define Self ((__wVisual*)__Self)
-    .WVisual = {
-      .PointGet = [](wVisual __Self)-> point2d {
+    .WVisual =
+    {
+      .PointGet = [](wVisual __Self)-> point2d
+      {
         return Self->Point();
       },
-      .PointSet = [](wVisual __Self, point2d Point) {
+      .PointSet = [](wVisual __Self, point2d Point)
+      {
         Self->Point(Point);
       },
 
-      .SizeGet = [](wVisual __Self)-> size2d {
+      .SizeGet = [](wVisual __Self)-> size2d
+      {
         return Self->Size();
       },
-      .SizeSet = [](wVisual __Self, size2d Size) {
+      .SizeSet = [](wVisual __Self, size2d Size)
+      {
         Self->Size(Size);
       },
 
-      .TextGet = [](wVisual __Self)-> jstring* {
-
+      .TextGet = [](wVisual __Self)-> jstring*
+      {
         return JString_New(Self->Text());
       },
-      .TextSet = [](wVisual __Self, const char* Text) {
+      .TextSet = [](wVisual __Self, const char* Text)
+      {
         Self->Text(string(Text));
       },
 
-      .Canvas = [](wVisual __Self)-> surface2 {
+      .Canvas = [](wVisual __Self)-> surface2
+      {
         return Self->Surface;
       },
-      .Draw = [](wVisual __Self) {
+      .Draw = [](wVisual __Self)
+      {
         Self->DrawBefore();
         Self->Draw();
+
+        if (Self->fmPaint != Nil)
+          Self->fmPaint(__Self, Self->Surface);
+
         Self->DrawAfter();
       },
 
-      .Input_Rel = [](wVisual __Self, i16 X, i16 Y) {
+      .Input_Rel = [](wVisual __Self, i16 X, i16 Y)
+      {
         Self->Input_Rel(X,Y);
+      },
+      
+      .mPaintGet = [](wVisual __Self)-> wVisual_mPaint
+      {
+        return Self->mPaint();
+      },
+      .mPaintSet = [](wVisual __Self, wVisual_mPaint mPaint)
+      {
+        Self->mPaint(mPaint);
       },
     },
     #undef Self
 
     #define Self ((__wPaint*)__Self)
-    .WPaint = {
+    .WPaint =
+    {
       .New = []()-> wPaint
       {
         __wPaint *Ret = new __wPaint();
@@ -118,7 +144,8 @@ void Push(sNucCom Com)
     #undef Self
 
     #define Self ((__wPanel*)__Self)
-    .WPanel = {
+    .WPanel =
+    {
       .New = []()-> wPanel
       {
         __wPanel *Ret = new __wPanel();
@@ -130,7 +157,8 @@ void Push(sNucCom Com)
     #undef Self
 
     #define Self ((__wButton*)__Self)
-    .WButton = {
+    .WButton =
+    {
       .New = []()-> wButton
       {
         __wButton *Ret = new __wButton();
@@ -142,7 +170,8 @@ void Push(sNucCom Com)
     #undef Self
 
     #define Self ((__wLabel*)__Self)
-    .WLabel = {
+    .WLabel =
+    {
       .New = []()-> wLabel
       {
         __wLabel *Ret = new __wLabel();

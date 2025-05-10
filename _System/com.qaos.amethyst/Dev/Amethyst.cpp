@@ -251,12 +251,12 @@ void Main()
   string User, Pass;
 
 
-  //#warning "Auto Login"
-  //PassOk = true;
-  //User = "alforce";
-  //Pass = "070824";
+  #warning "Auto Login"
+  PassOk = true;
+  User = "alforce";
+  Pass = "070824";
 
-  //goto _l_SkipLogin;
+  goto _l_SkipLogin;
 
   #pragma region Login
 
@@ -335,7 +335,7 @@ void Main()
 
   #pragma endregion
 
-  //_l_SkipLogin:
+  _l_SkipLogin:
 
 
 
@@ -367,7 +367,7 @@ void Main()
     X.second = SystemUI.Start(X.first);
 
     
-  sleep(5);
+  sleep(20);
 
   for (auto &X: Sessions)
     X.second->Stop(X.second);

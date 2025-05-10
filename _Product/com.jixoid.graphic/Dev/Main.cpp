@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cmath>
+#include <filesystem>
 
 #include "Basis.hpp"
 #include "Nucleol.hpp"
@@ -208,7 +209,7 @@ void      surface2·BufferSet(surface2 __Self, point Buffer)
 }
 
 
-void      surface2·Draw_Sur2(surface2 __Self, point2d Point, surface2 __Src)
+void      surface2·Draw_Sur2  (surface2 __Self, point2d Point, surface2 __Src)
 {
   if (Src == Nil)
     Log2("Src Nil pointer", lFatal);
@@ -218,9 +219,51 @@ void      surface2·Draw_Sur2(surface2 __Self, point2d Point, surface2 __Src)
   cairo_paint(Self->Car);
 }
 
-void      surface2·Draw_Bmp(surface2 __Self, point2d Point, const char* Path)
+void      surface2·Draw_Sur2_A(surface2 __Self, point2d Point, surface2 __Src, f32 Alpha)
 {
+  if (Src == Nil)
+    Log2("Src Nil pointer", lFatal);
 
+
+  cairo_set_source_surface(Self->Car, Src->Sur, Point.X, Point.Y);
+  cairo_paint_with_alpha(Self->Car, Alpha);
+}
+
+inline cairo_surface_t* __GetPng(const char* Path)
+{
+  return cairo_image_surface_create_from_png(Path);
+}
+
+void      surface2·Draw_Png  (surface2 __Self, point2d Point, const char* Path)
+{
+  if (! filesystem::is_regular_file(Path))
+    Log2("File not found: " +string(Path), lFatal);
+
+
+  cairo_surface_t *surface = __GetPng(Path);
+
+  cairo_set_source_surface(Self->Car, surface, Point.X, Point.Y);
+  cairo_paint(Self->Car);
+
+  cairo_surface_destroy(surface);
+}
+
+void      surface2·Draw_Png_A(surface2 __Self, point2d Point, const char* Path, f32 Alpha)
+{
+  if (! filesystem::is_regular_file(Path))
+    Log2("File not found: " +string(Path), lFatal);
+
+
+  cairo_surface_t *surface = __GetPng(Path);
+
+  cairo_set_source_surface(Self->Car, surface, Point.X, Point.Y);
+  cairo_paint_with_alpha(Self->Car, Alpha);
+
+  cairo_surface_destroy(surface);
+}
+
+inline cairo_surface_t* __GetBmp(const char* Path, u32* Data)
+{
   #pragma region Read bmp
 
   FILE *file = fopen(Path, "rb");
@@ -243,7 +286,7 @@ void      surface2·Draw_Bmp(surface2 __Self, point2d Point, const char* Path)
   }
 
   u8*  Raw  = (u8*)malloc(Width *Height *Bit);
-  u32* Data = (u32*)malloc(sizeof(u32) *Width *Height);
+  Data = (u32*)malloc(sizeof(u32) *Width *Height);
 
   fseek(file, *(int*)&Header[10], SEEK_SET);
   fread(Raw, sizeof(u8), Width *Height *Bit, file);
@@ -279,32 +322,75 @@ void      surface2·Draw_Bmp(surface2 __Self, point2d Point, const char* Path)
         A = Raw[index +3];
       }
       
-      Data[(Width *y) +x] = (A << 24) | (R << 16) | (G << 8) | B;
+      Data[(Width *y) +x] = (u32)(A << 24) | (u32)(R << 16) | (u32)(G << 8) | (u32)B;
     }
 
   #pragma endregion
 
 
+  free(Raw);
 
-  cairo_surface_t* surface = cairo_image_surface_create_for_data(
-    (unsigned char*)Data, CAIRO_FORMAT_ARGB32, Width, Height, Width *4
+  return cairo_image_surface_create_for_data(
+    (u8*)Data, CAIRO_FORMAT_ARGB32, Width, Height, Width *4
   );
+}
+
+void      surface2·Draw_Bmp  (surface2 __Self, point2d Point, const char* Path)
+{
+  u32* Data;
+
+  cairo_surface_t* surface = __GetBmp(Path, Data);
+
 
   cairo_set_source_surface(Self->Car, surface, Point.X, Point.Y);
   cairo_paint(Self->Car);
 
   cairo_surface_destroy(surface);
 
+  free(Data);
+}
 
-  free(Raw);
+void      surface2·Draw_Bmp_A(surface2 __Self, point2d Point, const char* Path, f32 Alpha)
+{
+  u32* Data;
+
+  cairo_surface_t* surface = __GetBmp(Path, Data);
+
+
+  cairo_set_source_surface(Self->Car, surface, Point.X, Point.Y);
+  cairo_paint_with_alpha(Self->Car, Alpha);
+
+  cairo_surface_destroy(surface);
+
   free(Data);
 }
 
 
 void      surface2·RectF(surface2 __Self, rect2d Rect, color Color)
 {
-  cairo_set_source_rgb(Self->Car, Color.R, Color.G, Color.B);
+  cairo_set_source_rgba(Self->Car, Color.R, Color.G, Color.B, Color.A);
   cairo_rectangle(Self->Car, Rect.L, Rect.T, Rect.W, Rect.H);
+
+  cairo_fill(Self->Car);
+}
+
+void      surface2·RectF_R(surface2 __Self, rect2d Rect, color Color, u16 Round)
+{
+  if (Round > Rect.W /2.0)
+    Round = Rect.W /2.0;
+  
+  if (Round > Rect.H /2.0)
+    Round = Rect.H /2.0;
+
+
+  cairo_set_source_rgba(Self->Car, Color.R, Color.G, Color.B, Color.A);
+  
+  cairo_new_sub_path(Self->Car);
+  cairo_arc(Self->Car, Rect.L +Rect.W -Round, Rect.T +Round, Round, -90 *(M_PI /180.0), 0);
+  cairo_arc(Self->Car, Rect.L +Rect.W -Round, Rect.T +Rect.H -Round, Round, 0, 90 *(M_PI /180.0));
+  cairo_arc(Self->Car, Rect.L +Round, Rect.T +Rect.H -Round, Round, 90 *(M_PI /180.0), 180 *(M_PI /180.0));
+  cairo_arc(Self->Car, Rect.L +Round, Rect.T +Round, Round, 180 *(M_PI /180.0), 270 *(M_PI /180.0));
+  cairo_close_path(Self->Car);
 
   cairo_fill(Self->Car);
 }
@@ -319,33 +405,12 @@ void      surface2·RectS(surface2 __Self, rect2d Rect, color Color, u16 Width)
 
 
   // Draw
-  cairo_set_source_rgb(Self->Car, Color.R, Color.G, Color.B);
+  cairo_set_source_rgba(Self->Car, Color.R, Color.G, Color.B, Color.A);
   cairo_set_line_width(Self->Car, Width);
 
   cairo_rectangle(Self->Car, Rect.L, Rect.T, Rect.W, Rect.H);
 
   cairo_stroke(Self->Car);
-}
-
-void      surface2·RectF_R(surface2 __Self, rect2d Rect, color Color, u16 Round)
-{
-  if (Round > Rect.W /2.0)
-    Round = Rect.W /2.0;
-  
-  if (Round > Rect.H /2.0)
-    Round = Rect.H /2.0;
-
-
-  cairo_set_source_rgb(Self->Car, Color.R, Color.G, Color.B);
-  
-  cairo_new_sub_path(Self->Car);
-  cairo_arc(Self->Car, Rect.L +Rect.W -Round, Rect.T +Round, Round, -90 *(M_PI /180.0), 0);
-  cairo_arc(Self->Car, Rect.L +Rect.W -Round, Rect.T +Rect.H -Round, Round, 0, 90 *(M_PI /180.0));
-  cairo_arc(Self->Car, Rect.L +Round, Rect.T +Rect.H -Round, Round, 90 *(M_PI /180.0), 180 *(M_PI /180.0));
-  cairo_arc(Self->Car, Rect.L +Round, Rect.T +Round, Round, 180 *(M_PI /180.0), 270 *(M_PI /180.0));
-  cairo_close_path(Self->Car);
-
-  cairo_fill(Self->Car);
 }
 
 void      surface2·RectS_R(surface2 __Self, rect2d Rect, color Color, u16 Width, u16 Round)
@@ -367,7 +432,7 @@ void      surface2·RectS_R(surface2 __Self, rect2d Rect, color Color, u16 Width
 
 
   // Draw
-  cairo_set_source_rgb(Self->Car, Color.R, Color.G, Color.B);
+  cairo_set_source_rgba(Self->Car, Color.R, Color.G, Color.B, Color.A);
   cairo_set_line_width(Self->Car, Width);
   
   cairo_new_sub_path(Self->Car);
@@ -403,7 +468,7 @@ void      surface2·Text(surface2 __Self, const char* Text, u16 Width, point2d P
   cairo_text_extents_t Ex;
 
   // Draw
-  cairo_set_source_rgb(Self->Car, Color.R, Color.G, Color.B);
+  cairo_set_source_rgba(Self->Car, Color.R, Color.G, Color.B, Color.A);
   cairo_set_font_size(Self->Car, Width);
   cairo_text_extents(Self->Car, Text, &Ex);
 
@@ -564,12 +629,16 @@ void Push(sNucCom Com)
       .BufferGet = &surface2·BufferGet,
       .BufferSet = &surface2·BufferSet,
 
-      .Draw_Sur2 = &surface2·Draw_Sur2,
-      .Draw_Bmp  = &surface2·Draw_Bmp,
+      .Draw_Sur2   = &surface2·Draw_Sur2,
+      .Draw_Sur2_A = &surface2·Draw_Sur2_A,
+      .Draw_Png    = &surface2·Draw_Png,
+      .Draw_Png_A  = &surface2·Draw_Png_A,
+      .Draw_Bmp    = &surface2·Draw_Bmp,
+      .Draw_Bmp_A  = &surface2·Draw_Bmp_A,
 
       .RectF     = &surface2·RectF,
-      .RectS     = &surface2·RectS,
       .RectF_R   = &surface2·RectF_R,
+      .RectS     = &surface2·RectS,
       .RectS_R   = &surface2·RectS_R,
 
       .TextSize  = &surface2·TextSize,

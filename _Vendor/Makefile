@@ -6,7 +6,10 @@ include ../Make.inc
 Srcs = \
 	com.jixui.widget \
 	\
-	com.jixui.font.inter
+	com.jixui.font.inter \
+	\
+	com.jixui.system-ui.notify \
+	com.jixui.system-ui.status
 
 
 

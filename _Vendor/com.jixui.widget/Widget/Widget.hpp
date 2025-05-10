@@ -53,6 +53,8 @@ public:
   // Props
   string fText;
 
+  wVisual_mPaint fmPaint = Nil;
+
   __wVisual *fFocusCtrl = Nil;
   
 
@@ -98,5 +100,8 @@ public:
   
   string Text();
   void Text(string Val);
+
+  wVisual_mPaint mPaint();
+  void mPaint(wVisual_mPaint Val);
 
 };

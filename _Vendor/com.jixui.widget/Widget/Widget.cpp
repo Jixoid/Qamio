@@ -12,6 +12,9 @@ using namespace std;
 using namespace jix;
 
 
+#define Log(X)     logger(__func__, X)
+#define Log2(X,Y)  logger(__func__, X, Y)
+
 
 
 #pragma region __widget
@@ -181,6 +184,10 @@ void __wVisual::DrawAfter()
     if (Visual->fMust_Draw) {
       Visual->DrawBefore();
       Visual->Draw();
+
+      if (Visual->fmPaint != Nil)
+        Visual->fmPaint(Visual, Visual->Surface);
+
       Visual->DrawAfter();
     }
 
@@ -363,6 +370,26 @@ void __wVisual::Text(string Val)
 
   __Parent_MustDraw(this);
 };
+
+
+wVisual_mPaint __wVisual::mPaint()
+{
+  shared_lock Lock(Locker);
+
+  return fmPaint;
+}
+
+void __wVisual::mPaint(wVisual_mPaint Val)
+{
+
+  _l_Set: {
+    unique_lock Lock(Locker);
+
+    fmPaint = Val;
+  }
+
+  __Parent_MustDraw(this);
+}
 
 #pragma endregion
 

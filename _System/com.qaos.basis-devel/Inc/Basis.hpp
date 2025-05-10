@@ -3,12 +3,14 @@
 #include <iostream>
 
 #include <stdint.h>
+#include <stdatomic.h>
 
 using namespace std;
 
 
 
-namespace jix {  
+namespace jix
+{  
 
   // Int
   using i8   = int8_t;
@@ -71,6 +73,38 @@ namespace jix {
   {
     void (*Dis)(jstring*);
     char* Str;
+  };
+
+
+
+  // Atomic
+  template<typename _T>
+  struct atom
+  {
+    _Atomic _T  Obj;
+
+
+    void operator++()
+    {
+      atomic_fetch_add(&Obj, 1);
+    }
+
+    void operator--()
+    {
+      atomic_fetch_sub(&Obj, 1);
+    }
+
+
+    void Push(_T Val)
+    {
+      atomic_store(&Obj, Val);
+    }
+
+    _T Pop()
+    {
+      return atomic_load(&Obj);
+    }
+  
   };
 
 }

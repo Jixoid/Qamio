@@ -19,18 +19,15 @@ using namespace jix;
 
 
 
-struct form
-{
-  wButton But;
-};
-
-
 struct __SystemUISession: qsession
 {
   screenSession ScrSess;
   windowSession WinSess;
 
   wVisual Root;
+
+  wPaint Notify;
+  wPaint Status;
 };
 
 
@@ -70,6 +67,26 @@ systemUISession SystemUI_Start(screenSession ScrSess)
   size2d Size = Widget.WVisual.SizeGet(Ret->Root);
 
 
+  #pragma region Load Mods
+
+  // Notify
+  Ret->Notify = SystemUI_Notify.New();
+
+  Widget.Widget.ParentSet(Ret->Notify, Ret->Root);
+  Widget.WVisual.PointSet(Ret->Notify, {0, 100});
+  Widget.WVisual.SizeSet(Ret->Notify, {Size.W/2, 40});
+
+
+  // Status
+  Ret->Status = SystemUI_Status.New();
+
+  Widget.Widget.ParentSet(Ret->Status, Ret->Root);
+  Widget.WVisual.PointSet(Ret->Status, {Size.W/2, 100});
+  Widget.WVisual.SizeSet(Ret->Status, {Size.W/2, 40});
+
+  #pragma endregion
+
+  
   // Design
 
 
@@ -104,6 +121,9 @@ void Pop()
 {
   PopNuc(Window);
   PopNuc(Widget);
+
+  PopNuc(SystemUI_Notify);
+  PopNuc(SystemUI_Status);
 }
 
 

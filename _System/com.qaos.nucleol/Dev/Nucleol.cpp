@@ -19,8 +19,12 @@ namespace jix
   sInput     Input;
   sLogin     Login;
   sScreen    Screen;
+  sBattery   Battery;
   sWedling   Wedling;
   sWidget    Widget;
   sWindow    Window;
+  
   sSystemUI  SystemUI;
+  sSystemUI_Notify SystemUI_Notify;
+  sSystemUI_Status SystemUI_Status;
 }

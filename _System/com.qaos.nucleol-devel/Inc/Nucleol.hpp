@@ -157,7 +157,7 @@ namespace jix
 
     color() = default;
 
-    explicit color(f32 nR, f32 nG, f32 nB, f32 nA = 0)
+    explicit color(f32 nR, f32 nG, f32 nB, f32 nA = 1)
     {
       A = nA;
       R = nR;
@@ -202,12 +202,16 @@ namespace jix
       point    (*BufferGet)(surface2);
       void     (*BufferSet)(surface2, point Buffer);
 
-      void     (*Draw_Sur2)(surface2, point2d Point, surface2 Src);
-      void     (*Draw_Bmp) (surface2, point2d Point, const char* Path);
+      void     (*Draw_Sur2)  (surface2, point2d Point, surface2 Src);
+      void     (*Draw_Sur2_A)(surface2, point2d Point, surface2 Src, f32 Alpha);
+      void     (*Draw_Png)   (surface2, point2d Point, const char* Path);
+      void     (*Draw_Png_A) (surface2, point2d Point, const char* Path, f32 Alpha);
+      void     (*Draw_Bmp)   (surface2, point2d Point, const char* Path);
+      void     (*Draw_Bmp_A) (surface2, point2d Point, const char* Path, f32 Alpha);
       
       void     (*RectF)  (surface2, rect2d Rect, color Color);
-      void     (*RectS)  (surface2, rect2d Rect, color Color, u16 Width);
       void     (*RectF_R)(surface2, rect2d Rect, color Color, u16 Round);
+      void     (*RectS)  (surface2, rect2d Rect, color Color, u16 Width);
       void     (*RectS_R)(surface2, rect2d Rect, color Color, u16 Width, u16 Round);
 
       size2d   (*TextSize)(surface2, const char* Text, u16 Width);  
@@ -310,6 +314,38 @@ namespace jix
 
 
 
+  #pragma region Battery
+
+  using battery_Status = enum: u8
+  {
+    bsUnknown     = 0,
+    bsCharging    = 1,
+    bsDisCharging = 2,
+    bsNotCharging = 3,
+    bsFull        = 4,
+  };
+
+
+  struct battery_Info
+  {
+    u8 Percent;
+    battery_Status Status;
+  };
+
+
+  struct sBattery
+  {
+    void  (*Reset)();
+
+    u16   (*Count)();
+    battery_Info (*Get)(u16 Index);
+  }
+  extern Battery;
+
+  #pragma endregion
+
+
+
   #pragma region BootAnim
 
   using bootAnimSession = qsession*;
@@ -389,6 +425,9 @@ namespace jix
 
   using  wVisual = widget; // : widget
 
+  using  wVisual_mPaint = void (*)(wVisual Sender, surface2 Surface);
+
+
   using  wPaint  = wVisual;  // : wvisual : widget
   using  wPanel  = wVisual;  // : wvisual : widget
   using  wButton = wVisual;  // : wvisual : widget
@@ -419,6 +458,11 @@ namespace jix
       void     (*Draw)    (wVisual);
       
       void     (*Input_Rel)(wVisual, i16 X, i16 Y);
+
+
+      wVisual_mPaint  (*mPaintGet)(wVisual);
+      void            (*mPaintSet)(wVisual, wVisual_mPaint Method);
+
     } WVisual;
 
 
@@ -474,9 +518,47 @@ namespace jix
   struct sSystemUI
   {
     systemUISession (*Start)(screenSession ScrSess);
-    
+
   }
   extern SystemUI;
+
+  #pragma endregion
+
+
+
+  #pragma region SystemUI/Notify
+
+  struct sSystemUI_Notify
+  {
+    wPaint (*New)();
+  }
+  extern SystemUI_Notify;
+
+  #pragma endregion
+
+
+
+  #pragma region SystemUI/Status
+
+  using systemUI_Status_Icon = qobject*;
+
+
+  struct sSystemUI_Status
+  {
+    wPaint (*New)();
+
+    struct
+    {
+      systemUI_Status_Icon (*New)(const char* Text, surface2 Icon);
+
+      surface2 (*IconGet)(systemUI_Status_Icon);
+      void     (*IconSet)(systemUI_Status_Icon, surface2 Icon);
+
+      jstring* (*TextGet)(systemUI_Status_Icon);
+      void     (*TextSet)(systemUI_Status_Icon, const char* Text);
+    } Icon;
+  }
+  extern SystemUI_Status;
 
   #pragma endregion
 

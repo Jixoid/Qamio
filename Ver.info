@@ -1,3 +1,27 @@
+v0.3.2:0 [PreAlpha]
+feature/system-ui/mods :4
+  + Added: Basis atomic vars
+  + Added: Graphics alpha support
+
+
+feature/system-ui/mods :3
+feature/battery :1
+  + Added: Battery Standard
+  + Added: Basic Linux battery HAL
+
+
+feature/system-ui/mods :2
+  + Added: Graphic .png load
+  + Added: SystemUI/Status Icons
+
+
+feature/system-ui/mods :1
+  > Ready for Status Bar
+  
+  + Added: SystemUI (Notify, Status)
+  + Added: Widget Methods (mPaint)
+
+
 v0.3.1:0 [PreAlpha]
 feature/system-ui :1
   > Ready for SystemUI
