@@ -1,29 +1,30 @@
-v0.3.2:0 [PreAlpha]
-feature/system-ui/mods :4
+v0.3.2:1 [Daily]
+  + Reorganized: Version log
+
+
+v0.3.2:0 [Daily]
   + Added: Basis atomic vars
   + Added: Graphics alpha support
 
 
-feature/system-ui/mods :3
-feature/battery :1
+feature/battery
   + Added: Battery Standard
   + Added: Basic Linux battery HAL
 
 
-feature/system-ui/mods :2
+feature/system-ui/mods
   + Added: Graphic .png load
   + Added: SystemUI/Status Icons
 
 
-feature/system-ui/mods :1
+feature/system-ui/mods
   > Ready for Status Bar
   
   + Added: SystemUI (Notify, Status)
   + Added: Widget Methods (mPaint)
 
 
-v0.3.1:0 [PreAlpha]
-feature/system-ui :1
+v0.3.1:0 [Daily]
   > Ready for SystemUI
 
   + Added: SystemUI Nucleol
@@ -31,7 +32,7 @@ feature/system-ui :1
   + Fixed: Widget dispose bug
 
 
-v0.3.0:0 [PreAlpha]
+v0.3.0:0 [Daily]
   > First input device control
 
   + Uses: Binary -> LLVM Bytecode
@@ -50,7 +51,7 @@ v0.3.0:0 [PreAlpha]
   + Fixed: Known bugs fixed
 
 
-v0.2:11 [PreAlpha]
+v0.2:11 [Daily]
   + Changed: Root dir names
   + Uses:  Graphic -> Cairo
   + Added: WidgetSet struct
@@ -60,24 +61,24 @@ v0.2:11 [PreAlpha]
   + Fixed: Amethyst modules system
 
 
-v0.2:10 [PreAlpha]
+v0.2:10 [Daily]
   + Added: Qiniter moq recursive depency
   + Added: Amethyst start with depency
   - Remov: Initrd helper dir (bin,lib64,etc,usr)
 
 
-v0.2:9 [PreAlpha]
+v0.2:9 [Daily]
   > First Boot Screen
 
   + Added: Kernel BootAnimation
   + Fixed: Nucleol exception catch
 
 
-v0.2:8 [PreAlpha]
+v0.2:8 [Daily]
   + Fixed: bmp
 
 
-v0.2:7 [PreAlpha]
+v0.2:7 [Daily]
   > First screen draw
 
   + Fixed: Window's Surface
@@ -89,7 +90,7 @@ v0.2:7 [PreAlpha]
   + Added: Screen window
 
 
-v0.2:6 [PreAlpha]
+v0.2:6 [Daily]
   + Worked: DRM
   + Update: Kernel to 6.12.10 (Broken)
   + Added: Basic Graphics Engine
@@ -97,7 +98,7 @@ v0.2:6 [PreAlpha]
   + Moved: Completely to C++
 
 
-v0.2:5 [PreAlpha]
+v0.2:5 [Daily]
   + Uses:  C exception
   + Added: Amethyst modules
   + Added: Moq depency
@@ -105,7 +106,7 @@ v0.2:5 [PreAlpha]
   - Remov: Kernel static modules
 
 
-v0.2:4 [PreAlpha]
+v0.2:4 [Daily]
   + Added: /dev /proc /sys
   + Fixed: Multiple boot errors
   + Fixed: Kernel.moq mount 
@@ -113,7 +114,7 @@ v0.2:4 [PreAlpha]
   + Uses:  Moq -> tar
 
 
-v0.2:3 [PreAlpha] 
+v0.2:3 [Daily] 
   > Qiniter basically works
 
   + Added Fuse
@@ -125,5 +126,5 @@ v0.2:3 [PreAlpha]
   + Added Qiniter
 
 
-v0.2:2 [PreAlpha]
+v0.2:2 [Daily]
   + packages reorganized
