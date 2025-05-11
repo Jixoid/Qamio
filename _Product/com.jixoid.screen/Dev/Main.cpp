@@ -25,7 +25,7 @@ using namespace jix;
 struct __scr;
 
 
-struct __screenSession: qsession
+struct __screenSess: sessBase
 {
   __scr *Scr;
   screenMode Mode;
@@ -57,7 +57,7 @@ struct __scr
   // SCR
   u32 ScrID;
 
-  __screenSession *Sess;
+  __screenSess *Sess;
 };
 
 struct __gpu
@@ -72,8 +72,8 @@ vector<__scr> OpenSCR;
 
 
 
-bool screen·IsConnected(screenSession __Session);
-void screen·DisConnect(screenSession __Session);
+bool screen·IsConnected(screenSess __Session);
+void screen·DisConnect(screenSess __Session);
 
 
 
@@ -93,8 +93,8 @@ void _Reset()
 
       // Stop //
 
-      if (screen·IsConnected(Y))
-        screen·DisConnect(Y);
+      if (screen·IsConnected((screenSess)Y))
+        screen·DisConnect((screenSess)Y);
 
       drmModeFreeConnector(Y->Con); Y->Con = Nil;
 
@@ -182,13 +182,13 @@ u16  _Count()
 
 
 
-#define Session ((__screenSession*)__Session)
+#define Session ((__screenSess*)__Session)
 
 
-void screen·Stop(screenSession __Session)
+void screen·Stop(sessBase *__Session)
 {
-  if (screen·IsConnected(__Session))
-    screen·DisConnect(__Session);
+  if (screen·IsConnected((screenSess)__Session))
+    screen·DisConnect((screenSess)__Session);
 
 
   if (Session->Con != Nil)
@@ -203,7 +203,7 @@ void screen·Stop(screenSession __Session)
   delete Session;
 };
 
-screenSession screen·Start(u16 Index)
+screenSess screen·Start(u16 Index)
 {
   // Already ?
   if (OpenSCR[Index].Sess != Nil)
@@ -212,7 +212,7 @@ screenSession screen·Start(u16 Index)
 
 
   // Interface
-  __screenSession *Ret = new __screenSession();
+  __screenSess *Ret = new __screenSess();
   Ret->Stop = &screen·Stop;
   Ret->Scr  = &OpenSCR[Index];
 
@@ -234,11 +234,11 @@ screenSession screen·Start(u16 Index)
 
 
   // Return
-  return (screenSession)Ret;
+  return (screenSess)Ret;
 }
 
 
-u16 screen·ModeC(screenSession __Session)
+u16 screen·ModeC(screenSess __Session)
 {
   if (!Session->Valid)
     Log2("Device is not suitable", lFatal);
@@ -246,7 +246,7 @@ u16 screen·ModeC(screenSession __Session)
   return (Session->Con)->count_modes;
 }
 
-screenMode screen·ModeGet(screenSession __Session, u16 Mode)
+screenMode screen·ModeGet(screenSess __Session, u16 Mode)
 {
   if (!Session->Valid)
     Log2("Device is not suitable", lFatal);
@@ -259,7 +259,7 @@ screenMode screen·ModeGet(screenSession __Session, u16 Mode)
 }
 
 
-bool screen·IsDevConnected(screenSession __Session)
+bool screen·IsDevConnected(screenSess __Session)
 {
   if (!Session->Valid)
     Log2("Device is not suitable", lFatal);
@@ -267,7 +267,7 @@ bool screen·IsDevConnected(screenSession __Session)
   return (Session->Con->connection == DRM_MODE_CONNECTED);
 }
 
-bool screen·IsConnected(screenSession __Session)
+bool screen·IsConnected(screenSess __Session)
 {
   if (!Session->Valid)
     Log2("Device is not suitable", lFatal);
@@ -275,7 +275,7 @@ bool screen·IsConnected(screenSession __Session)
   return (Session->Window != Nil);
 }
 
-void screen·Connect(screenSession __Session, u16 _Mode)
+void screen·Connect(screenSess __Session, u16 _Mode)
 {
   if (!Session->Valid)
     Log2("Device is not suitable", lFatal);
@@ -374,7 +374,7 @@ void screen·Connect(screenSession __Session, u16 _Mode)
   Log("ScrSess: " +to_string((uPtr)__Session));
 }
 
-void screen·DisConnect(screenSession __Session)
+void screen·DisConnect(screenSess __Session)
 {
   if (!Session->Valid)
     Log2("Device is not suitable", lFatal);
@@ -398,7 +398,7 @@ void screen·DisConnect(screenSession __Session)
 }
 
 
-window screen·Window(screenSession __Session)
+window screen·Window(screenSess __Session)
 {
   if (!Session->Valid)
     Log2("Device is not suitable", lFatal);
@@ -406,14 +406,14 @@ window screen·Window(screenSession __Session)
   return Session->Window;
 }
 
-void screen·Swap(screenSession __Session)
+void screen·Swap(screenSess __Session)
 {
   if (!Session->Valid)
     Log2("Device is not suitable", lFatal);
 
 
   // Swap Buffer
-  __screenSession::__sBuf Cac = Session->Buf[0];
+  __screenSess::__sBuf Cac = Session->Buf[0];
   Session->Buf[0] = Session->Buf[1];
   Session->Buf[1] = Cac;
 
@@ -453,7 +453,7 @@ void Push(sNucCom Com)
     .Screen = {
       .Start  = &screen·Start,
 
-      .IsValid = [](screenSession __Session)-> bool
+      .IsValid = [](screenSess __Session)-> bool
       {
         return Session->Valid;
       },

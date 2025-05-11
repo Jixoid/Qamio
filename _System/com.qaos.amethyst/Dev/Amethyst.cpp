@@ -192,10 +192,33 @@ void Main()
   NucMng.Load();
 
 
-  vector<pair<screenSession, qsession*>> Sessions;
 
-  
+
+
+  _l_BootAnim: {
+
   #ifdef CONFIG_BootAnim_Active
+
+  struct __session
+  {
+    cScreenSess Screen;
+    cBootAnimSess Anim;
+
+    __session(u16 i): Screen(i), Anim(__Dummy())
+    {}
+  
+  
+    inline cScreenSess __Dummy()
+    {
+      Screen.Connect(0);
+      return Screen;
+    }
+
+  };
+  
+  vector<__session> Sessions;
+
+
 
   Log2("BootAnim", lIBeg);
 
@@ -205,23 +228,15 @@ void Main()
 
   for (u16 i = 0; i < Screen.Count(); i++)
   {
-    screenSession Sess = Screen.Screen.Start(i);
-
-    if (! Screen.Screen.IsDevConnected(Sess))
     {
-      Sess->Stop(Sess);
-      continue;
+      cScreenSess Sess(i);
+
+      if (! Sess.IsDevConnected())
+        continue;
     }
 
-
-    Screen.Screen.Connect(Sess, 0);
-
-    Sessions.push_back({ Sess, Nil });
+    Sessions.emplace_back(i);
   }
-
-
-  for (auto &X: Sessions)
-    X.second = BootAnim.Start(X.first);
 
 
   #endif
@@ -231,20 +246,19 @@ void Main()
   NucMng.Start();
 
   #ifdef CONFIG_BootAnim_Active
-  
-  for (auto &X: Sessions)
-    X.second->Stop(X.second);
-    
-  for (auto &X: Sessions)
-    X.first->Stop(X.first);
-
-  Sessions.clear();
 
   Log2("BootAnim", lIEnd);
 
   #endif
+  
+  }
 
 
+
+
+
+  _l_Login: {
+  vector<pair<screenSess, sessBase*>> Sessions;
 
   // Login
   bool PassOk;
@@ -256,9 +270,9 @@ void Main()
   User = "alforce";
   Pass = "070824";
 
-  goto _l_SkipLogin;
+  goto _l_SystemUI;
 
-  #pragma region Login
+
 
   #ifdef CONFIG_Login_Style_Graphic
   Log2("Login", lIBeg);
@@ -270,7 +284,7 @@ void Main()
 
   for (u16 i = 0; i < Screen.Count(); i++)
   {
-    screenSession Sess = Screen.Screen.Start(i);
+    screenSess Sess = Screen.Screen.Start(i);
 
     if (! Screen.Screen.IsDevConnected(Sess))
     {
@@ -310,7 +324,7 @@ void Main()
 
   PopNuc(Login);
 
-  loginSession_Console Sess = Login.Start_Console();
+  loginSess_Console Sess = Login.Start_Console();
 
   PassOk = Login.PassOk(Sess);
   if (PassOk)
@@ -333,13 +347,36 @@ void Main()
   }
   #endif
 
-  #pragma endregion
-
-  _l_SkipLogin:
+  }
 
 
+
+
+
+  _l_SystemUI: {
 
   #ifdef CONFIG_Session_Graphic
+
+  struct __session
+  {
+    cScreenSess Screen;
+    cSystemUISess UI;
+
+    __session(u16 i): Screen(i), UI(__Dummy())
+    {}
+  
+  
+    inline cScreenSess __Dummy()
+    {
+      Screen.Connect(0);
+      return Screen;
+    }
+
+  };
+  
+  vector<__session> Sessions;
+
+
 
   Log2("SystemUI", lIBeg);
 
@@ -349,40 +386,32 @@ void Main()
 
   for (u16 i = 0; i < Screen.Count(); i++)
   {
-    screenSession Sess = Screen.Screen.Start(i);
-
-    if (! Screen.Screen.IsDevConnected(Sess))
     {
-      Sess->Stop(Sess);
-      continue;
+      cScreenSess Sess(i);
+
+      if (! Sess.IsDevConnected())
+        continue;
     }
 
-
-    Screen.Screen.Connect(Sess, 0);
-
-    Sessions.push_back({ Sess, Nil });
+    Sessions.emplace_back(i);
   }
 
-  for (auto &X: Sessions)
-    X.second = SystemUI.Start(X.first);
 
     
   sleep(20);
-
-  for (auto &X: Sessions)
-    X.second->Stop(X.second);
-    
-  for (auto &X: Sessions)
-    X.first->Stop(X.first);
-
-  Sessions.clear();
 
 
   Log2("SystemUI", lIEnd);
 
   #endif
+
   #ifdef CONFIG_Session_Console
   #endif
+
+  }
+
+
+
 
 
   NucMng.Stop();

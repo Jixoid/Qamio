@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <thread>
+#include <chrono>
 #include <atomic>
 #include <unordered_map>
 #include <wait.h>
@@ -19,13 +20,14 @@ using namespace jix;
 
 
 
-struct __windowSession: qsession
+struct __windowSess: sessBase
 {
-  screenSession ScrSession;
-  window Window;
+  cScreenSess *ScrSession;
+
+  cWindow *Window;
   u16 W,H;
   
-  wVisual Root;
+  cWVisual *Root;
 
   // Thread
   atomic<bool> Active;
@@ -33,10 +35,49 @@ struct __windowSession: qsession
 
   // Cursor
   point2d Cursor;
+
+
+  // Fps
+  u16 FPS;
+  chrono::nanoseconds Duration;
 };
 
 
-void Handler(__windowSession *Self, atomic<bool> *__Ctrl)
+
+
+inline void Painter(__windowSess *&Self)
+{
+  // Process
+  Self->Root->Draw();
+
+
+  // Get Surface
+  cSurface2 Sur    = Self->Window->Sur();
+
+
+  // Copy to buffer
+  Sur.Draw_Sur2({0,0}, Self->Root->Canvas());
+  
+
+  // Draw Cursor
+  Sur.RectF(
+    {
+      .L = Self->Cursor.X,
+      .T = Self->Cursor.Y,
+      .W = 32, .H = 32
+    }, 
+    color(1,1,1,1)
+  );
+
+
+  // Swap
+  Self->Window->Swap();
+  Self->ScrSession->Swap();
+}
+
+
+
+void Handler(__windowSess *Self, atomic<bool> *__Ctrl)
 {
   // Control
   __Ctrl->store(true);
@@ -45,31 +86,35 @@ void Handler(__windowSession *Self, atomic<bool> *__Ctrl)
   // Start
   Log2("Thread", lIBeg);
 
+
+  auto TBeg = chrono::steady_clock::now();
+  auto TEnd = TBeg;
+
+  auto FrameT = TBeg;
+  u16 FrameC = 0;
+
   while (Self->Active.load())
   {
-    // Get Surface
-    surface2 Sur = Graphic.Window.Sur(Self->Window);
+    Painter(Self);
+    FrameC++;
+    TEnd = chrono::steady_clock::now();
 
 
-    // Root Draw
-    //Widget.WVisual.Input_Rel(Self->Root, Self->Cursor.X, Self->Cursor.Y);  
-   
-    Widget.WVisual.Draw(Self->Root);
-
-    surface2 Canvas = Widget.WVisual.Canvas(Self->Root);
-
-    Graphic.Surface2.Draw_Sur2(Sur, {0,0}, Canvas);
-
-    // Draw Cursor
-    Graphic.Surface2.RectF(Sur, {.L = Self->Cursor.X, .T = Self->Cursor.Y, .W = 32, .H = 32}, color(1,1,1,1));
+    if (TEnd -FrameT >= std::chrono::seconds(1))
+    {
+      cout << "FPS: " << FrameC << endl;
+      FrameC = 0;
+      FrameT = TEnd;
+    }
 
 
-    // Swap
-    Graphic.Window.Swap(Self->Window);
-    Screen.Screen.Swap(Self->ScrSession);
+    if ( TEnd-TBeg < Self->Duration )
+      this_thread::sleep_for(Self->Duration -(TEnd-TBeg));
 
-    usleep(10000);
+
+    TBeg = chrono::steady_clock::now();
   }
+  
 
   Log2("Thread", lIEnd);
 }
@@ -78,9 +123,9 @@ void Handler(__windowSession *Self, atomic<bool> *__Ctrl)
 
 #pragma region Publish
 
-#define Session ((__windowSession*)__Session)
+#define Session ((__windowSess*)__Session)
 
-void   windowSession_Stop (windowSession __Session)
+void   windowSess_Stop (sessBase *__Session)
 {
   // Stop
   Session->Active.store(false);
@@ -88,7 +133,9 @@ void   windowSession_Stop (windowSession __Session)
 
 
   // Prepare
-  Session->Root->Dis(Session->Root);
+  delete Session->Root;
+  delete Session->Window;
+  delete Session->ScrSession;
 
 
   Log2("WinSess: " +to_string((uPtr)__Session) +", ScrSess: " +to_string((uPtr)Session->ScrSession), lIEnd);
@@ -97,29 +144,36 @@ void   windowSession_Stop (windowSession __Session)
 }
 
 
-windowSession windowSession_Start(screenSession ScrSession)
+windowSess windowSess_Start(screenSess ScrSession)
 {
-  __windowSession *Ret = new __windowSession();
-  Ret->Stop = &windowSession_Stop;
-  Ret->ScrSession = ScrSession;
+  __windowSess *Ret = new __windowSess();
+  Ret->Stop = &windowSess_Stop;
 
   Log2("WinSess: " +to_string((uPtr)Ret) +", ScrSess: " +to_string((uPtr)ScrSession), lIBeg);
 
 
   // Prepare
-  Ret->Window = Screen.Screen.Window(ScrSession);
+  Ret->ScrSession = new cScreenSess(ScrSession);
+  Ret->Window = new cWindow(Ret->ScrSession->Window());
   
-  size2d Size = Graphic.Window.SizeGet(Ret->Window);
+  size2d Size = Ret->Window->Size();
   Ret->W = Size.W;
   Ret->H = Size.H;
 
 
-  Ret->Root = Widget.WPaint.New();
+  Ret->Root = new cWPaint();
 
-  Widget.WVisual.SizeSet(Ret->Root, {
-    .W = f32(Ret->W),
-    .H = f32(Ret->H),
-  });
+  Ret->Root->Size(
+    {
+      .W = f32(Ret->W),
+      .H = f32(Ret->H),
+    }
+  );
+
+
+  // Calc
+  Ret->FPS = 60;
+  Ret->Duration = chrono::nanoseconds(1'000'000'000 / Ret->FPS);
 
 
   // Start
@@ -133,20 +187,21 @@ windowSession windowSession_Start(screenSession ScrSession)
   while (! Ctrl.load()) {}
 
 
-  return (windowSession)Ret;
+  return (windowSess)Ret;
 }
 
 
-wVisual  windowSession_Root(windowSession __Session)
+wVisual  windowSess_Root(windowSess __Session)
 {
-  return Session->Root;
+  return Session->Root->GetOHID();
 }
 
-void   windowSession_Input_Rel(windowSession __Session, i16 X, i16 Y)
+void   windowSess_Input_Rel(windowSess __Session, i16 X, i16 Y)
 {
   Session->Cursor.X += X *2;
   Session->Cursor.Y += Y *2;
 }
+
 
 #undef Session
 
@@ -166,9 +221,9 @@ void Push(sNucCom Com)
 {
   PushNuc(Window)
   {
-    .Start = &windowSession_Start,
+    .Start = &windowSess_Start,
 
-    .Root  = &windowSession_Root,
+    .Root  = &windowSess_Root,
   };
 }
 

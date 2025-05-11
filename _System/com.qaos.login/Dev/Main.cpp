@@ -30,31 +30,31 @@ using namespace jix;
 
 struct form
 {
-  wButton But;
+  cWButton *But;
 };
 
 
 
-struct __loginSession: qsession
+struct __loginSess: sessBase
 {
   bool OK = false;
   string User = "", Pass = "";
 };
 
 
-struct __loginSession_Graphic: __loginSession
+struct __loginSess_Graphic: __loginSess
 {
-  screenSession ScrSession;
-  windowSession WinSession;
+  cScreenSess *ScrSess;
+  cWindowSess *WinSess;
 
-  wVisual Root;
+  cWVisual *Root;
 
   // UI
   form Form;
 };
 
 
-struct __loginSession_Console: __loginSession
+struct __loginSess_Console: __loginSess
 {
 
 };
@@ -143,16 +143,18 @@ jstring* JString_New(string Str)
 
 #pragma region Publish
 
-#define Session ((__loginSession_Graphic*)__Session)
+#define Session ((__loginSess_Graphic*)__Session)
 
-void  loginSession_Stop_Graphic(loginSession_Graphic __Session)
+void  loginSess_Stop_Graphic(sessBase* __Session)
 {
-  Session->Form.But->Dis(Session->Form.But);
+  delete Session->Form.But;
+
+  delete Session->Root;
+  delete Session->WinSess;
+  delete Session->ScrSess;
   
-  Session->WinSession->Stop(Session->WinSession);
 
-
-  Log2("LoginSess: " +to_string((uPtr)__Session) +", ScrSess: " +to_string((uPtr)Session->ScrSession), lIEnd);
+  //Log2("LoginSess: " +to_string((uPtr)__Session) +", ScrSess: " +to_string((uPtr)Session->ScrSess), lIEnd);
   
   delete Session;
 }
@@ -160,47 +162,46 @@ void  loginSession_Stop_Graphic(loginSession_Graphic __Session)
 #undef Session
 
 
-loginSession_Graphic  loginSession_Start_Graphic(screenSession ScrSession)
+loginSess_Graphic  loginSess_Start_Graphic(screenSess ScrSession)
 {
-  __loginSession_Graphic *Ret = new __loginSession_Graphic();
-  Ret->Stop = &loginSession_Stop_Graphic;
+  __loginSess_Graphic *Ret = new __loginSess_Graphic();
+  Ret->Stop = &loginSess_Stop_Graphic;
 
 
-  Log2("LoginSess: " +to_string((uPtr)Ret) +", ScrSess: " +to_string((uPtr)ScrSession), lIBeg);
+  //Log2("LoginSess: " +to_string((uPtr)Ret) +", ScrSess: " +to_string((uPtr)ScrSession), lIBeg);
 
 
   // Prepare
-  Ret->ScrSession = ScrSession;
-
-  Ret->WinSession = Window.Start(Ret->ScrSession);
+  Ret->ScrSess = new cScreenSess(ScrSession);
+  Ret->WinSess = new cWindowSess(*Ret->ScrSess);
   
-  Ret->Root = Window.Root(Ret->WinSession);
+  Ret->Root = new cWVisual(Ret->WinSess->Root());
   
 
-  size2d Size = Widget.WVisual.SizeGet(Ret->Root);
+  size2d Size = Ret->Root->Size();
 
 
   // Design
-  Ret->Form.But = Widget.WButton.New();
-  Widget.Widget.ParentSet(Ret->Form.But, Ret->Root);
+  Ret->Form.But = new cWButton();
+  Ret->Form.But->Parent(*Ret->Root);
+  
 
-
-  Widget.WVisual.PointSet(Ret->Form.But, {20, 20});
-  Widget.WVisual.SizeSet(Ret->Form.But, {100, 30});
-  Widget.WVisual.TextSet(Ret->Form.But, "Hello, JixUI!");
+  Ret->Form.But->Point({20,20});
+  Ret->Form.But->Size({100,30});
+  Ret->Form.But->Text("Hello, JixUI!");
 
 
   // Return
-  return (loginSession_Graphic)Ret;
+  return (loginSess_Graphic)Ret;
 }
 
 
 
 
 
-#define Session ((__loginSession_Graphic*)__Session)
+#define Session ((__loginSess_Graphic*)__Session)
 
-void  loginSession_Stop_Console(loginSession_Console __Session)
+void  loginSess_Stop_Console(sessBase *__Session)
 {
   Log2("LoginSess: " +to_string((uPtr)__Session), lIEnd);
   
@@ -210,10 +211,10 @@ void  loginSession_Stop_Console(loginSession_Console __Session)
 #undef Session
 
 
-loginSession_Console  loginSession_Start_Console()
+loginSess_Console  loginSess_Start_Console()
 {
-  __loginSession_Console *Ret = new __loginSession_Console();
-  Ret->Stop = &loginSession_Stop_Console;
+  __loginSess_Console *Ret = new __loginSess_Console();
+  Ret->Stop = &loginSess_Stop_Console;
 
 
   Log2("LoginSess: " +to_string((uPtr)Ret), lIBeg);
@@ -273,26 +274,26 @@ loginSession_Console  loginSession_Start_Console()
 
 
   // Return
-  return (loginSession_Graphic)Ret;
+  return (loginSess_Graphic)Ret;
 }
 
 
 
 
 
-#define Session ((__loginSession*)__Session)
+#define Session ((__loginSess*)__Session)
 
-bool loginSession_PassOk(loginSession __Session)
+bool loginSess_PassOk(loginSess __Session)
 {
   return Session->OK;
 }
 
-jstring* loginSession_GetUser(loginSession __Session)
+jstring* loginSess_GetUser(loginSess __Session)
 {
   return JString_New(Session->User);
 }
 
-jstring* loginSession_GetPass(loginSession __Session)
+jstring* loginSess_GetPass(loginSess __Session)
 {
   return JString_New(Session->Pass);
 }
@@ -316,12 +317,12 @@ void Push(sNucCom Com)
 {
   PushNuc(Login)
   {
-    .Start_Graphic = &loginSession_Start_Graphic,
-    .Start_Console = &loginSession_Start_Console,
+    .Start_Graphic = &loginSess_Start_Graphic,
+    .Start_Console = &loginSess_Start_Console,
 
-    .PassOk  = &loginSession_PassOk,
-    .GetUser = &loginSession_GetUser,
-    .GetPass = &loginSession_GetPass,
+    .PassOk  = &loginSess_PassOk,
+    .GetUser = &loginSess_GetUser,
+    .GetPass = &loginSess_GetPass,
   };
 }
 

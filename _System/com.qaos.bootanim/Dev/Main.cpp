@@ -15,28 +15,30 @@ using namespace jix;
 #define Log2(X,Y)  logger(__func__, X, Y)
 
 
-struct __bootAnimSession: qsession
+struct __bootAnimSess: sessBase
 {
-  screenSession ScrSession;
+  cScreenSess* ScrSession;
 
-  surface2 BootImg;
+  cSurface2* BootImg;
 
   u16 W,H;
-  window Window;
+  cWindow* Window;
 };
 
 
 #pragma region Publish
 
-#define Session ((__bootAnimSession*)__Session)
+#define Session ((__bootAnimSess*)__Session)
 
-void bootAnimSession_Stop(bootAnimSession __Session)
+void bootAnimSess_Stop(sessBase *__Session)
 {
   // Free Anim
-  Session->BootImg->Dis(Session->BootImg);
+  delete Session->BootImg;
+  delete Session->Window;
+  delete Session->ScrSession;
 
   
-  Log2("BootAnimSess: " +to_string((uPtr)__Session) + ", ScrSess: " +to_string((uPtr)Session->ScrSession), lIBeg);
+  Log2("BootAnimSess: " +to_string((uPtr)__Session) + ", ScrSess: " +to_string((uPtr)Session->ScrSession), lIEnd);
 
   // Delete
   delete Session;
@@ -46,57 +48,62 @@ void bootAnimSession_Stop(bootAnimSession __Session)
 
 
 
-bootAnimSession _Start(screenSession ScrSession)
+bootAnimSess _Start(screenSess ScrSession)
 {
-  __bootAnimSession *Ret = new __bootAnimSession();
-  Ret->Stop = &bootAnimSession_Stop;
-  Ret->ScrSession = ScrSession;
+  __bootAnimSess *Ret = new __bootAnimSess();
+  Ret->Stop = &bootAnimSess_Stop;
 
   Log2("BootAnimSess: " +to_string((uPtr)Ret) + ", ScrSess: " +to_string((uPtr)ScrSession), lIBeg);
 
 
   // Start
-  Ret->Window = Screen.Screen.Window(ScrSession);
+  Ret->ScrSession = new cScreenSess(ScrSession);
+  Ret->Window = new cWindow(Ret->ScrSession->Window());
 
-  size2d Size = Graphic.Window.SizeGet(Ret->Window);
+
+  size2d Size = Ret->Window->Size();
   Ret->W = Size.W;
   Ret->H = Size.H;
 
 
   // Prepare
-  Ret->BootImg = Graphic.Surface2.New(720, 720);
-  Graphic.Surface2.Draw_Bmp(Ret->BootImg, {0,0}, "/Vendor/Conf/BootAnim.bmp");
+  Ret->BootImg = new cSurface2(720, 720);
+  Ret->BootImg->Draw_Bmp({0,0}, "/Vendor/Conf/BootAnim.bmp");
 
 
 
   // Draw
-  surface2 Sur = Graphic.Window.Sur(Ret->Window);
+  cSurface2 Sur(Ret->Window->Sur());
 
 
   // Back
-  Graphic.Surface2.RectF(Sur, {
+  Sur.RectF(
+    {
       .L = 0, .T = 0,
       .W = f32(Ret->W),
       .H = f32(Ret->H),
     },
-    Graphic.Surface2.Pixel(Ret->BootImg, {0,0})
+    Ret->BootImg->Pixel({0,0})
   );
 
   
   // Image
-  Graphic.Surface2.Draw_Sur2(Sur, {
-    .X = f32(Ret->W -720) /2,
-    .Y = f32(Ret->H -720) /2,
-  }, Ret->BootImg);
+  Sur.Draw_Sur2(
+    {
+      .X = f32(Ret->W -720) /2,
+      .Y = f32(Ret->H -720) /2,
+    },
+    *Ret->BootImg
+  );
 
 
   // Swap
-  Graphic.Window.Swap(Ret->Window);
-  Screen.Screen.Swap(ScrSession);
+  Ret->Window->Swap();
+  Ret->ScrSession->Swap();
 
 
   // Ret
-  return (bootAnimSession)Ret;
+  return (bootAnimSess)Ret;
 }
 
 

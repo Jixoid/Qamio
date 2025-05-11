@@ -1,3 +1,9 @@
+v0.3.2:2 [Daily]
+  + Added: Native Nuc Objs
+  + Added: FPS limiter
+  + Rebased: Native Nuc Objs
+
+
 v0.3.2:1 [Daily]
   + Reorganized: Version log
 

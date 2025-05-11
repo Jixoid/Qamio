@@ -210,10 +210,10 @@ inline jstring* JString_New(string Str)
 
 #pragma region Publish
 
-wPaint _New()
+wVisual _New()
 {
   // Interface
-  wPaint Ret = Widget.WPaint.New();
+  wVisual Ret = Widget.WVisual.New();
 
   Widget.WVisual.mPaintSet(Ret, &Painter);
   

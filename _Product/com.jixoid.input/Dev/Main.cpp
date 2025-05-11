@@ -30,7 +30,7 @@ namespace fs = filesystem;
 
 struct __input;
 
-struct __inputSession: qsession
+struct __inputSess: sessBase
 {
   __input *Input;
 
@@ -54,7 +54,7 @@ struct __input
 {
   string Path;
 
-  __inputSession *Sess;
+  __inputSess *Sess;
 };
 
 vector<__input> OpenInput;
@@ -133,7 +133,7 @@ u16  _Count()
 
 
 
-void Handler(__inputSession *Session) { while (Session->Active.load())
+void Handler(__inputSess *Session) { while (Session->Active.load())
 {
   lock_guard Lock(Session->Wait);
   
@@ -203,10 +203,10 @@ void Handler(__inputSession *Session) { while (Session->Active.load())
 
 
 
-#define Session ((__inputSession*)__Session)
+#define Session ((__inputSess*)__Session)
 
 
-void input·Stop(inputSession __Session)
+void input·Stop(sessBase *__Session)
 {
   // Stop
   Session->Active.store(false);
@@ -226,7 +226,7 @@ void input·Stop(inputSession __Session)
   delete Session;
 }
 
-inputSession input·Start(u16 Index)
+inputSess input·Start(u16 Index)
 {
   // Already ?
   if (OpenInput[Index].Sess != Nil)
@@ -235,7 +235,7 @@ inputSession input·Start(u16 Index)
 
 
   // Interface
-  __inputSession *Ret = new __inputSession();
+  __inputSess *Ret = new __inputSess();
   Ret->Stop  = &input·Stop;
   Ret->Input = &OpenInput[Index];
   
@@ -259,7 +259,7 @@ inputSession input·Start(u16 Index)
 
 
   // Return
-  return (inputSession)Ret;
+  return (inputSess)Ret;
 }
 
 
@@ -284,13 +284,13 @@ void Push(sNucCom Com)
     {
       .Start = &input·Start,
 
-      .IsValid = [](inputSession __Session)-> bool
+      .IsValid = [](inputSess __Session)-> bool
       {
         return Session->Valid;
       },
       
       
-      .SetHandlerREL = [](inputSession __Session, inputHandlerREL Handler)
+      .SetHandlerREL = [](inputSess __Session, inputHandlerREL Handler)
       {
         if (!Session->Valid)
           qexcept(__func__, "Device is not suitable");
@@ -299,7 +299,7 @@ void Push(sNucCom Com)
         Session->H_REL = Handler;
       },
 
-      .SetHandlerWHL = [](inputSession __Session, inputHandlerWHL Handler)
+      .SetHandlerWHL = [](inputSess __Session, inputHandlerWHL Handler)
       {
         if (!Session->Valid)
           qexcept(__func__, "Device is not suitable");
@@ -308,7 +308,7 @@ void Push(sNucCom Com)
         Session->H_WHL = Handler;
       },
 
-      .SetHandlerABS = [](inputSession __Session, inputHandlerABS Handler)
+      .SetHandlerABS = [](inputSess __Session, inputHandlerABS Handler)
       {
         if (!Session->Valid)
           qexcept(__func__, "Device is not suitable");

@@ -87,7 +87,7 @@ public:
   virtual void Draw();
 
 
-  void Input_Rel(f32 X, f32 Y);
+  void Input_Abs(f32 X, f32 Y);
 
 
 public:

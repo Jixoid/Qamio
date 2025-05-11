@@ -58,6 +58,14 @@ void Push(sNucCom Com)
     #define Self ((__widget*)__Self)
     .Widget =
     {
+      .New = []()-> widget
+      {
+        __widget *Ret = new __widget();
+        Ret->Dis = &Widget_Dis;
+
+        return (widget)Ret;
+      },
+
       .ParentGet = [](widget __Self)-> widget
       {
         return (widget)Self->Parent();
@@ -72,6 +80,14 @@ void Push(sNucCom Com)
     #define Self ((__wVisual*)__Self)
     .WVisual =
     {
+      .New = []()-> wVisual
+      {
+        __wVisual *Ret = new __wVisual();
+        Ret->Dis = &Widget_Dis;
+
+        return (wVisual)Ret;
+      },
+
       .PointGet = [](wVisual __Self)-> point2d
       {
         return Self->Point();
@@ -114,9 +130,9 @@ void Push(sNucCom Com)
         Self->DrawAfter();
       },
 
-      .Input_Rel = [](wVisual __Self, i16 X, i16 Y)
+      .Input_Abs = [](wVisual __Self, f32 X, f32 Y)
       {
-        Self->Input_Rel(X,Y);
+        Self->Input_Abs(X,Y);
       },
       
       .mPaintGet = [](wVisual __Self)-> wVisual_mPaint

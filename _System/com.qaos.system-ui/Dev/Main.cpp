@@ -19,26 +19,32 @@ using namespace jix;
 
 
 
-struct __SystemUISession: qsession
+struct __SystemUISess: sessBase
 {
-  screenSession ScrSess;
-  windowSession WinSess;
+  cScreenSess *ScrSess;
+  cWindowSess *WinSess;
 
-  wVisual Root;
+  cWVisual *Root;
 
-  wPaint Notify;
-  wPaint Status;
+  cWVisual *Notify;
+  cWVisual *Status;
 };
 
 
 
 #pragma region Publish
 
-#define Session ((__SystemUISession*)__Session)
+#define Session ((__SystemUISess*)__Session)
 
-void  SystemUI_Stop(systemUISession __Session)
+void  SystemUI_Stop(sessBase *__Session)
 {
-  Session->WinSess->Stop(Session->WinSess);
+  delete Session->Notify;
+  delete Session->Status;
+
+
+  delete Session->Root;
+  delete Session->WinSess;
+  delete Session->ScrSess;
 
 
   Log2("SystemUISess: " +to_string((uPtr)__Session), lIEnd);
@@ -49,40 +55,41 @@ void  SystemUI_Stop(systemUISession __Session)
 #undef Session
 
 
-systemUISession SystemUI_Start(screenSession ScrSess)
+systemUISess SystemUI_Start(screenSess ScrSess)
 {
   // Interface
-  __SystemUISession *Ret = new __SystemUISession();
+  __SystemUISess *Ret = new __SystemUISess();
   Ret->Stop = &SystemUI_Stop;
 
   Log2("SystemUISess: " +to_string((uPtr)Ret), lIBeg);
 
 
   // Prepare
-  Ret->ScrSess = ScrSess;
-  Ret->WinSess = Window.Start(Ret->ScrSess);
+  Ret->ScrSess = new cScreenSess(ScrSess);
+  Ret->WinSess = new cWindowSess(*Ret->ScrSess);
   
-  Ret->Root = Window.Root(Ret->WinSess);
+  Ret->Root = new cWVisual(Ret->WinSess->Root());
   
-  size2d Size = Widget.WVisual.SizeGet(Ret->Root);
+  size2d Size = Ret->Root->Size();
+
 
 
   #pragma region Load Mods
 
   // Notify
-  Ret->Notify = SystemUI_Notify.New();
+  Ret->Notify = new cWVisual(SystemUI_Notify.New());
 
-  Widget.Widget.ParentSet(Ret->Notify, Ret->Root);
-  Widget.WVisual.PointSet(Ret->Notify, {0, 100});
-  Widget.WVisual.SizeSet(Ret->Notify, {Size.W/2, 40});
+  Ret->Notify->Parent(*Ret->Root);
+  Ret->Notify->Point({0, 100});
+  Ret->Notify->Size({Size.W/2, 40});
 
 
   // Status
-  Ret->Status = SystemUI_Status.New();
+  Ret->Status = new cWVisual(SystemUI_Status.New());
 
-  Widget.Widget.ParentSet(Ret->Status, Ret->Root);
-  Widget.WVisual.PointSet(Ret->Status, {Size.W/2, 100});
-  Widget.WVisual.SizeSet(Ret->Status, {Size.W/2, 40});
+  Ret->Status->Parent(*Ret->Root);
+  Ret->Status->Point({Size.W/2, 100});
+  Ret->Status->Size({Size.W/2, 40});
 
   #pragma endregion
 
@@ -92,7 +99,7 @@ systemUISession SystemUI_Start(screenSession ScrSess)
 
   
   // Return
-  return (systemUISession)Ret;
+  return (systemUISess)Ret;
 }
 
 

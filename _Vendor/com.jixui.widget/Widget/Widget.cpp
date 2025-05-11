@@ -168,6 +168,8 @@ void __wVisual::DrawBefore()
 
 void __wVisual::DrawAfter()
 {
+  //Log("Paint");
+
   unique_lock Lock(Locker);
 
   for (auto it = Childs.rbegin(); it != Childs.rend(); ++it)
@@ -181,7 +183,8 @@ void __wVisual::DrawAfter()
 
 
     // Draw
-    if (Visual->fMust_Draw) {
+    if (Visual->fMust_Draw)
+    {
       Visual->DrawBefore();
       Visual->Draw();
 
@@ -207,7 +210,7 @@ void __wVisual::Draw()
 }
 
 
-void __wVisual::Input_Rel(f32 X, f32 Y)
+void __wVisual::Input_Abs(f32 X, f32 Y)
 {
   __wVisual *Target = Nil;
   f32 MeX, MeY;
@@ -298,7 +301,7 @@ void __wVisual::Input_Rel(f32 X, f32 Y)
 
   _l_Call_Child: {
     if (Target != this)
-      Target->Input_Rel(X -MeX, Y -MeY);
+      Target->Input_Abs(X -MeX, Y -MeY);
   }
 
 }
