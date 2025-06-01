@@ -3,14 +3,8 @@ include ../Make.inc
 
 # Config
 
-Srcs = \
-	com.jixui.widget \
-	\
-	com.jixui.font.inter \
-	\
-	com.jixui.system-ui.notify \
-	com.jixui.system-ui.status
-
+Plan = $(shell ls | grep "^!com.")
+Srcs = $(shell ls | grep "^com.")
 
 
 
@@ -19,8 +13,14 @@ Srcs = \
 Build: Basis
 
 	@set -e; \
+	for target in $(Plan); do \
+		echo -e "  ⭐ $(ORANGE)$$target$(RESET)"; \
+	done
+
+
+	@set -e; \
 	for target in $(Srcs); do \
-		echo -e "🧩 $(BLUE)vendor$(RESET)::$(ORANGE)$$target$(RESET)"; \
+		echo -e "  🧩 $(ORANGE)$$target$(RESET)"; \
 		make -C $$target Build; \
 		\
 		if [ -f "$$target/.noinstall" ]; then \
@@ -37,7 +37,7 @@ Build: Basis
 			continue; \
 		fi; \
 		\
-		echo -e "- ⚡ Installing"; \
+		echo -e "  - ⚡ Installing"; \
 		rm -rf $(Out)/Moq/$$target; \
 		mkdir $(Out)/Moq/$$target; \
 		tar -xf $$target/$(Out)/Package.moq  -C $(Out)/Moq/$$target; \
@@ -61,7 +61,7 @@ Clean:
 
 	@set -e; \
 	for target in $(Srcs); do \
-		echo -e "🗑️ $(BLUE)vendor$(RESET)::$(ORANGE)$$target$(RESET)"; \
+		echo -e "  🗑️ $(ORANGE)$$target$(RESET)"; \
 		make -C $$target Clean; \
 	done
 

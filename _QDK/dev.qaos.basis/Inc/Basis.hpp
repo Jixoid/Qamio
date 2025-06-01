@@ -40,7 +40,6 @@ namespace jix
   // Char
   using c8  = char;
   using c16 = char16_t;
-  using c32 = char32_t;
 
 
 
@@ -57,6 +56,7 @@ namespace jix
   using idT = pthread_t;
   
 
+
   // Point
   using point = void*;
   #define Nil  nullptr
@@ -67,44 +67,13 @@ namespace jix
     uPtr  Size;
   };
 
+  
 
   // String
   struct jstring
   {
     void (*Dis)(jstring*);
     char* Str;
-  };
-
-
-
-  // Atomic
-  template<typename _T>
-  struct atom
-  {
-    _Atomic _T  Obj;
-
-
-    void operator++()
-    {
-      atomic_fetch_add(&Obj, 1);
-    }
-
-    void operator--()
-    {
-      atomic_fetch_sub(&Obj, 1);
-    }
-
-
-    void Push(_T Val)
-    {
-      atomic_store(&Obj, Val);
-    }
-
-    _T Pop()
-    {
-      return atomic_load(&Obj);
-    }
-  
   };
 
 }

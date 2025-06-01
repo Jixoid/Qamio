@@ -17,8 +17,8 @@ Clean:
 
 # Files
 
-$(Out)/Package.moq: Inc/Neon.hpp
-	@echo "- 🗜️ Packing"
+$(Out)/Package.moq: Inc/ParamParser.hpp
+	@echo "  - 🗜️ Packing"
 
 	@rm -f $(Out)/Package.moq
 	@tar -cf $(Out)/Package.moq  -C . Inc

@@ -16,13 +16,11 @@ Clean:
 	@rm -rf $(Out)
 
 
-
 # Files
 
-$(Out)/Package.moq: Inc/JConf.hpp
-	@echo "- 🗜️ Packing"
+$(Out)/Package.moq: Inc/Basis.hpp
+	@echo "  - 🗜️ Packing"
 
 	@rm -f $(Out)/Package.moq
-	@tar -cf $(Out)/Package.moq  -C . Inc  -C @Out Lib
-
+	@tar -cf $(Out)/Package.moq  -C . Inc
 

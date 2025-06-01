@@ -11,13 +11,13 @@ Srcs = \
 	Widget/Standard.cpp
 
 Dirs = \
-	$(SYS)/com.qaos.basis-devel/Inc \
-	$(SYS)/com.qaos.nucleol-devel/Inc \
-	$(SYS)/com.qaos.jconf-devel/Inc
+	$(QDK)/dev.qaos.basis/Inc \
+	$(QDK)/dev.qaos.nucleol/Inc \
+	$(QDK)/dev.qaos.jconf/Inc
 
 Links = \
-	$(SYS)/com.qaos.nucleol/$(Lib)/Nucleol.o \
-	-L$(SYS)/com.qaos.jconf/$(Lib) -lJConf -Wl,-rpath,/System/Moq/com.qaos.jconf/Lib
+	$(SYS)/lib.qaos.nucleol/$(Lib)/Nucleol.o \
+	-L$(SYS)/lib.qaos.jconf/$(Lib) -lJConf -Wl,-rpath,/System/Moq/lib.qaos.jconf/Lib
 
 
 Incs = $(foreach dir,$(Dirs),-I$(dir))
@@ -49,7 +49,7 @@ Clean:
 # Files
 
 $(Out)/Package.moq: $(Nuc)/Main.qo
-	@echo "- 🗜️ Packing"
+	@echo "  - 🗜️ Packing"
 
 	@rm -f $(Out)/Package.moq
 	@tar -cf $(Out)/Package.moq  -C @Out Nuc
@@ -57,21 +57,21 @@ $(Out)/Package.moq: $(Nuc)/Main.qo
 
 
 $(Nuc)/Main.qo: $(Nuc)/Main.qo.bc
-	@echo "- 🔨 Main.qo"
+	@echo "  - 🔨 Main.qo"
 	@$(CP) -shared $(Links) $(Nuc)/Main.qo.bc \
 		-o $(Nuc)/Main.qo
 
 
 
 $(Nuc)/Main.qo.bc: $(Objs)
-	@echo "- 🔗 Main.qo.bc"
+	@echo "  - 🔗 Main.qo.bc"
 	@llvm-link $(Objs) \
 		-o $(Nuc)/Main.qo.bc
 
 
 
 $(Tmp)/%.bc: */%.cpp $(Deps)
-	@echo "- ⚙️ $(notdir $@)"
+	@echo "  - ⚙️ $(notdir $@)"
 	@$(LP) -DModule=\"$(Module)\" $(Incs) $< \
 		-o $@
 

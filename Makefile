@@ -20,48 +20,78 @@ Config:
 
 
 Compile:
-	@echo "qamio builder"
-	@echo "Mode: Compile"
+	@echo "♦️ Compile"
 	@echo
 
+
+	@echo -e "💠 $(BLUE)qdk$(RESET): $(shell cat _QDK/_Config/Head.txt)"
+	@$(MAKE) -C _QDK  Build
+	@echo
+
+	@echo -e "💠 $(BLUE)system$(RESET): $(shell cat _System/_Config/Head.txt)"
 	@$(MAKE) -C _System  Build
-	@$(MAKE) -C _Vendor  Build
-	@$(MAKE) -C _Product Build
-	@$(MAKE) -C _Data    Build
-
 	@echo
-	@echo "Successfuly compiled!"
+	
+	@echo -e "💠 $(BLUE)vendor$(RESET): $(shell cat _Vendor/_Config/Head.txt)"
+	@$(MAKE) -C _Vendor  Build
+	@echo
 
+	@echo -e "💠 $(BLUE)product$(RESET): $(shell cat _Product/_Config/Head.txt)"
+	@$(MAKE) -C _Product Build
+	@echo
+
+	@echo -e "💠 $(BLUE)data$(RESET)"
+	@$(MAKE) -C _Data    Build
+	@echo
+
+	@echo "Successfuly Compiled!"
+	@echo
+	@echo
 
 
 Clean:
-	@echo "qamio builder"
-	@echo "Mode: Clean"
+	@echo "♦️ Clean"
 	@echo
 
+	@echo -e "💠 $(BLUE)qdk$(RESET): $(shell cat _QDK/_Config/Head.txt)"
+	@$(MAKE) -C _QDK  Clean
+	@echo
+
+	@echo -e "💠 $(BLUE)system$(RESET): $(shell cat _System/_Config/Head.txt)"
 	@$(MAKE) -C _System  Clean
+	@echo
+	
+	@echo -e "💠 $(BLUE)vendor$(RESET): $(shell cat _Vendor/_Config/Head.txt)"
 	@$(MAKE) -C _Vendor  Clean
+	@echo
+
+	@echo -e "💠 $(BLUE)product$(RESET): $(shell cat _Product/_Config/Head.txt)"
 	@$(MAKE) -C _Product Clean
+	@echo
+
+	@echo -e "💠 $(BLUE)data$(RESET)"
 	@$(MAKE) -C _Data    Clean
+	@echo
+
+	@echo
 
 
 
-DISK = Dev/Mount/System
+DISK = Dev/Mount/Disk1
 Build:
-	@echo "qamio builder"
-	@echo "Mode: Build"
+	@echo "♦️ Build"
 	@echo
 
 
 # Clean up
-	@echo "> Clean up"
+	@echo "🗑️ Clean up"
 
 	@rm -rf $(DISK)/*
 
 
 
 # Linux Basis
-	@echo "> Linux Basis"
+	@echo "💠 Linux Basis"
 
 	@mkdir $(DISK)/Dev
 	@mkdir $(DISK)/Proc
@@ -76,69 +106,81 @@ Build:
 
 
 # Flashing Basis
-	@echo "> Flashing Parts"
+	@echo "🔥 Flashing Parts"
 
+	@echo "  ⚡ System"
 	@mkdir $(DISK)/System
 	@cp -r _System/@Out/*   $(DISK)/System
 
+	@echo "  ⚡ Vendor"
 	@mkdir $(DISK)/Vendor
 	@cp -r _Vendor/@Out/*   $(DISK)/Vendor
 
+	@echo "  ⚡ Product"
 	@mkdir $(DISK)/Product
 	@cp -r _Product/@Out/*  $(DISK)/Product
 
+	@echo "  ⚡ Data"
 	@mkdir $(DISK)/Data
 	@cp -r _Data/@Out/*     $(DISK)/Data
 
+	@echo
+
 
 # Bootstrap Lib
-	@echo "> Bootstrap"
+	@echo "🔗 Bootstrap"
 
 	@ln -s System/Moq/com.qaos.bootstrap/Lib $(DISK)/Lib
+
+	@echo
+	@echo
 
 
 
 Mount:
-	@echo "qamio builder"
-	@echo "Mode: Mount"
+	@echo "♦️ Mount"
 	@echo
 
 
-# System
-	@echo "> System.img"
+# Disk1
+	@echo "💠 Disk1.img"
 
 	@mkdir -p $(DISK)
 	
-	@rm -f Dev/Image/System.img
-	@truncate -s $$(jq -r .System.Size Conf/Disk.json)  Dev/Image/System.img
+	@rm -f Dev/Image/Disk1.img
+	@truncate -s $$(jq -r .Disk1.Size Conf/Disk.json)  Dev/Image/Disk1.img
 
-	@mkfs.ext4  -O casefold  Dev/Image/System.img
+	@mkfs.ext4  -O casefold  Dev/Image/Disk1.img &> /dev/null
 
-	@$(SU) mount Dev/Image/System.img $(DISK)
+	@$(SU) mount Dev/Image/Disk1.img $(DISK)
 	@$(SU) chown alforce -R $(DISK)
 
 	@rm -rf $(DISK)/*
 	@chattr +F $(DISK)
 
+	@echo
+	@echo
+
 
 
 UMount:
-	@echo "qamio builder"
-	@echo "Mode: UMount"
+	@echo "♦️ UMount"
 	@echo
 
 
 # Sync
-	@echo "> Syncing"
+	@echo "✴️ Syncing"
 	@sync
 
 
-# System
-	@echo "> System.img"
+# Disk1
+	@echo "💠 Disk1.img"
 	
 	@$(SU) umount $(DISK)
 
 	@rm -r $(DISK)
+
+	@echo
 
 
 
@@ -158,7 +200,7 @@ Start:
 		-kernel Dev/Linux.elf \
 		-append "root=/dev/sda rw  selinux=0  init=/System/Conf/Init.elf  console=ttyS0  quiet" \
 		\
-		-drive file=Dev/Image/System.img,format=raw \
+		-drive file=Dev/Image/Disk1.img,format=raw \
 		-device virtio-gpu \
 		-netdev user,id=net0 -device e1000,netdev=net0 \
 		-device usb-host,vendorid=0x03f0,productid=0x5341 \
@@ -187,7 +229,7 @@ PopLog:
 
 	@echo "> Connect Qamio"
 	@mkdir -p $(DISK)
-	@$(SU) mount Dev/Image/System.img $(DISK)
+	@$(SU) mount Dev/Image/Disk1.img $(DISK)
 
 
 	@echo "> Poping Logs"
@@ -198,6 +240,6 @@ PopLog:
 	
 
 	@echo "> Disconnect Qamio"
-	@$(SU) umount Dev/Mount/System
+	@$(SU) umount Dev/Mount/Disk1
 	@rm -r $(DISK)
 

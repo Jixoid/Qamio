@@ -1,3 +1,8 @@
+v0.3.2:3 [Daily]
+  + Reorganized: Make Style
+  + Rebased: Package List
+
+
 v0.3.2:2 [Daily]
   + Added: Native Nuc Objs
   + Added: FPS limiter

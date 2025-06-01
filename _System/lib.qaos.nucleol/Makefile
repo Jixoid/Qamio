@@ -3,14 +3,14 @@ include ../../Make.inc
 
 # Config
 
-Module = com.qaos.nucleol
+Module = lib.qaos.nucleol
 
 Srcs = \
 	Dev/Nucleol.cpp \
 
 Dirs = \
-	$(SYS)/com.qaos.basis-devel/Inc \
-	$(SYS)/com.qaos.nucleol-devel/Inc
+	$(QDK)/dev.qaos.basis/Inc \
+	$(QDK)/dev.qaos.nucleol/Inc
 
 
 Incs = $(foreach dir,$(Dirs),-I$(dir))
@@ -40,7 +40,7 @@ Clean:
 # Files
 
 $(Out)/Package.moq: $(Lib)/Nucleol.o
-	@echo "- 🗜️ Packing"
+	@echo "  - 🗜️ Packing"
 
 	@rm -f $(Out)/Package.moq
 	@tar -cf $(Out)/Package.moq  -C @Out Lib
@@ -48,19 +48,19 @@ $(Out)/Package.moq: $(Lib)/Nucleol.o
 
 
 $(Lib)/Nucleol.o: $(Lib)/Nucleol.o.bc
-	@echo "- 🔨 Nucleol.o"
+	@echo "  - 🔨 Nucleol.o"
 	@$(CP) -c $(Lib)/Nucleol.o.bc \
 		-o $(Lib)/Nucleol.o
 
 
 $(Lib)/Nucleol.o.bc: $(Objs)
-	@echo "- 🔗 Nucleol.o.bc"
+	@echo "  - 🔗 Nucleol.o.bc"
 	@llvm-link $(Objs) \
 		-o $(Lib)/Nucleol.o.bc
 
 
 $(Tmp)/%.bc: */%.cpp $(Deps)
-	@echo "- ⚙️ $(notdir $@)"
+	@echo "  - ⚙️ $(notdir $@)"
 	@$(LP) -DModule=\"$(Module)\" $(Incs) $< \
 		-o $@
 

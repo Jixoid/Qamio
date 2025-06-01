@@ -18,7 +18,7 @@ endef
 
 # $1 Module
 define Moq_Install
-	@echo -e "- ⚡ Installing"
+	@echo -e "  - ⚡ Installing"
 	@mkdir $(Out)/Moq/$(1)
 	@tar -xf $(1)/$(Out)/Package.moq  -C $(Out)/Moq/$(1)
 endef
@@ -35,11 +35,12 @@ Lib = $(Out)/Lib
 Nuc = $(Out)/Nuc
 
 
-SYS = /home/alforce/Projeler/QAOS/_System
-VND = /home/alforce/Projeler/QAOS/_Vendor
-PRO = /home/alforce/Projeler/QAOS/_Product
-KER = /home/alforce/Projeler/QAOS/_Kernel
-DAT = /home/alforce/Projeler/QAOS/_Data
+Locate = /home/alforce/Projeler/QAOS
+QDK = $(Locate)/_QDK
+SYS = $(Locate)/_System
+VND = $(Locate)/_Vendor
+PRO = $(Locate)/_Product
+DAT = $(Locate)/_Data
 
 
 # Compile

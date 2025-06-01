@@ -9,8 +9,8 @@ Srcs = \
 	Dev/Neon.cpp \
 
 Dirs = \
-	$(SYS)/com.qaos.basis-devel/Inc \
-	$(SYS)/com.qaos.neon-devel/Inc
+	$(QDK)/dev.qaos.basis/Inc \
+	$(QDK)/dev.qaos.neon/Inc
 
 
 Incs = $(foreach dir,$(Dirs),-I$(dir))
@@ -42,7 +42,7 @@ Clean:
 # Files
 
 $(Out)/Package.moq: $(Lib)/libNeon.so
-	@echo "- 🗜️ Packing"
+	@echo "  - 🗜️ Packing"
 
 	@rm -f $(Out)/Package.moq
 	@tar -cf $(Out)/Package.moq  -C @Out Lib
@@ -50,21 +50,21 @@ $(Out)/Package.moq: $(Lib)/libNeon.so
 
 
 $(Lib)/libNeon.so: $(Lib)/libNeon.so.bc
-	@echo "- 🔨 libNeon.so"
+	@echo "  - 🔨 libNeon.so"
 	@$(CP) -shared $(Lib)/libNeon.so.bc \
 		-o $(Lib)/libNeon.so
 
 
 
 $(Lib)/libNeon.so.bc: $(Objs)
-	@echo "- 🔗 libNeon.so.bc"
+	@echo "  - 🔗 libNeon.so.bc"
 	@llvm-link $(Objs) \
 		-o $(Lib)/libNeon.so.bc
 
 
 
 $(Tmp)/%.bc: */%.cpp $(Deps)
-	@echo "- ⚙️ $(notdir $@)"
+	@echo "  - ⚙️ $(notdir $@)"
 	@$(LP) -DModule=\"$(Module)\" $(Incs) $< \
 		-o $@
 

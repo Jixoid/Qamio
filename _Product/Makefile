@@ -3,16 +3,8 @@ include ../Make.inc
 
 # Config
 
-Srcs = \
-	com.jixoid.screen \
-	com.jixoid.input \
-	com.jixoid.graphic \
-	com.jixoid.battery \
-	\
-	com.jixoid.drm \
-	com.jixoid.drm.virtio \
-	com.jixoid.cairo
-
+Plan = $(shell ls | grep "^!com.")
+Srcs = $(shell ls | grep "^com.")
 
 
 
@@ -21,8 +13,14 @@ Srcs = \
 Build: Basis
 
 	@set -e; \
+	for target in $(Plan); do \
+		echo -e "  ⭐ $(ORANGE)$$target$(RESET)"; \
+	done
+
+
+	@set -e; \
 	for target in $(Srcs); do \
-		echo -e "🧩 $(BLUE)product$(RESET)::$(ORANGE)$$target$(RESET)"; \
+		echo -e "  🧩 $(ORANGE)$$target$(RESET)"; \
 		make -C $$target Build; \
 		\
 		if [ -f "$$target/.noinstall" ]; then \
@@ -39,7 +37,7 @@ Build: Basis
 			continue; \
 		fi; \
 		\
-		echo -e "- ⚡ Installing"; \
+		echo -e "  - ⚡ Installing"; \
 		rm -rf $(Out)/Moq/$$target; \
 		mkdir $(Out)/Moq/$$target; \
 		tar -xf $$target/$(Out)/Package.moq  -C $(Out)/Moq/$$target; \
@@ -66,7 +64,7 @@ Clean:
 
 	@set -e; \
 	for target in $(Srcs); do \
-		echo -e "🗑️ $(BLUE)product$(RESET)::$(ORANGE)$$target$(RESET)"; \
+		echo -e "  🗑️ $(ORANGE)$$target$(RESET)"; \
 		make -C $$target Clean; \
 	done
 

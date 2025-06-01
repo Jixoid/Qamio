@@ -4,14 +4,14 @@ include ../../Make.inc
 
 # Config
 
-Module = com.qaos.paramparser
+Module = lib.qaos.paramparser
 
 Srcs = \
 	Dev/ParamParser.cpp \
 
 Dirs = \
-	$(SYS)/com.qaos.basis-devel/Inc \
-	$(SYS)/com.qaos.paramparser-devel/Inc \
+	$(QDK)/dev.qaos.basis/Inc \
+	$(QDK)/dev.qaos.paramparser/Inc \
 
 
 Incs = $(foreach dir,$(Dirs),-I$(dir))
@@ -43,7 +43,7 @@ Clean:
 # Files
 
 $(Out)/Package.moq: $(Lib)/libParamParser.so
-	@echo "- 🗜️ Packing"
+	@echo "  - 🗜️ Packing"
 
 	@rm -f $(Out)/Package.moq
 	@tar -cf $(Out)/Package.moq  -C @Out Lib
@@ -52,7 +52,7 @@ $(Out)/Package.moq: $(Lib)/libParamParser.so
 
 $(Lib)/libParamParser.so: $(Lib)/libParamParser.so.bc
 
-	@echo "- 🔨 libParamParser.so"
+	@echo "  - 🔨 libParamParser.so"
 
 	@$(CP) -shared $(Lib)/libParamParser.so.bc \
 		-o $(Lib)/libParamParser.so
@@ -60,14 +60,14 @@ $(Lib)/libParamParser.so: $(Lib)/libParamParser.so.bc
 
 
 $(Lib)/libParamParser.so.bc: $(Objs)
-	@echo "- 🔗 libParamParser.so.bc"
+	@echo "  - 🔗 libParamParser.so.bc"
 	@llvm-link $(Objs) \
 		-o $(Lib)/libParamParser.so.bc
 
 
 
 $(Tmp)/%.bc: */%.cpp $(Deps)
-	@echo "- ⚙️ $(notdir $@)"
+	@echo "  - ⚙️ $(notdir $@)"
 	@$(LP) -DModule=\"$(Module)\" $(Incs) $< \
 		-o $@
 

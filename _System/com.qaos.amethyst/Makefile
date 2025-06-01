@@ -10,13 +10,13 @@ Srcs = \
 	Modules/Modules.cpp
 
 Dirs = \
-	$(SYS)/com.qaos.basis-devel/Inc \
-	$(SYS)/com.qaos.nucleol-devel/Inc \
-	$(SYS)/com.qaos.jconf-devel/Inc
+	$(QDK)/dev.qaos.basis/Inc \
+	$(QDK)/dev.qaos.nucleol/Inc \
+	$(QDK)/dev.qaos.jconf/Inc
 
 Links = \
-	$(SYS)/com.qaos.nucleol/$(Lib)/Nucleol.o \
-	-L$(SYS)/com.qaos.jconf/$(Lib) -lJConf -Wl,-rpath,/System/Moq/com.qaos.jconf/Lib
+	$(SYS)/lib.qaos.nucleol/$(Lib)/Nucleol.o \
+	-L$(SYS)/lib.qaos.jconf/$(Lib) -lJConf -Wl,-rpath,/System/Moq/lib.qaos.jconf/Lib
 
 
 Incs = $(foreach dir,$(Dirs),-I$(dir))
@@ -49,7 +49,7 @@ Clean:
 # Files
 
 $(Out)/Package.moq: $(Bin)/Main.elf
-	@echo "- 🗜️ Packing"
+	@echo "  - 🗜️ Packing"
 
 	@rm -f $(Out)/Package.moq
 	@tar -cf $(Out)/Package.moq  -C @Out Bin
@@ -57,19 +57,19 @@ $(Out)/Package.moq: $(Bin)/Main.elf
 
 
 $(Bin)/Main.elf: $(Bin)/Main.elf.bc
-	@echo "- 🔨 Main.elf"
+	@echo "  - 🔨 Main.elf"
 	@$(CP) $(Links) $(Bin)/Main.elf.bc \
 		-o $(Bin)/Main.elf
 
 
 $(Bin)/Main.elf.bc: $(Objs)
-	@echo "- 🔗 Main.elf.bc"
+	@echo "  - 🔗 Main.elf.bc"
 	@llvm-link $(Objs) \
 		-o $(Bin)/Main.elf.bc
 
 
 $(Tmp)/%.bc: */%.cpp $(Deps)
-	@echo "- ⚙️ $(notdir $@)"
+	@echo "  - ⚙️ $(notdir $@)"
 	@$(LP) -DModule=\"$(Module)\" $(Incs) $< \
 		-o $@
 

@@ -4,10 +4,13 @@
 #include <filesystem>
 
 #include "Basis.hpp"
-#include "ParamParser.hh"
+
+#include "ParamParser.hpp"
 #include "JConf.hpp"
 
 using namespace std;
+using namespace jix;
+
 
 
 struct {
@@ -28,86 +31,94 @@ void __Compile();
 void __Decompile();
 
 
-int main(int ArgC, char* ArgV[]) {
 
-  // Parse Params
-  ParamParser·Parse(ArgC, ArgV);
+int    FileC;
+char **FileV;
 
+int ModC = 1;
+ParamParser::mod Mods[] =
+{
+  {
+    .Name = "help\n",
+    .Method = &__Help,
 
-  // Choose Mode
-  if (ParamParser·Params.Modes.size() == 0)
-    __Help();
+    .Params = {},
+    .ParamC = 0,
 
-  elif (ParamParser·Params.Modes[0] == "help" || ParamParser·Params.Modes[0] == "h")
-    __Help();
-
-  elif (ParamParser·Params.Modes[0] == "version" || ParamParser·Params.Modes[0] == "v")
-    __Version();
-
-  elif (ParamParser·Params.Modes[0] == "compile" || ParamParser·Params.Modes[0] == "c")
-    __Compile();
-
-  elif (ParamParser·Params.Modes[0] == "decompile" || ParamParser·Params.Modes[0] == "d")
-    __Decompile();
-
-  else {
-    cout << "Mode not found: " << ParamParser·Params.Modes[0] << endl;
-    exit(1);
+    .Mods = {},
+    .ModC = 0,
   }
+};
+
+
+int main(int ArgC, char* ArgV[])
+{
+  // Parse Params
+  ParamParser::Parse(ArgC, ArgV, ModC, Mods, FileC, FileV);
 
   return 0;
 }
 
 
-void __Help() {
+void __Help()
+{
   cout << "Mode: Help" << endl;
-
 }
 
-void __Version() {
+void __Version()
+{
   cout << "Mode: Version" << endl;
 
   cout << "v" << Ver.MainVer << "." << Ver.MajVer << "." << Ver.MinVer << ":" << Ver.PatchVer << endl;
-
 }
 
 
 
 
-void __Compile() {
+void __Compile()
+{
   cout << "Mode: Compile" << endl;
 
   // Input file
-  if (! filesystem::exists(ParamParser·Params.Vars["file"]))
+  if (FileC != 2)
+  {
+    cerr << "Invalid file parametemers" << endl;
+    exit(2);
+  }
+
+  if (! filesystem::exists(string(FileV[0])))
     exit(2);
 
   
-  cJConf Engine;
 
+  JConf::cStc *Conf = JConf::ParseRaw(string(FileV[0]));
 
-  cJConf::cStc *Conf = Engine.ParseRaw(ParamParser·Params.Vars["file"]);
+  JConf::WriteBin(string(FileV[1]), Conf);
 
-  
-  Engine.WriteBin(ParamParser·Params.Vars["dest"], Conf);
 
   delete Conf;
 }
 
-void __Decompile() {
+void __Decompile()
+{
   cout << "Mode: Decompile" << endl;
 
   // Input file
-  if (! filesystem::exists(ParamParser·Params.Vars["file"]))
+  if (FileC != 2)
+  {
+    cerr << "Invalid file parametemers" << endl;
+    exit(2);
+  }
+
+  if (! filesystem::exists(string(FileV[0])))
     exit(2);
 
     
-  cJConf Engine;
 
+  JConf::cStc *Conf = JConf::ParseBin(string(FileV[0]));
 
-  cJConf::cStc *Conf = Engine.ParseBin(ParamParser·Params.Vars["file"]);
+  JConf::WriteRaw(string(FileV[1]), Conf);
 
-  
-  Engine.WriteRaw(ParamParser·Params.Vars["dest"], Conf);
 
   delete Conf;
 }

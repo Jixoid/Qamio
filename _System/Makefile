@@ -3,35 +3,8 @@ include ../Make.inc
 
 # Config
 
-Srcs = \
-	com.qaos.bootstrap \
-	com.qaos.basis-devel \
-	\
-	com.qaos.crypto \
-	\
-	com.qaos.paramparser-devel \
-	com.qaos.paramparser \
-	\
-	com.qaos.neon-devel \
-	com.qaos.neon \
-	\
-	com.qaos.jconf-devel \
-	com.qaos.jconf \
-	\
-	com.qaos.nucleol-devel \
-	com.qaos.nucleol \
-	\
-	com.qaos.amethyst \
-	\
-	com.qaos.bootanim \
-	com.qaos.wedling \
-	com.qaos.window \
-	com.qaos.login \
-	com.qaos.system-ui \
-	\
-	com.qaos.font.noto \
-	com.qaos.font.noto-mono
-
+Plan = $(shell ls | grep "^!com.")
+Srcs = $(shell ls | grep "^lib.") $(shell ls | grep "^com.")
 
 
 
@@ -40,8 +13,14 @@ Srcs = \
 Build: Basis
 
 	@set -e; \
+	for target in $(Plan); do \
+		echo -e "  ⭐ $(ORANGE)$$target$(RESET)"; \
+	done
+
+
+	@set -e; \
 	for target in $(Srcs); do \
-		echo -e "🧩 $(BLUE)system$(RESET)::$(ORANGE)$$target$(RESET)"; \
+		echo -e "  🧩 $(ORANGE)$$target$(RESET)"; \
 		make -C $$target Build; \
 		\
 		if [ -f "$$target/.noinstall" ]; then \
@@ -58,7 +37,7 @@ Build: Basis
 			continue; \
 		fi; \
 		\
-		echo -e "- ⚡ Installing"; \
+		echo -e "  - ⚡ Installing"; \
 		rm -rf $(Out)/Moq/$$target; \
 		mkdir $(Out)/Moq/$$target; \
 		tar -xf $$target/$(Out)/Package.moq  -C $(Out)/Moq/$$target; \
@@ -85,7 +64,7 @@ Clean:
 
 	@set -e; \
 	for target in $(Srcs); do \
-		echo -e "🗑️ $(BLUE)system$(RESET)::$(ORANGE)$$target$(RESET)"; \
+		echo -e "  🗑️ $(ORANGE)$$target$(RESET)"; \
 		make -C $$target Clean; \
 	done
 

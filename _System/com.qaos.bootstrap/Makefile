@@ -19,7 +19,7 @@ Clean:
 # Files
 
 $(Out)/Package.moq:
-	@echo "- 🗜️ Packing"
+	@echo "  - 🗜️ Packing"
 
 	@rm -f $(Out)/Package.moq
 	@tar -cf $(Out)/Package.moq  -C . Lib

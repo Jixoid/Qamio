@@ -10,10 +10,10 @@ using namespace std;
 #include "Basis.hpp"
 
 
-namespace jix::JConf {
 
-  extern
-  const char *_c_Magic;
+namespace jix::JConf
+{
+  extern const char *_c_Magic;
 
   const i8 _c_Val = 0x1;
   const i8 _c_Stc = 0x2;
@@ -66,5 +66,4 @@ namespace jix::JConf {
 
   cStc* ParseBin(string FPath);
   void  WriteBin(string FPath, cStc *Data);
-
 }

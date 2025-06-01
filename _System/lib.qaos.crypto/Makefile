@@ -10,6 +10,7 @@ Build: Basis $(Out)/Package.moq
 Basis:
 	@mkdir -p $(Out)
 
+
 Clean:
 	@rm -rf $(Out)
 
@@ -17,9 +18,9 @@ Clean:
 
 # Files
 
-$(Out)/Package.moq: Inc/ParamParser.hpp
-	@echo "- 🗜️ Packing"
+$(Out)/Package.moq:
+	@echo "  - 🗜️ Packing"
 
 	@rm -f $(Out)/Package.moq
-	@tar -cf $(Out)/Package.moq  -C . Inc
+	@tar -cf $(Out)/Package.moq  -C . Lib
 

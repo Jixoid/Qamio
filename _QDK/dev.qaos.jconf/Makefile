@@ -19,9 +19,10 @@ Clean:
 
 # Files
 
-$(Out)/Package.moq: Inc/Nucleol.hpp
-	@echo "- 🗜️ Packing"
+$(Out)/Package.moq: Inc/JConf.hpp
+	@echo "  - 🗜️ Packing"
 
 	@rm -f $(Out)/Package.moq
-	@tar -cf $(Out)/Package.moq  -C . Inc
+	@tar -cf $(Out)/Package.moq  -C . Inc  -C @Out Lib
+
 

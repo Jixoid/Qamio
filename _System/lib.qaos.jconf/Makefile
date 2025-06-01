@@ -3,19 +3,14 @@ include ../../Make.inc
 
 # Config
 
-Module = com.qaos.jconf
+Module = lib.qaos.jconf
 
 Srcs = \
 	Dev/JConf.cpp \
 
 Dirs = \
 	$(QDK)/dev.qaos.basis/Inc \
-	$(QDK)/dev.qaos.paramparser/Inc \
 	$(QDK)/dev.qaos.jconf/Inc
-
-Links = \
-	-L$(SYS)/lib.qaos.jconf/$(Lib)  -lJConf  -Wl,-rpath,/System/Moq/lib.qaos.jconf/Lib \
-	-L$(SYS)/lib.qaos.paramparser/$(Lib)  -lParamParser  -Wl,-rpath,/System/Moq/lib.qaos.paramparser/Lib
 
 
 Incs = $(foreach dir,$(Dirs),-I$(dir))
@@ -37,7 +32,6 @@ Basis:
 	@mkdir -p $(Out)
 	@mkdir -p $(Tmp)
 	@mkdir -p $(Lib)
-	@mkdir -p $(Bin)
 
 
 Clean:
@@ -47,24 +41,29 @@ Clean:
 
 # Files
 
-$(Out)/Package.moq: $(Bin)/jconf.elf
+$(Out)/Package.moq: $(Lib)/libJConf.so $(Lib)/JConf.o
 	@echo "  - 🗜️ Packing"
 
 	@rm -f $(Out)/Package.moq
-	@tar -cf $(Out)/Package.moq  -C @Out Bin
+	@tar -cf $(Out)/Package.moq  -C @Out Lib
 
 
 
-$(Bin)/jconf.elf: $(Lib)/jconf.o.bc
-	@echo "  - 🔨 jconf.elf"
-	@$(CP) $(Links) $(Lib)/jconf.o.bc \
-		-o $(Bin)/jconf.elf
+$(Lib)/libJConf.so: $(Lib)/JConf.o.bc
+	@echo "  - 🔨 libJConf.so"
+	@$(CP) -shared $(Lib)/JConf.o.bc \
+		-o $(Lib)/libJConf.so
+
+$(Lib)/JConf.o: $(Lib)/JConf.o.bc
+	@echo "  - 🔨 JConf.o"
+	@$(CP) -c $(Lib)/JConf.o.bc \
+		-o $(Lib)/JConf.o
 
 
-$(Lib)/jconf.o.bc: $(Tmp)/Main.bc
-	@echo "  - 🔗 jconf.o.bc"
-	@llvm-link $(Tmp)/Main.bc \
-		-o $(Lib)/jconf.o.bc
+$(Lib)/JConf.o.bc: $(Tmp)/JConf.bc
+	@echo "  - 🔗 JConf.o.bc"
+	@llvm-link $(Tmp)/JConf.bc \
+		-o $(Lib)/JConf.o.bc
 
 
 $(Tmp)/%.bc: */%.cpp $(Deps)
