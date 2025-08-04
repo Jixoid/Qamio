@@ -1,24 +1,15 @@
-# General
-/Dev
-
-# Out
-*@Out
-
-# Binarys
-*.elf
-*.ko
-*.qo
-*.so*
-*.o
-*.a
-*.bmp
-*.bc
-
 # Helpers
-.stfolder*
-.stignore
+.obsidian
 .vscode
+.stfolder*
 
-# Config
-.config
-.config.old
+
+# Compiled files and Not applyed plans
+**@*
+**!*
+**.so.*
+
+
+# Configs
+.config*
+config.*

@@ -1,0 +1,26 @@
+Licensing Information
+
+This project contains files licensed under different licenses depending on
+their type:
+
+  Source code files written in C, C++, Pascal, Assembly, LLVM and QLang
+  (*.c, *.h, *.cpp, *.hpp, *.pas, *.s, *.ll, *.bc, *.ql, etc.) are
+  licensed under the GNU General Public License (GPL).
+
+  Build system files, including Makefile, KConfig are licensed under
+  the GNU Lesser General Public License (LGPL).
+
+  Documentation files, such as Markdown files (*.md), are licensed under
+  the Creative Commons Attribution-ShareAlike (CC BY-SA) license.
+
+
+Each file contains a header specifying the applicable license.
+Users and contributors are encouraged to review these licenses carefully.
+
+For full license texts and details, please visit the following official
+pages or LICENSES folder:
+
+  GPL License
+  LGPL License
+  CC BY-SA (Creative Commons BY-SA) License
+

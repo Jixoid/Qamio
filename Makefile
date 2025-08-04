@@ -1,47 +1,58 @@
+#
+#  This file is part of QAOS.
+#
+#  This file is licensed under the GNU Lesser General Public License version 3 (LGPLv3).
+#
+#  You should have received a copy of GNU Lesser General Public License
+#  along with QAOS. If not, see <https://www.gnu.org/licenses/>.
+#
+#  Copyright (c) 2025 by Kadir Aydın.
+#
+
+
+
 include Make.inc
-
-
-SU = sudo
 
 
 include .config
 export $(shell sed '/^\s*#/d;/^\s*$$/d;s/=.*//' .config)
 
 
-CONFIG = $(shell Tools/ParseConfig.sh)
-export CONFIG
-
-
 
 .PHONY: Config
 Config:
-	@Tools/mconf Config/Main.kconfig
+	@Tools/mconf '&Conf/Main.kconfig'
 
 
 
-Compile:
+config.h: .config
+	@echo "♦️ Reconfig"
+	@echo
+
+	@$(MAKE) Clean
+
+	@Tools/ParseConfig.sh
+
+
+Compile: config.h
 	@echo "♦️ Compile"
 	@echo
 
 
-	@echo -e "💠 $(BLUE)qdk$(RESET): $(shell cat _QDK/_Config/Head.txt)"
-	@$(MAKE) -C _QDK  Build
-	@echo
-
-	@echo -e "💠 $(BLUE)system$(RESET): $(shell cat _System/_Config/Head.txt)"
-	@$(MAKE) -C _System  Build
+	@echo -e "💠 $(BLUE)system$(RESET): $(shell cat 'Part/System/&Conf/Head.txt')"
+	@$(MAKE) -C Part/System  Build
 	@echo
 	
-	@echo -e "💠 $(BLUE)vendor$(RESET): $(shell cat _Vendor/_Config/Head.txt)"
-	@$(MAKE) -C _Vendor  Build
+	@echo -e "💠 $(BLUE)vendor$(RESET): $(shell cat 'Part/Vendor/&Conf/Head.txt')"
+	@$(MAKE) -C Part/Vendor  Build
 	@echo
 
-	@echo -e "💠 $(BLUE)product$(RESET): $(shell cat _Product/_Config/Head.txt)"
-	@$(MAKE) -C _Product Build
+	@echo -e "💠 $(BLUE)product$(RESET): $(shell cat 'Part/Product/&Conf/Head.txt')"
+	@$(MAKE) -C Part/Product Build
 	@echo
 
-	@echo -e "💠 $(BLUE)data$(RESET)"
-	@$(MAKE) -C _Data    Build
+	@echo -e "💠 $(BLUE)data$(RESET): preloaded"
+	@$(MAKE) -C Part/Data    Build
 	@echo
 
 	@echo "Successfuly Compiled!"
@@ -53,31 +64,28 @@ Clean:
 	@echo "♦️ Clean"
 	@echo
 
-	@echo -e "💠 $(BLUE)qdk$(RESET): $(shell cat _QDK/_Config/Head.txt)"
-	@$(MAKE) -C _QDK  Clean
-	@echo
 
-	@echo -e "💠 $(BLUE)system$(RESET): $(shell cat _System/_Config/Head.txt)"
-	@$(MAKE) -C _System  Clean
+	@echo -e "💠 $(BLUE)system$(RESET): $(shell cat 'Part/System/&Conf/Head.txt')"
+	@$(MAKE) -C Part/System  Clean
 	@echo
 	
-	@echo -e "💠 $(BLUE)vendor$(RESET): $(shell cat _Vendor/_Config/Head.txt)"
-	@$(MAKE) -C _Vendor  Clean
+	@echo -e "💠 $(BLUE)vendor$(RESET): $(shell cat 'Part/Vendor/&Conf/Head.txt')"
+	@$(MAKE) -C Part/Vendor  Clean
 	@echo
 
-	@echo -e "💠 $(BLUE)product$(RESET): $(shell cat _Product/_Config/Head.txt)"
-	@$(MAKE) -C _Product Clean
+	@echo -e "💠 $(BLUE)product$(RESET): $(shell cat 'Part/Product/&Conf/Head.txt')"
+	@$(MAKE) -C Part/Product Clean
 	@echo
 
 	@echo -e "💠 $(BLUE)data$(RESET)"
-	@$(MAKE) -C _Data    Clean
+	@$(MAKE) -C Part/Data    Clean
 	@echo
 
 	@echo
 
 
 
-DISK = Dev/Mount/Disk1
+DISK = @Dev/Mount/Disk1
 Build:
 	@echo "♦️ Build"
 	@echo
@@ -99,7 +107,17 @@ Build:
 
 
 
-# Cache
+# Qamio Basis
+	@echo "💠 Qamio Basis"
+
+	@mkdir $(DISK)/System
+	@mkdir $(DISK)/Vendor
+	@mkdir $(DISK)/Product
+	@mkdir $(DISK)/Data
+
+
+	@mkdir $(DISK)/Neon
+	
 	@mkdir $(DISK)/Cache
 	@mkdir $(DISK)/Cache/Font
 
@@ -109,20 +127,16 @@ Build:
 	@echo "🔥 Flashing Parts"
 
 	@echo "  ⚡ System"
-	@mkdir $(DISK)/System
-	@cp -r _System/@Out/*   $(DISK)/System
+	@cp -r Part/System/@Out/*   $(DISK)/System
 
 	@echo "  ⚡ Vendor"
-	@mkdir $(DISK)/Vendor
-	@cp -r _Vendor/@Out/*   $(DISK)/Vendor
+	@cp -r Part/Vendor/@Out/*   $(DISK)/Vendor
 
 	@echo "  ⚡ Product"
-	@mkdir $(DISK)/Product
-	@cp -r _Product/@Out/*  $(DISK)/Product
+	@cp -r Part/Product/@Out/*  $(DISK)/Product
 
 	@echo "  ⚡ Data"
-	@mkdir $(DISK)/Data
-	@cp -r _Data/@Out/*     $(DISK)/Data
+	@cp -r Part/Data/@Out/*     $(DISK)/Data
 
 	@echo
 
@@ -147,13 +161,13 @@ Mount:
 
 	@mkdir -p $(DISK)
 	
-	@rm -f Dev/Image/Disk1.img
-	@truncate -s $$(jq -r .Disk1.Size Conf/Disk.json)  Dev/Image/Disk1.img
+	@rm -f @Dev/Image/Disk1.img
+	@truncate -s $$(jq -r .Disk1.Size @Dev/Disk.json)  @Dev/Image/Disk1.img
 
-	@mkfs.ext4  -O casefold  Dev/Image/Disk1.img &> /dev/null
+	@mkfs.ext4  -O casefold  @Dev/Image/Disk1.img -q
 
-	@$(SU) mount Dev/Image/Disk1.img $(DISK)
-	@$(SU) chown alforce -R $(DISK)
+	@sudo mount @Dev/Image/Disk1.img $(DISK)
+	@sudo chown alforce -R $(DISK)
 
 	@rm -rf $(DISK)/*
 	@chattr +F $(DISK)
@@ -176,7 +190,7 @@ UMount:
 # Disk1
 	@echo "💠 Disk1.img"
 	
-	@$(SU) umount $(DISK)
+	@sudo umount $(DISK)
 
 	@rm -r $(DISK)
 
@@ -197,16 +211,16 @@ Start:
 		-m 6G \
 		-usb \
 		\
-		-kernel Dev/Linux.elf \
-		-append "root=/dev/sda rw  selinux=0  init=/System/Conf/Init.elf  console=ttyS0  quiet" \
+		-kernel  @Dev/Linux.elf \
+		-append "root=/dev/sda rw  selinux=0  init=/System/Moq/com.qaos.kernel/Bin/Main.elf  console=ttyS0  quiet" \
 		\
-		-drive file=Dev/Image/Disk1.img,format=raw \
+		-drive file=@Dev/Image/Disk1.img,format=raw \
 		-device virtio-gpu \
 		-netdev user,id=net0 -device e1000,netdev=net0 \
 		-device usb-host,vendorid=0x03f0,productid=0x5341 \
 		\
 		-display sdl \
-		-serial stdio \
+		-serial stdio
 
 
 #	-device ich9-intel-hda -device hda-output
@@ -220,26 +234,28 @@ PopLog:
 	@echo "qamio emulater"
 	@echo
 
-	@rm -rf Log
+	@rm -rf @Dev/Log
 
 
-	@echo "> Sync"
+	@echo "✴️ Sync"
 	@sync
 
 
-	@echo "> Connect Qamio"
+	@echo "🔗 Connect Qamio"
 	@mkdir -p $(DISK)
-	@$(SU) mount Dev/Image/Disk1.img $(DISK)
+	@sudo mount @Dev/Image/Disk1.img $(DISK)
 
 
-	@echo "> Poping Logs"
-	@cp -r $(DISK)/Data/Log .
+	@echo "💾 Poping Logs"
+	@cp -r $(DISK)/Data/Log @Dev
 	
 	@rm -rf $(DISK)/Data/Log
 	@mkdir $(DISK)/Data/Log
 	
 
-	@echo "> Disconnect Qamio"
-	@$(SU) umount Dev/Mount/Disk1
+	@echo "⛓️‍💥 Disconnect Qamio"
+	@sudo umount @Dev/Mount/Disk1
 	@rm -r $(DISK)
 
+	@cat @Dev/Log/Qamio.log
+	

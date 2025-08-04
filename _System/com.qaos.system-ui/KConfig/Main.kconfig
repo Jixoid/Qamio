@@ -1,7 +1,0 @@
-
-menu "SystemUI"
-  depends on Session_Graphic
-
-
-
-endmenu

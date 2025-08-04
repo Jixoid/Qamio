@@ -1,0 +1,12 @@
+mainmenu "QAOS Configuration"
+
+
+source "&Conf/Compile.kconfig"
+
+
+
+source "Part/System/&Conf/Main.kconfig"
+
+source "Part/Vendor/&Conf/Main.kconfig"
+
+source "Part/Product/&Conf/Main.kconfig"

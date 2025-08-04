@@ -1,0 +1,21 @@
+#
+#  This file is part of QAOS.
+#
+#  This file is licensed under the GNU Lesser General Public License version 3 (LGPLv3).
+#
+#  You should have received a copy of GNU Lesser General Public License
+#  along with QAOS. If not, see <https://www.gnu.org/licenses/>.
+#
+#  Copyright (c) 2025 by Kadir Aydın.
+#
+
+
+
+menu "Vendor (JixUI v0.1.0:0)"
+
+
+source "Part/Vendor/&Conf/Graphic.kconfig"
+source "Part/Vendor/&Conf/Display.kconfig"
+
+
+endmenu

@@ -1,0 +1,41 @@
+#
+#  This file is part of QAOS.
+#
+#  This file is licensed under the GNU Lesser General Public License version 3 (LGPLv3).
+#
+#  You should have received a copy of GNU Lesser General Public License
+#  along with QAOS. If not, see <https://www.gnu.org/licenses/>.
+#
+#  Copyright (c) 2025 by Kadir Aydın.
+#
+
+
+
+menu "Device"
+
+
+config Dev_Brand
+  string "Brand"
+  default "Jix"
+
+config Dev_Model
+  string "Model"
+  default "v1"
+
+
+
+menu "Screen"
+
+config Dev_Screen_Width
+  int "Width"
+  default 1600
+
+config Dev_Screen_Height
+  int "Height"
+  default 900
+
+endmenu
+
+
+
+endmenu
