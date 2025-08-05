@@ -67,7 +67,7 @@ $(Out)/Package.moq: $(Bin)/Main.elf
 	@echo "  - 📦️ Packing"
 
 	@rm -f $(Out)/Package.moq
-	@tar -cf $(Out)/Package.moq  -C . Package.conf  -C @Out Bin
+	@tar -cf $(Out)/Package.moq  -C . Package.conf  -C $(Out) Bin
 
 
 

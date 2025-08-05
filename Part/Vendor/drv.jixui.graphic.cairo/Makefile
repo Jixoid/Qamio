@@ -63,7 +63,7 @@ $(Out)/Package.moq: $(Nuc)/Main.qo
 	@echo "  - 📦️ Packing"
 
 	@rm -f $(Out)/Package.moq
-	@tar -cf $(Out)/Package.moq  -C . Package.conf  -C . Lib  -C @Out Nuc
+	@tar -cf $(Out)/Package.moq  -C . Package.conf  -C . Lib  -C $(Out) Nuc
 
 
 

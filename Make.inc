@@ -10,6 +10,9 @@
 #
 
 
+# Bash
+SHELL = /bin/bash
+
 
 # Colors
 
@@ -23,7 +26,7 @@ RESET = \e[0m
 
 # Params
 
-Out = @Out
+Out = !Out
 Tmp = $(Out)/Tmp
 Bin = $(Out)/Bin
 Lib = $(Out)/Lib
@@ -32,6 +35,7 @@ Nuc = $(Out)/Nuc
 
 Locate = /home/alforce/Projeler/QAOS
 QDK = $(Locate)/QDK
+EXT = $(Locate)/ExternLib
 SYS = $(Locate)/Part/System
 VND = $(Locate)/Part/Vendor
 PRO = $(Locate)/Part/Product

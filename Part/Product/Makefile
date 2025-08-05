@@ -16,7 +16,7 @@ include ../../Make.inc
 
 # Config
 
-Plan = $(shell ls | grep "^!")
+Plan = $(shell ls | grep "^@")
 Srcs = $(shell ls | grep "^kmod.") $(shell ls | grep "^com.")
 
 
@@ -27,7 +27,7 @@ Build: Basis
 
 	@set -e; \
 	for target in $(Plan); do \
-		echo -e "  ⭐ $(ORANGE)$$target$(RESET)"; \
+		echo -e "  ⭐ $(GRAY)$$(echo $$target | sed 's/^@//')$(RESET)"; \
 	done
 
 

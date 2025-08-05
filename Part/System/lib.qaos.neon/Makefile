@@ -60,7 +60,7 @@ $(Out)/Package.moq: $(Lib)/libNeon.so
 	@echo "  - 📦️ Packing"
 
 	@rm -f $(Out)/Package.moq
-	@tar -cf $(Out)/Package.moq  -C . Package.conf  -C @Out Lib
+	@tar -cf $(Out)/Package.moq  -C . Package.conf  -C $(Out) Lib
 
 
 
