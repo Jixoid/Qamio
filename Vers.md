@@ -1,4 +1,8 @@
 
+### v0.4.1:3 [Daily Alpha]
+ - Added: README.md
+
+___
 ### v0.4.1:2 [Daily]
  - Added: Fpc pascal compiler
  - Added: CleanAll and ExternLib was linked to it
