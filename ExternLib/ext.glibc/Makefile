@@ -27,7 +27,7 @@ Clean:
 $(STAMP): $(TARBALL)
 	@tar -xf $(TARBALL) -C $(Out)
 
-	@echo "  - 🔨 Compiling"
+	@echo "  - 🔨 Compiling (-j$(shell nproc))"
 	@konsole -e bash -c " \
 		cd $(Out) && cd glibc-* && \
 		\
@@ -38,6 +38,7 @@ $(STAMP): $(TARBALL)
 		make -j$(nproc) && \
 		\
 		find . -type f,l  -name 'lib*.so*'  -exec cp {} ../../../$(Lib) \; && \
+		cp elf/ld.so  ../../../$(Lib)/ld-qamio.elf && \
 		\
 		cd ../../../ && touch $(STAMP) \
 		\
@@ -66,4 +67,6 @@ $(TARBALL):
 		\
 		echo "  - ⬇️ Downloading glibc-$(VER)"; \
 		curl --progress-bar -L https://ftp.gnu.org/gnu/glibc/glibc-$(VER).tar.xz -o "$(TARBALL)"; \
+		\
+		echo -ne "\033[1A\033[2K"; \
 	fi

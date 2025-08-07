@@ -147,14 +147,6 @@ Build:
 	@cp -r Part/Data/$(Out)/*     $(DISK)/Data
 
 	@echo
-
-
-# Bootstrap Lib
-	@echo "🔗 Bootstrap"
-
-	@ln -s System/Moq/com.qaos.bootstrap/Lib $(DISK)/Lib
-
-	@echo
 	@echo
 
 

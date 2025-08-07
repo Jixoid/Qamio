@@ -1,6 +1,13 @@
 
+### v0.4.1:1 [Daily]
+ - Fixed: dynamic linker (ld-qamio.elf)
+ - Removed: /Lib (-> /System/Moq/lib.qaos.bootstrap/Lib)
+ - Chaged: ExterLibs use ext. prefix
+ - Added: a ExternLib (ext.gcc)
+
+___
 ## v0.4.1:0 [Daily]
- - Added: Added external libraries as dependencies (ExternLib) [lib.drm, lib.glibc, lib.openssl]
+ - Added: Added external libraries as dependencies (ExternLib) (lib.drm, lib.glibc, lib.openssl)
  - Changes:
    - Output directory `@Out` to `!Out`
    - Device directory `@Dev` to `!Dev`

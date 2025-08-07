@@ -17,7 +17,7 @@ include ../Make.inc
 # Config
 
 Plan = $(shell ls | grep "^@")
-Srcs = $(shell ls | grep "^lib.")
+Srcs = $(shell ls | grep "^ext.")
 
 
 

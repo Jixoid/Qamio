@@ -27,7 +27,7 @@ Clean:
 $(STAMP): $(TARBALL)
 	@tar -xf $(TARBALL) -C $(Out)
 
-	@echo "  - 🔨 Compiling"
+	@echo "  - 🔨 Compiling (-j$(shell nproc))"
 	@konsole -e bash -c " \
 		cd $(Out) && cd libdrm-* && \
 		\
@@ -39,7 +39,7 @@ $(STAMP): $(TARBALL)
 			-D udev=true          \
 			-D valgrind=disabled  \
 			.. && \
-		ninja && \
+		ninja -j $$(nproc) && \
 		\
 		find . -type f,l  ! -name '*.symbols' -name '*.so*'  -exec cp {} ../../../$(Lib) \; && \
 		\
@@ -70,4 +70,6 @@ $(TARBALL):
 		\
 		echo "  - ⬇️ Downloading libdrm-$(VER)"; \
 		curl --progress-bar -L https://dri.freedesktop.org/libdrm/libdrm-$(VER).tar.xz -o "$(TARBALL)"; \
+		\
+		echo -ne "\033[1A\033[2K"; \
 	fi

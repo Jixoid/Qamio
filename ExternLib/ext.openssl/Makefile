@@ -25,7 +25,7 @@ Clean:
 
 $(STAMP): $(DIR)
 
-	@echo "  - 🔨 Compiling"
+	@echo "  - 🔨 Compiling (-j$(shell nproc))"
 	@konsole -e bash -c " \
 		cd $(DIR) && \
 		\

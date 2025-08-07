@@ -35,5 +35,5 @@ $(Out)/Package.moq:
 	@echo "  - 📦️ Packing"
 
 	@rm -f $(Out)/Package.moq
-	@tar -cf $(Out)/Package.moq  -C . Package.conf  -C $(EXT)/lib.glibc/$(Out) Lib
+	@tar -cf $(Out)/Package.moq  -C . Package.conf  -C $(EXT)/ext.glibc/$(Out) Lib  -C $(EXT)/ext.gcc/$(Out) Lib
 
