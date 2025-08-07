@@ -49,20 +49,56 @@ void cNucMng::GetNucList() { for (string Part: {"System", "Vendor", "Product"})
   for (const auto &Entry: fs::directory_iterator("/" +Part+ "/Moq"))
     if (Entry.is_directory())
     {
-      string Pkg = Entry.path().filename().string();
-
-
-      if (
-        !(
-          Pkg.rfind("hal.", 0) == 0 ||
-          Pkg.rfind("com.", 0) == 0 ||
-          Pkg.rfind("drv.", 0) == 0
-        ) ||
-        Pkg == "com.qaos.kernel"
-      )
-        continue;
+      string
+        Pkg  = Entry.path().filename().string(),
+        Path = Entry.path().string();
 
       
+      jc_stc Conf = jc_Parse((Path +"/Package.conf").c_str());
+      {
+        if (Conf == Nil)
+        {
+          Log2(Part+"::"+Pkg +"/Package.conf is not found", kernel::lWarn);
+          goto _l_Close;
+        }
+
+        
+        jc_arr Kind = jc_StcGet(Conf, "Kind");
+        if (Kind == Nil)
+        {
+          Log2(Part+"::"+Pkg +"/Package.conf -> Kind is not found", kernel::lWarn);
+          goto _l_Close;
+        }
+        else if (!jc_IsArr(Kind))
+        {
+          Log2(Part+"::"+Pkg +"/Package.conf -> Kind is not compatible", kernel::lWarn);
+          goto _l_Close;
+        }
+
+
+        for (u32 i = 0; i < jc_ArrC(Kind); i++)
+        {
+          jc_val Obj = jc_ArrGet(Kind, i);
+          if (!jc_IsVal(Obj))
+          {
+            Log2(Part+"::"+Pkg +"/Package.conf -> Kind["+to_string(i)+"] is not compatible", kernel::lWarn);
+            continue;
+          }
+
+
+          char *CStr = jc_ValGet(Obj);
+          string Str = string(CStr);
+          jc_DisStr(CStr);
+
+          if (Str == "Nuc")
+            goto _l_OK;
+        }
+      }
+      _l_Close: {jc_DisStc(Conf);}
+      continue;
+
+      _l_OK: 
+      jc_DisStc(Conf);
       Nucleols.push_back(sNucleol{
         .Package = Pkg,
         .Part = Part,

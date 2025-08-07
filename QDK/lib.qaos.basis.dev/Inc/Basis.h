@@ -16,6 +16,8 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <bits/types.h>
+#include <bits/pthreadtypes.h>
 
 
 #ifdef __cplusplus
@@ -58,9 +60,9 @@ typedef  double  f64;
 
 
 // IDs
-typedef  uid_t  idU;
-typedef  gid_t  idG;
-typedef  pid_t  idP;
+typedef  __uid_t  idU;
+typedef  __gid_t  idG;
+typedef  __pid_t  idP;
 typedef  pthread_t  idT;
 
 

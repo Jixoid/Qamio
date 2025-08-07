@@ -33,7 +33,7 @@
 #include "Modules.hpp"
 
 #include "JConf.h"
-#include "Neon.hpp"
+#include "Neon.h"
 
 #include "COM/Login.hpp"
 
@@ -184,7 +184,7 @@ void LoadKMod(string Pkg, string Mod)
     Log2(string(strerror(errno)) +": " +FPath, kernel::lPanic);
   }
 
-  Log("Loaded: Product::" +Pkg+ "->" +Mod);
+  Log("Loaded: Product::" +Pkg+ " -> " +Mod);
 
   
   free(MData);
@@ -251,6 +251,7 @@ void lkmLoadModules()
     LoadKMod(X.first, X.second);
   
 }
+
 
 void MountFS()
 {

@@ -1,4 +1,4 @@
-menu "Compiler (C C++)"
+menu "Compiler (C C++ Pas)"
 
 
 choice
@@ -27,6 +27,14 @@ endchoice
 
 config CC_Params
 	string "C Extra Params"
+	default ""
+
+config CP_Params
+	string "C++ Extra Params"
+	default ""
+
+config PP_Params
+	string "Pas Extra Params"
 	default ""
 
 

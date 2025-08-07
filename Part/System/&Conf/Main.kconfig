@@ -11,7 +11,7 @@
 
 
 
-menu "System (Qamio v0.4.0:0)"
+menu "System (Qamio v0.4.1:2)"
 
 
 source "Part/System/com.qaos.kernel/KConfig/Main.kconfig"

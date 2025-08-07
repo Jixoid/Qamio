@@ -61,12 +61,19 @@ CArg = -fPIC -IInc \
   -rdynamic \
 	\
 	-Wno-unused-result \
-  -Wno-unused-command-line-argument \
+  -Wno-unused-command-line-argument
+
+PArg = -fPIC -FuInc \
+  -k--dynamic-linker=/System/Moq/lib.qaos.bootstrap/Lib/ld-qamio.elf \
+  -k--rpath=/System/Moq/lib.qaos.bootstrap/Lib \
+  -k--export-dynamic
+
 
 
 LC = clang   -emit-llvm -c $(_O_Level) $(CArg) $(CONFIG_CC_Params) -include $(Locate)/config.h -std=c23
-LP = clang++ -emit-llvm -c $(_O_Level) $(CArg) $(CONFIG_CC_Params) -include $(Locate)/config.h -std=c++20
+LP = clang++ -emit-llvm -c $(_O_Level) $(CArg) $(CONFIG_CP_Params) -include $(Locate)/config.h -std=c++20
 
 CC = clang   $(_O_Level) $(CArg)
 CP = clang++ $(_O_Level) $(CArg)
 
+PP = /home/alforce/fpcupdeluxe/fpc/bin/x86_64-linux/fpc $(PArg) $(CONFIG_PP_Params) -Mobjfpc -Sh+

@@ -55,7 +55,7 @@ Clean:
 
 # Files
 
-$(Out)/Package.moq: $(Lib)/libJConf.so
+$(Out)/Package.moq: Package.conf $(Lib)/libJConf.so
 	@echo "  - 📦️ Packing"
 
 	@rm -f $(Out)/Package.moq

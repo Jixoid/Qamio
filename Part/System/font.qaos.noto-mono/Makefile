@@ -31,7 +31,7 @@ Clean:
 
 # Files
 
-$(Out)/Package.moq:
+$(Out)/Package.moq: Package.conf
 	@echo "  - 📦️ Packing"
 
 	@rm -f $(Out)/Package.moq

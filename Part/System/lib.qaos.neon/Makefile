@@ -19,8 +19,8 @@ include ../../../Make.inc
 Module = $(notdir $(CURDIR))
 
 Srcs = \
-	Dev/Neon.cpp \
-	Dev/Neon_Error.cpp
+	Dev/Neon.c \
+	Dev/Neon_Error.c
 
 Dirs = \
 	$(QDK)/lib.qaos.basis.dev/Inc \
@@ -56,7 +56,7 @@ Clean:
 
 # Files
 
-$(Out)/Package.moq: $(Lib)/libNeon.so
+$(Out)/Package.moq: Package.conf $(Lib)/libNeon.so
 	@echo "  - 📦️ Packing"
 
 	@rm -f $(Out)/Package.moq
@@ -83,3 +83,7 @@ $(Tmp)/%.bc: */%.cpp $(Deps)
 	@$(LP) -DModule=\"$(Module)\" $(Incs) $< \
 		-o $@
 
+$(Tmp)/%.bc: */%.c $(Deps)
+	@echo "  - ⚙️ $(notdir $@)"
+	@$(LC) -DModule=\"$(Module)\" $(Incs) $< \
+		-o $@

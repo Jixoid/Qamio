@@ -69,6 +69,31 @@ Clean:
 	@echo
 
 
+	@echo -e "💠 $(BLUE)system$(RESET): $(shell cat 'Part/System/&Conf/Head.txt')"
+	@$(MAKE) -C Part/System  Clean
+	@echo
+	
+	@echo -e "💠 $(BLUE)vendor$(RESET): $(shell cat 'Part/Vendor/&Conf/Head.txt')"
+	@$(MAKE) -C Part/Vendor  Clean
+	@echo
+
+	@echo -e "💠 $(BLUE)product$(RESET): $(shell cat 'Part/Product/&Conf/Head.txt')"
+	@$(MAKE) -C Part/Product Clean
+	@echo
+
+	@echo -e "💠 $(BLUE)data$(RESET)"
+	@$(MAKE) -C Part/Data    Clean
+	@echo
+
+	@echo
+
+
+
+CleanAll:
+	@echo "♦️ Clean All"
+	@echo
+
+
 	@echo -e "🔗 $(BLUE)externs$(RESET): dependency packages"
 	@$(MAKE) -C ExternLib    Clean
 	@echo

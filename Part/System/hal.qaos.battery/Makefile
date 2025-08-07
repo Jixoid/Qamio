@@ -56,7 +56,7 @@ Clean:
 
 # Files
 
-$(Out)/Package.moq: $(Nuc)/Main.qo
+$(Out)/Package.moq: Package.conf $(Nuc)/Main.qo
 	@echo "  - 📦️ Packing"
 
 	@rm -f $(Out)/Package.moq

@@ -63,7 +63,7 @@ Clean:
 
 # Files
 
-$(Out)/Package.moq: $(Bin)/Main.elf
+$(Out)/Package.moq: Package.conf $(Bin)/Main.elf
 	@echo "  - 📦️ Packing"
 
 	@rm -f $(Out)/Package.moq

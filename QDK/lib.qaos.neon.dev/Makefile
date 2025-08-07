@@ -31,7 +31,7 @@ Clean:
 
 # Files
 
-$(Out)/Package.moq: Inc/JConf.hpp
+$(Out)/Package.moq: Inc/Neon.h Inc/Neon_Error.h Inc/Neon.pas Inc/Neon_Error.pas
 	@echo "  - 📦️ Packing"
 
 	@rm -f $(Out)/Package.moq

@@ -1,4 +1,14 @@
 
+### v0.4.1:2 [Daily]
+ - Added: Fpc pascal compiler
+ - Added: CleanAll and ExternLib was linked to it
+ - Added: pascal header files for Basis, JConf, Neon
+ - Added: Nucleol Kind (cuntom but; Nuc,Lib,Font,KMod,...)
+ - Chages:
+   - qaos.kernel selects modules by ("Nuc" $\in$ Kind)
+   - Neon head file moved to C
+
+___
 ### v0.4.1:1 [Daily]
  - Fixed: dynamic linker (ld-qamio.elf)
  - Removed: /Lib (-> /System/Moq/lib.qaos.bootstrap/Lib)
