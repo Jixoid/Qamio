@@ -14,11 +14,14 @@
 #include <iostream>
 #include <vector>
 #include <format>
+#include <thread>
 
 #include <termios.h>
+#include <sys/wait.h>
 
 #include "Basis.h"
 #include "Kernel.hpp"
+#include "Neon.h"
 
 #include "COM/SysUI.hpp"
 #include "COM/User.hpp"
@@ -50,11 +53,85 @@ graphic::sHAL *Graphic;
 
 
 
+bool n_Accept(idA Aid)
+{
+  return true;
+}
+
+void n_Handler(contact_p Con, data_ Data)
+{
+  Log("Received data [Size: "+to_string(Data.Size)+"]");
+}
+
+
+void MessageHandler(bool *Started)
+{
+  contact_p NServer = neon_Server("com.qaos.sysui", 100);
+
+  *Started = true;
+
+
+  bool Work = true;
+
+  neon_Process(NServer, &Work, &n_Accept, &n_Handler);
+}
+
+
+
+
+
+idP StartApp(char* FPath)
+{
+  pid_t pid = fork();
+
+  if (pid < 0)
+  {
+    cerr << "fork başarısız!" << endl;
+    return 0;
+  }
+
+  if (pid == 0)
+  {
+    // Çocuk işlem (child)
+    cout << "Çocuk işlem başlıyor, PID: " << getpid() << endl;
+
+    char* args[] = {
+      FPath,
+      Nil,
+    };
+
+
+    if (execvp(args[0], args) == -1) {
+      perror("execvp başarısız");
+      exit(EXIT_FAILURE);
+    }
+
+  } else {
+
+    // Ana işlem (parent)
+    cout << "Ana işlem, PID: " << getpid() << ", Çocuk PID: " << pid << endl;
+
+    // Çocuğu bekle
+    int status;
+    waitpid(pid, &status, 0);
+
+    if (WIFEXITED(status)) {
+      cout << "Çocuk işlem normal çıktı, çıkış kodu: " << WEXITSTATUS(status) << endl;
+    } else {
+      cout << "Çocuk işlem beklenmedik şekilde sonlandı." << endl;
+    }
+  }
+
+  return pid;
+}
+
+
 // Global
 sysui::sDriver DRV = {
 
   .Start = [](idU UID)
   {
+    // Start Display
     if (Display->DRV.Count() == 0)
       Log2("No screen found", kernel::lWarn);
 
@@ -73,36 +150,34 @@ sysui::sDriver DRV = {
       }
 
     }
+    
 
+    // Draw Screen
     auto Buf = Comp_Display->DisplayG(DisSess, 0);
 
     auto Size = Graphic->DRV.SizeGet(Buf);
 
-    Log("Draw");
     Graphic->DRV.Set_Source_RGB(Buf, graphic::color(0.22,0.22,0.22));
     Graphic->DRV.Basis_Rect(Buf, graphic::rect2d{0,0, Size.W, Size.H});
     Graphic->DRV.Fill(Buf);
 
-    Graphic->DRV.Set_Source_RGB(Buf, graphic::color(0.12, 0.12, 0.12));
-    Graphic->DRV.Basis_RectR(Buf, graphic::rect2d{40,40, 400, 300}, 8);
-    Graphic->DRV.Fill(Buf);
-
-    Graphic->DRV.Set_Source_RGB(Buf, graphic::color(0.45, 0.30, 0.80));
-    Graphic->DRV.Basis_RectR(Buf, graphic::rect2d{40,40, 400, 40}, 8);
-    Graphic->DRV.Fill(Buf);
-
-    Graphic->DRV.Set_Source_RGB(Buf, graphic::color(1,1,1));
-    Graphic->DRV.Basis_Move(Buf, graphic::point2d{40+9,40+9});
-    Graphic->DRV.Set_Font_Size(Buf, 15);
-    Graphic->DRV.Text(Buf, "Hello Qamio");
-
-    Log("Graphic.Flush");
     Graphic->DRV.Flush(Buf);
     Comp_Display->DisplaySwap(DisSess, 0);
     
 
-    // Wait
-    sleep(5);
+    
+    // Run Server
+    bool Started = false;
+    thread *AThread = new thread(&MessageHandler, &Started);
+
+    while (!Started) {}
+
+
+    // Start App
+    StartApp("/Vendor/Moq/com.jixui.app/Bin/Main.elf");
+  
+
+    sleep(3600);
   },
 
 };

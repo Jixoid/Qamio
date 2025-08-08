@@ -1,4 +1,8 @@
 
+## v0.4.2:0 [Daily]
+  - Added: Argon api (almost nothing yet)
+
+___
 ### v0.4.1:3 [Daily Alpha]
  - Added: README.md
 

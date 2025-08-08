@@ -16,6 +16,7 @@
 
 #include <iostream>
 #include <vector>
+#include <filesystem>
 #include <tuple>
 #include <thread>
 #include <mutex>
@@ -32,6 +33,7 @@
 
 
 using namespace std;
+namespace fs = std::filesystem; 
 using namespace jix;
 
 
@@ -67,6 +69,13 @@ extern "C" contact_p neon_Connect(const char *ID)
 
   string Path = Neonization(ID);
   
+
+  // FileStat
+  if (!fs::is_socket(Path))
+  {
+    LastError = neon_errors::neSocket; // Target socket not found
+    return Nil;
+  }
 
   // Soketi oluştur
   Ret->Socket = socket(AF_UNIX, SOCK_STREAM, 0);
@@ -113,7 +122,7 @@ extern "C" contact_p neon_Connect(const char *ID)
   clog << "@Neon: Connect: " << ID << endl;
 
   LastError = neon_errors::neOK;
-  return Nil;
+  return Ret;
 }
 
 extern "C" contact_p neon_Server(const char *ID, u32 ConnectCount)
@@ -162,7 +171,7 @@ extern "C" contact_p neon_Server(const char *ID, u32 ConnectCount)
   clog << "@Neon: Server: " << ID << endl;
 
   LastError = neon_errors::neOK;
-  return Nil;
+  return Ret;
 }
 
 extern "C" bool      neon_Close(contact_p __Self)
@@ -204,7 +213,8 @@ void MessageHandler(contact_p __Con, bool *Work, neon_mHandler Handler)
   while (*Work)
   {
     data_ Data;
-    neon_Recv(__Con, &Data);
+    if (!neon_Recv(__Con, &Data))
+      continue;
 
     Handler(__Con, Data);
 
@@ -322,14 +332,14 @@ extern "C" bool     neon_Process(contact_p __Con, bool *Work, neon_mAccept Accep
     if (Accept != Nil)
       if (Accept(Aid) == false)
       {
-        clog << "Connection refused" << endl;
+        clog << "@Neon: Connection refused" << endl;
 
         close(SubSocket);
         continue;
       }
     
 
-    clog << "New connection has been established" << endl;
+    clog << "@Neon: New connection has been established" << endl;
 
 
     // Yeni Bağlantı
@@ -349,7 +359,7 @@ extern "C" bool     neon_Process(contact_p __Con, bool *Work, neon_mAccept Accep
       
 
       // New Thread
-      thread *AThread = new thread(&MessageHandler, ACon, Work, Handler);
+      thread *AThread = new thread(&MessageHandler, ACon, FWork, Handler);
       
 
       Con->ConList.push_back({ ACon, AThread, FWork });

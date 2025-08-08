@@ -24,6 +24,7 @@ Srcs = \
 Dirs = \
 	$(QDK)/lib.qaos.basis.dev/Inc \
 	$(QDK)/lib.qaos.kernel.dev/Inc \
+	$(QDK)/lib.qaos.neon.dev/Inc \
 	$(QDK)/com.qaos.sysui.dev/Inc \
 	$(QDK)/com.qaos.user.dev/Inc \
 	$(QDK)/hal.qaos.display.dev/Inc \
@@ -31,6 +32,7 @@ Dirs = \
 	$(QDK)/com.qaos.composer.display.dev/Inc
 
 Links = \
+	-L$(SYS)/lib.qaos.neon/$(Lib)  -lNeon  -Wl,-rpath,/System/Moq/lib.qaos.neon/Lib	
 
 
 Incs = $(foreach dir,$(Dirs),-I$(dir))
