@@ -23,27 +23,14 @@ Clean:
 
 
 # Files
-
-$(STAMP): $(TARBALL)
-	@tar -xf $(TARBALL) -C $(Out)
-
+$(STAMP): $(DIR)
 	@echo "  - 🔨 Compiling (-j$(shell nproc))"
 	@konsole -e bash -c " \
-		cd $(Out) && cd libdrm-* && \
+		cd $(DIR)/build && \
 		\
-		mkdir -p build && \
-		cd build && \
-		\
-		meson setup \
-			--buildtype=release   \
-			-D udev=true          \
-			-D valgrind=disabled  \
-			.. && \
 		ninja -j $$(nproc) && \
 		\
-		find . -type f,l  ! -name '*.symbols' -name '*.so*'  -exec cp {} ../../../$(Lib) \; && \
-		\
-		cd ../../../ && touch $(STAMP) \
+		cd ../../../../ && touch $(STAMP) \
 		\
 	  || { echo -n 'Press any key to close... '; read -n 1; exit 1; } " &> /dev/null
 
@@ -53,7 +40,31 @@ $(STAMP): $(TARBALL)
 		false; \
 	fi
 
+	@find $(DIR)/build -type f,l  ! -name '*.symbols' -name '*.so*'  -exec cp {} $(Lib) \;
+
 	@echo
+
+
+$(DIR): $(TARBALL)
+	@echo "  - ⚙️ Extract and Configure"
+
+	@tar -xf $(TARBALL) -C $(Out)
+
+	@mv $(DIR)-* $(DIR)
+
+	@konsole -e bash -c " \
+		cd $(DIR) && \
+		\
+		mkdir -p build && \
+		cd build && \
+		\
+		meson setup \
+			--buildtype=release   \
+			-D udev=true          \
+			-D valgrind=disabled  \
+			.. \
+		\
+		|| { echo -n 'Press any key to close... '; read -n 1; exit 1; } " &> /dev/null
 
 
 $(TARBALL):

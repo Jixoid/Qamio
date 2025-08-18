@@ -16,11 +16,12 @@ include ../../../Make.inc
 
 # Targets
 
-Build: Basis $(Out)/Package.moq
+Build: Basis $(Out)/Package.moqs
 
 
 Basis:
 	@mkdir -p $(Out)
+	@mkdir -p $(Mod)
 
 
 Clean:
@@ -29,9 +30,20 @@ Clean:
 
 
 # Files
+$(Out)/Package.moqs: $(Out)/Package.moq
+	@echo -e $(L_SG) "Package.moqs"
+	@$(SHA)
+	@$(SIG)
+	@rm -f $(Out)/Package.moqs
+	@tar -cf $(Out)/Package.moqs  -C $(Out) Package.moq Package.moq.sig
 
-$(Out)/Package.moq: Package.conf
-	@echo "  - 📦️ Packing"
 
-	@rm -f $(Out)/Package.moq
-	@tar -cf $(Out)/Package.moq  -C . Package.conf  -C . Mod
+$(Out)/Package.moq: Package.conf $(Mod)/drm_dma_helper.ko
+	@echo -e $(L_MQ) "Package.moq"
+	@$(MQ) Package.conf $(Mod) \
+		$(MQ2)
+
+
+$(Mod)/drm_dma_helper.ko: $(EXT)/ext.linux/$(Lib)/drm_dma_helper.ko
+	@cp $(EXT)/ext.linux/$(Lib)/drm_dma_helper.ko  $(Mod)/drm_dma_helper.ko
+

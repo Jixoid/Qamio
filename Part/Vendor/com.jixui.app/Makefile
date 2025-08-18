@@ -19,7 +19,7 @@ include ../../../Make.inc
 Module = $(notdir $(CURDIR))
 
 Srcs = \
-	Dev/Main.pas
+	Dev/Main.pp
 
 Dirs = \
 	$(QDK)/lib.qaos.basis.dev/Inc \
@@ -29,17 +29,21 @@ Dirs = \
 
 
 Links = \
-	-Fl$(SYS)/lib.qaos.neon/$(Lib) -k-lNeon -k-rpath=/System/Moq/lib.qaos.neon/Lib
+	-L$(SYS)/lib.qaos.neon/$(Lib)  -lNeon  -Wl,-rpath,/System/Moq/lib.qaos.neon/Lib	\
+	libfpcrtl.a
 
 
 Incs = $(foreach dir,$(Dirs),-Fu$(dir))
 
 Deps = $(foreach dir,$(Dirs),$(wildcard $(dir)/*.hpp))
 
+Objs = $(addprefix $(Tmp)/, $(basename $(notdir $(Srcs))))
+Objs:= $(addsuffix .o, $(Objs))
+
 
 # Targets
 
-Build: Basis $(Out)/Package.moq
+Build: Basis $(Out)/Package.moqs
 
 
 Basis:
@@ -54,17 +58,29 @@ Clean:
 
 
 # Files
+$(Out)/Package.moqs: $(Out)/Package.moq
+	@echo -e $(L_SG) "Package.moqs"
+	@$(SHA)
+	@$(SIG)
+	@rm -f $(Out)/Package.moqs
+	@tar -cf $(Out)/Package.moqs  -C $(Out) Package.moq Package.moq.sig
 
-$(Out)/Package.moq: $(Bin)/Main.elf
-	@echo "  - 📦️ Packing"
 
-	@rm -f $(Out)/Package.moq
-	@tar -cf $(Out)/Package.moq  -C . Package.conf  -C $(Out) Bin
+$(Out)/Package.moq: Package.conf $(Bin)/Main.elf
+	@echo -e $(L_MQ) "Package.moq"
+	@$(MQ) Package.conf $(Bin) \
+		$(MQ2)
 
 
-$(Bin)/Main.elf: $(Srcs)
-	@echo "  - ⚙️ Main.elf"
-	@$(PP) $(Incs) $(Links) $(Srcs) \
-		-FU$(Tmp) \
-		-o$(Bin)/Main.elf
 
+$(Bin)/Main.elf: $(Objs)
+	@echo -e $(L_LD) "Main.elf"
+	@$(CC) -o $(Bin)/Main.elf \
+		$(Objs) $(Links)
+
+
+
+$(Tmp)/%.o: */%.pp $(Deps)
+	@echo -e $(L_PP) "$(notdir $@)"
+	@$(PP) -E $(Incs) $< \
+		-o$@

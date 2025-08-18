@@ -1,6 +1,6 @@
 
 # Reset
-echo -n "" > config.h
+echo -n "" > def.list
 
 # Parse
 while IFS='=' read -r Key Val; do
@@ -9,7 +9,7 @@ while IFS='=' read -r Key Val; do
 
   # Dump
   if [ "$Val" = "y" ]; then
-    echo "#define $Key" >> config.h
+    echo -n "$Key " >> def.list
   fi
 
 done < ".config"

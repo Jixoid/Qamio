@@ -55,14 +55,20 @@ Build: Basis
     	exit 1; \
 		fi; \
 		\
-		if [ "$(Out)/Moq/$$target" -nt "$$target/$(Out)/Package.moq" ]; then \
+		if [ "$(Out)/Pkg/$$target/Base.sig" -nt "$$target/$(Out)/Package.moq" ]; then \
 			continue; \
 		fi; \
 		\
-		echo -e "  - ⚡ Installing"; \
-		rm -rf $(Out)/Moq/$$target; \
-		mkdir $(Out)/Moq/$$target; \
-		tar -xf $$target/$(Out)/Package.moq  -C $(Out)/Moq/$$target; \
+		echo -e "    ⚡ $(GRAY)--$(RESET) Installing"; \
+		\
+		rm -rf $(Out)/Pkg/$$target; \
+		mkdir  $(Out)/Pkg/$$target; \
+			\
+			rm -f $(Out)/Pkg/$$target/Base.moq; \
+			cp $$target/$(Out)/Package.moq  $(Out)/Pkg/$$target/Base.moq; \
+			\
+			rm -f $(Out)/Pkg/$$target/Base.sig; \
+			cp $$target/$(Out)/Package.moq.sig  $(Out)/Pkg/$$target/Base.sig; \
 	done
 
 	@rm -rf $(Out)/Conf
@@ -70,12 +76,8 @@ Build: Basis
 	@cp -r ^Conf/*  $(Out)/Conf
 
 
-
 Basis:
-	@mkdir -p $(Out)/Moq
-	@mkdir -p $(Out)/Conf
-
-
+	@mkdir -p $(Out)/{Moq,Pkg,Conf}
 
 
 Clean:

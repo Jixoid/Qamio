@@ -11,11 +11,10 @@
 
 
 
-include Make.inc
-
-
 include .config
 export $(shell sed '/^\s*#/d;/^\s*$$/d;s/=.*//' .config)
+
+include Make.inc
 
 
 
@@ -25,7 +24,7 @@ Config:
 
 
 
-config.h: .config
+def.list: .config
 	@echo "♦️ Reconfig"
 	@echo
 
@@ -34,13 +33,17 @@ config.h: .config
 	@Tools/ParseConfig.sh
 
 
-Compile: config.h
+Compile: def.list
 	@echo "♦️ Compile"
 	@echo
 
 
 	@echo -e "🔗 $(BLUE)externs$(RESET): dependency packages"
 	@$(MAKE) -C ExternLib    Build
+	@echo
+
+	@echo -e "📦 $(BLUE)qdk$(RESET): Qamio developer kit"
+	@$(MAKE) -C QDK  Build
 	@echo
 
 	@echo -e "💠 $(BLUE)system$(RESET): $(shell cat 'Part/System/&Conf/Head.txt')"
@@ -55,7 +58,7 @@ Compile: config.h
 	@$(MAKE) -C Part/Product Build
 	@echo
 
-	@echo -e "💠 $(BLUE)data$(RESET): preloaded"
+	@echo -e "💾 $(BLUE)data$(RESET): preloaded"
 	@$(MAKE) -C Part/Data    Build
 	@echo
 
@@ -68,6 +71,10 @@ Clean:
 	@echo "♦️ Clean"
 	@echo
 
+
+	@echo -e "📦 $(BLUE)qdk$(RESET): Qamio developer kit"
+	@$(MAKE) -C QDK  Clean
+	@echo
 
 	@echo -e "💠 $(BLUE)system$(RESET): $(shell cat 'Part/System/&Conf/Head.txt')"
 	@$(MAKE) -C Part/System  Clean
@@ -96,6 +103,10 @@ CleanAll:
 
 	@echo -e "🔗 $(BLUE)externs$(RESET): dependency packages"
 	@$(MAKE) -C ExternLib    Clean
+	@echo
+
+	@echo -e "📦 $(BLUE)qdk$(RESET): Qamio developer kit"
+	@$(MAKE) -C QDK  Clean
 	@echo
 
 	@echo -e "💠 $(BLUE)system$(RESET): $(shell cat 'Part/System/&Conf/Head.txt')"
@@ -149,8 +160,13 @@ Build:
 	@mkdir $(DISK)/Data
 
 
-	@mkdir $(DISK)/Neon
+	@mkdir $(DISK)/Keybox
+	@mkdir $(DISK)/Slots
+	@mkdir -p $(DISK)/Slots/System/main
+	@mkdir -p $(DISK)/Slots/Vendor/main
+	@mkdir -p $(DISK)/Slots/Product/main
 	
+	@mkdir $(DISK)/Neon
 	@mkdir $(DISK)/Cache
 	@mkdir $(DISK)/Cache/Font
 
@@ -160,20 +176,31 @@ Build:
 	@echo "🔥 Flashing Parts"
 
 	@echo "  ⚡ System"
-	@cp -r Part/System/$(Out)/*   $(DISK)/System
+	@cp -r Part/System/$(Out)/*   $(DISK)/Slots/System/main
 
 	@echo "  ⚡ Vendor"
-	@cp -r Part/Vendor/$(Out)/*   $(DISK)/Vendor
+	@cp -r Part/Vendor/$(Out)/*   $(DISK)/Slots/Vendor/main
 
 	@echo "  ⚡ Product"
-	@cp -r Part/Product/$(Out)/*  $(DISK)/Product
+	@cp -r Part/Product/$(Out)/*  $(DISK)/Slots/Product/main
 
 	@echo "  ⚡ Data"
 	@cp -r Part/Data/$(Out)/*     $(DISK)/Data
 
 	@echo
+
+
+# Loading Qiniter
+	@echo "🚀 Loading qiniter"
+	@cp $(SYS)/com.qaos.qiniter/$(Bin)/Main.elf  $(DISK)/Qiniter.elf
+
+
+# Loading keybox
+	@echo "🔒 Loading keybox"
+	@cp $(Locate)/!Dev/Key_public.pem  $(DISK)/Keybox/1.pem
 	@echo
 
+	@echo
 
 
 Mount:
@@ -237,7 +264,7 @@ Start:
 		-usb \
 		\
 		-kernel  !Dev/Linux.elf \
-		-append "root=/dev/sda rw  selinux=0  init=/System/Moq/com.qaos.kernel/Bin/Main.elf  console=ttyS0  quiet" \
+		-append "root=/dev/sda rw  selinux=0  init=/Qiniter.elf  console=ttyS0  quiet" \
 		\
 		-drive file=!Dev/Image/Disk1.img,format=raw \
 		-device virtio-gpu \

@@ -1,40 +1,51 @@
-menu "Compiler (C C++ Pas)"
+menu "Compile (GCC G++ FPC ...)"
 
 
 choice
 	prompt "Arch"
 
 config Arch_X64
-	bool "x64 (x86_64)"
+	bool "X64 (x86_64)"
 
 config Arch_X32
-	bool "x32 (x86)"
+	bool "X32 (i386)"
 
 config Arch_A64
-	bool "a64 (Aarch64)"
+	bool "A64 (aarch64)"
 
 config Arch_A32
-	bool "a32 (Arm)"
+	bool "A32 (arm)"
 
 config Arch_R64
-	bool "r64 (RiskV 64)"
+	bool "R64 (riskV 64)"
 
 config Arch_R32
-	bool "r32 (RiskV 32)"
+	bool "R32 (riskV 32)"
+
+config Arch_P64
+	bool "P64 (powerpc 64 le)"
 
 endchoice
 
 
 config CC_Params
-	string "C Extra Params"
+	string "GCC Extra Params"
 	default ""
 
 config CP_Params
-	string "C++ Extra Params"
+	string "G++ Extra Params"
 	default ""
 
 config PP_Params
-	string "Pas Extra Params"
+	string "FPC Extra Params"
+	default ""
+
+config AR_Params
+	string "AR Extra Params"
+	default ""
+
+config LD_Params
+	string "LD Extra Params"
 	default ""
 
 

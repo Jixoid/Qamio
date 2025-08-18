@@ -23,24 +23,14 @@ Clean:
 
 
 # Files
-
-$(STAMP): $(TARBALL)
-	@tar -xf $(TARBALL) -C $(Out)
-
+$(STAMP): $(DIR)
 	@echo "  - 🔨 Compiling (-j$(shell nproc))"
 	@konsole -e bash -c " \
-		cd $(Out) && cd glibc-* && \
+		cd $(DIR)/build && \
 		\
-		mkdir -p build && \
-		cd build && \
-		\
-		../configure --prefix $$(pwd) && \
 		make -j$(nproc) && \
 		\
-		find . -type f,l  -name 'lib*.so*'  -exec cp {} ../../../$(Lib) \; && \
-		cp elf/ld.so  ../../../$(Lib)/ld-qamio.elf && \
-		\
-		cd ../../../ && touch $(STAMP) \
+		cd ../../../../ && touch $(STAMP) \
 		\
 	  || { echo -n 'Press any key to close... '; read -n 1; exit 1; } " &> /dev/null
 
@@ -49,8 +39,30 @@ $(STAMP): $(TARBALL)
 	if [ ! -f "$(STAMP)" ]; then \
 		false; \
 	fi
-		
+
+
+	find $(DIR)/build -type f,l  -name 'lib*.so*'  -exec cp {} $(Lib) \;
+	cp   $(DIR)/build/elf/ld.so  $(Lib)/ld-qamio.elf
+	
 	@echo
+
+
+$(DIR): $(TARBALL)
+	@echo "  - ⚙️ Extract and Configure"
+
+	@tar -xf $(TARBALL) -C $(Out)
+
+	@mv $(DIR)-* $(DIR)
+
+	@konsole -e bash -c " \
+		cd $(DIR) && \
+		\
+		mkdir -p build && \
+		cd build && \
+		\
+		../configure --prefix $$(pwd) \
+		\
+		|| { echo -n 'Press any key to close... '; read -n 1; exit 1; } " &> /dev/null
 
 
 $(TARBALL):

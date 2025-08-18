@@ -23,24 +23,15 @@ Clean:
 
 
 # Files
-
-$(STAMP): $(TARBALL)
-	@tar -xf $(TARBALL) -C $(Out)
-
+$(STAMP): $(DIR)
 	@echo "  - 🔨 Compiling (-j8)"
 	
 	@konsole -e bash -c " \
-		cd $(Out) && cd gcc-* && \
+		cd $(DIR)/build && \
 		\
-		./contrib/download_prerequisites && \
-		\
-		mkdir -p build && \
-		cd build && \
-		\
-		../configure --disable-multilib --enable-languages=c,c++ --prefix=$$(pwd) &&\
 		make -j8 && \
 		\
-		cd ../../../ && touch $(STAMP) \
+		cd ../../../../ && touch $(STAMP) \
 		\
 	  || { echo -n 'Press any key to close... '; read -n 1; exit 1; } " &> /dev/null
 
@@ -50,15 +41,33 @@ $(STAMP): $(TARBALL)
 		false; \
 	fi
 
-	@cd $(Out) && cd gcc-* && \
-		find . -type f,l  -name 'libstdc++.so*'  -exec cp {} ../../$(Lib) \; && \
-		find . -type f,l  -name 'libgcc_s.so*'  -exec cp {} ../../$(Lib) \; && \
-		find . -type f,l  -name 'libatomic.so*'  -exec cp {} ../../$(Lib) \; && \
-		find . -type f,l  -name 'libitm.so*'  -exec cp {} ../../$(Lib) \; && \
-		find . -type f,l  -name 'libquadmath.so*'  -exec cp {} ../../$(Lib) \;
-		
+	@find $(DIR)/build -type f,l  -name 'libstdc++.so*'   -exec cp {} $(Lib) \;
+	@find $(DIR)/build -type f,l  -name 'libstdc++.a*' 		-exec cp {} $(Lib) \;
+	@find $(DIR)/build -type f,l  -name 'libgcc_s.so*'  	-exec cp {} $(Lib) \;
+	@find $(DIR)/build -type f,l  -name 'libatomic.so*'  	-exec cp {} $(Lib) \;
+	@find $(DIR)/build -type f,l  -name 'libitm.so*'  		-exec cp {} $(Lib) \;
+	@find $(DIR)/build -type f,l  -name 'libquadmath.so*' -exec cp {} $(Lib) \;
 		
 	@echo
+
+
+$(DIR): $(TARBALL)
+	@echo "  - ⚙️ Extract and Configure"
+
+	@tar -xf $(TARBALL) -C $(Out)
+
+	@mv $(DIR)-* $(DIR)
+
+	@konsole -e bash -c " \
+		cd $(DIR) && \
+		\
+		./contrib/download_prerequisites && \
+		mkdir -p build && \
+		cd build && \
+		\
+		../configure --disable-multilib --enable-languages=c,c++ --prefix=$$(pwd) \
+		\
+		|| { echo -n 'Press any key to close... '; read -n 1; exit 1; } " &> /dev/null
 
 
 $(TARBALL):

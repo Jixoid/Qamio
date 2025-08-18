@@ -14,21 +14,14 @@
 include ../../Make.inc
 
 
-Build: Basis \
-	
-
+Build: Basis 
 	@cp -r ^Conf/*  $(Out)/Conf
-
 
 
 Basis:
 	@rm -rf $(Out)
 
-	@mkdir -p $(Out)/Moq
-	@mkdir -p $(Out)/Log
-	@mkdir -p $(Out)/Conf
-
-
+	@mkdir -p $(Out)/{Moq,Pkg,Log,Conf}
 
 
 Clean:

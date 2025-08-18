@@ -7,7 +7,14 @@
 # Compiled files and Not applyed plans
 **@*
 **!*
+**.o*
+**.a*
 **.so*
+**.ko*
+**.qo*
+**.elf*
+&Conf/CPU_*.kconfig
+&Conf/CPU_*.inc
 
 
 # Configs

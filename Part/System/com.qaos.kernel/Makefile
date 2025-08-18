@@ -19,8 +19,8 @@ include ../../../Make.inc
 Module = $(notdir $(CURDIR))
 
 Srcs = \
-	Dev/Kernel.cpp \
-	Modules/Modules.cpp
+	Dev/Kernel.cc \
+	Modules/Modules.cc
 
 Dirs = \
 	$(QDK)/lib.qaos.basis.dev/Inc \
@@ -40,14 +40,14 @@ Incs+= -IModules
 Deps = $(foreach dir,$(Dirs),$(wildcard $(dir)/*.hpp))
 
 Objs = $(addprefix $(Tmp)/, $(basename $(notdir $(Srcs))))
-Objs:= $(addsuffix .bc, $(Objs))
+Objs:= $(addsuffix .o, $(Objs))
 
 
 
 
 # Targets
 
-Build: Basis $(Out)/Package.moq
+Build: Basis $(Out)/Package.moqs
 
 
 Basis:
@@ -62,29 +62,30 @@ Clean:
 
 
 # Files
+$(Out)/Package.moqs: $(Out)/Package.moq
+	@echo -e $(L_SG) "Package.moqs"
+	@$(SHA)
+	@$(SIG)
+	@rm -f $(Out)/Package.moqs
+	@tar -cf $(Out)/Package.moqs  -C $(Out) Package.moq Package.moq.sig
+
 
 $(Out)/Package.moq: Package.conf $(Bin)/Main.elf
-	@echo "  - 📦️ Packing"
-
-	@rm -f $(Out)/Package.moq
-	@tar -cf $(Out)/Package.moq  -C . Package.conf  -C $(Out) Bin
-
+	@echo -e $(L_MQ) "Package.moq"
+	@$(MQ) Package.conf $(Bin) \
+		$(MQ2)
 
 
-$(Bin)/Main.elf: $(Bin)/Main.elf.bc
-	@echo "  - 🔨 Main.elf"
-	@$(CP) $(Links) $(Bin)/Main.elf.bc \
-		-o $(Bin)/Main.elf
+
+$(Bin)/Main.elf: $(Objs)
+	@echo -e $(L_LD) "Main.elf"
+	@$(CP) -o $(Bin)/Main.elf \
+		$(Objs) $(Links)
 
 
-$(Bin)/Main.elf.bc: $(Objs)
-	@echo "  - 🔗 Main.elf.bc"
-	@llvm-link $(Objs) \
-		-o $(Bin)/Main.elf.bc
 
-
-$(Tmp)/%.bc: */%.cpp $(Deps)
-	@echo "  - ⚙️ $(notdir $@)"
-	@$(LP) -DModule=\"$(Module)\" $(Incs) $< \
+$(Tmp)/%.o: */%.cc $(Deps)
+	@echo -e $(L_CP) "$(notdir $@)"
+	@$(CP) -c -DModule=\"$(Module)\" $(Incs) $< \
 		-o $@
 

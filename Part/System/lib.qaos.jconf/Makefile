@@ -19,7 +19,7 @@ include ../../../Make.inc
 Module = $(notdir $(CURDIR))
 
 Srcs = \
-	Dev/JConf.cpp \
+	Dev/JConf.cc \
 
 Dirs = \
 	$(QDK)/lib.qaos.basis.dev/Inc \
@@ -32,14 +32,14 @@ Incs = $(foreach dir,$(Dirs),-I$(dir))
 Deps = $(foreach dir,$(Dirs),$(wildcard $(dir)/*.hpp))
 
 Objs = $(addprefix $(Tmp)/, $(basename $(notdir $(Srcs))))
-Objs:= $(addsuffix .bc, $(Objs))
+Objs:= $(addsuffix .o, $(Objs))
 
 
 
 
 # Targets
 
-Build: Basis $(Out)/Package.moq
+Build: Basis $(Out)/Package.moqs
 
 
 Basis:
@@ -54,29 +54,36 @@ Clean:
 
 
 # Files
-
-$(Out)/Package.moq: Package.conf $(Lib)/libJConf.so
-	@echo "  - 📦️ Packing"
-
-	@rm -f $(Out)/Package.moq
-	@tar -cf $(Out)/Package.moq  -C . Package.conf  -C $(Out) Lib
-
-
-
-$(Lib)/libJConf.so: $(Lib)/libJConf.so.bc
-	@echo "  - 🔨 libJConf.so"
-	@$(CP) -shared $(Lib)/libJConf.so.bc \
-		-o $(Lib)/libJConf.so
+$(Out)/Package.moqs: $(Out)/Package.moq
+	@echo -e $(L_SG) "Package.moqs"
+	@$(SHA)
+	@$(SIG)
+	@rm -f $(Out)/Package.moqs
+	@tar -cf $(Out)/Package.moqs  -C $(Out) Package.moq Package.moq.sig
 
 
-$(Lib)/libJConf.so.bc: $(Objs)
-	@echo "  - 🔗 libJConf.so.bc"
-	@llvm-link $(Objs) \
-		-o $(Lib)/libJConf.so.bc
+$(Out)/Package.moq: Package.conf $(Lib)/libJConf.a $(Lib)/libJConf.so
+	@echo -e $(L_MQ) "Package.moq"
+	@$(MQ) Package.conf $(Lib) \
+		$(MQ2)
 
 
-$(Tmp)/%.bc: */%.cpp $(Deps)
-	@echo "  - ⚙️ $(notdir $@)"
-	@$(LP) -DModule=\"$(Module)\" $(Incs) $< \
+
+$(Lib)/libJConf.so: $(Objs)
+	@echo -e $(L_LD) "libJConf.so"
+	@$(CP) -shared -o $(Lib)/libJConf.so \
+		$(Objs) $(Links)
+
+
+$(Lib)/libJConf.a: $(Objs)
+	@echo -e $(L_AR) "libJConf.a"
+	@$(AR) rcs $(Lib)/libJConf.a \
+		$(Objs)
+
+
+
+$(Tmp)/%.o: */%.cc $(Deps)
+	@echo -e $(L_CP) "$(notdir $@)"
+	@$(CP) -c -DModule=\"$(Module)\" $(Incs) $< \
 		-o $@
 

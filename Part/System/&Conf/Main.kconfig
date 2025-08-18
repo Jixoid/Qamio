@@ -15,6 +15,7 @@ menu "System (Qamio v0.4.1:2)"
 
 
 source "Part/System/com.qaos.kernel/KConfig/Main.kconfig"
+source "Part/System/com.qaos.qiniter/KConfig/Main.kconfig"
 
 source "Part/System/hal.qaos.audio/KConfig/Main.kconfig"
 source "Part/System/hal.qaos.battery/KConfig/Main.kconfig"

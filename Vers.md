@@ -1,4 +1,17 @@
 
+## v0.4.3:0 [Daily]
+ - Added: Package siganute (!Dev/key_priv.pem !Dev/key_public.pem)
+ - Uses:  Moq, tar -> squashfs
+ - Added: Moqs = tar(pack.moq pack.moq.sig)
+ - Reorganized: Make Style
+ - Added: Qiniter (Stage 1 bootloader) for mount packages and moqs verify
+ - Fixed: Depency compile resume
+ - Renamed:
+   - cpp -> cc
+   - hpp -> hh
+   - pas -> pp
+
+___
 ## v0.4.2:0 [Daily]
   - Added: Argon api (almost nothing yet)
 

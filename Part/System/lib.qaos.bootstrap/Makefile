@@ -17,7 +17,7 @@ include ../../../Make.inc
 
 # Targets
 
-Build: Basis $(Out)/Package.moq
+Build: Basis $(Out)/Package.moqs
 
 
 Basis:
@@ -30,10 +30,21 @@ Clean:
 
 
 # Files
+$(Out)/Package.moqs: $(Out)/Package.moq
+	@echo -e $(L_SG) "Package.moqs"
+	@$(SHA)
+	@$(SIG)
+	@rm -f $(Out)/Package.moqs
+	@tar -cf $(Out)/Package.moqs  -C $(Out) Package.moq Package.moq.sig
+
 
 $(Out)/Package.moq: Package.conf
-	@echo "  - 📦️ Packing"
+	@echo -e $(L_MQ) "Package.moq"
+	
+	@rm -rf $(Lib)
+	@mkdir -p $(Lib)
+	
+	@cp $(EXT)/ext.glibc/$(Lib)/* $(EXT)/ext.gcc/$(Lib)/*  $(Lib)/
 
-	@rm -f $(Out)/Package.moq
-	@tar -cf $(Out)/Package.moq  -C . Package.conf  -C $(EXT)/ext.glibc/$(Out) Lib  -C $(EXT)/ext.gcc/$(Out) Lib
-
+	@$(MQ) Package.conf $(Lib) \
+		$(MQ2)

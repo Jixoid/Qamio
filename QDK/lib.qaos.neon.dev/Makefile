@@ -17,7 +17,7 @@ include ../../Make.inc
 
 # Targets
 
-Build: Basis  $(Out)/Package.moq
+Build: Basis  $(Out)/Package.moqs
 
 
 Basis:
@@ -30,11 +30,16 @@ Clean:
 
 
 # Files
+$(Out)/Package.moqs: $(Out)/Package.moq
+	@echo -e $(L_SG) "Package.moqs"
+	@$(SHA)
+	@$(SIG)
+	@rm -f $(Out)/Package.moqs
+	@tar -cf $(Out)/Package.moqs  -C $(Out) Package.moq Package.moq.sig
 
-$(Out)/Package.moq: Inc/Neon.h Inc/Neon_Error.h Inc/Neon.pas Inc/Neon_Error.pas
-	@echo "  - 📦️ Packing"
 
-	@rm -f $(Out)/Package.moq
-	@tar -cf $(Out)/Package.moq  -C . Package.conf  -C . Inc
-
+$(Out)/Package.moq: Package.conf Inc/Neon.h Inc/Neon.pp Inc/Neon_Error.h Inc/Neon.Error.pp
+	@echo -e $(L_MQ) "Package.moq"
+	@$(MQ) Package.conf Inc \
+		$(MQ2)
 
