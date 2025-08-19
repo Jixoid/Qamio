@@ -18,23 +18,12 @@ include ../../../Make.inc
 
 Module = $(notdir $(CURDIR))
 
+KDIR := $(EXT)/ext.linux/$(Out)/linux
+CWD := $(shell pwd)
+
 Srcs = \
-	Dev/Main.pp
-
-Dirs = \
-	$(QDK)/lib.qaos.basis.dev/Inc \
-	$(QDK)/lib.qaos.jconf.dev/Inc \
-	$(QDK)/lib.qaos.neon.dev/Inc \
-	$(QDK)/fwk.qaos.argon.dev/Inc
-
-
-Links = \
-	-L$(SYS)/lib.qaos.neon/$(Lib)  -lNeon  -Wl,-rpath,/System/Moq/lib.qaos.neon/Lib
-
-
-Incs = $(foreach dir,$(Dirs),-I$(dir))
-
-Deps = $(foreach dir,$(Dirs),$(wildcard $(dir)/*.hpp))
+	Dev/Main.c \
+	Dev/Handler.c
 
 Objs = $(addprefix $(Tmp)/, $(basename $(notdir $(Srcs))))
 Objs:= $(addsuffix .o, $(Objs))
@@ -48,7 +37,7 @@ Build: Basis $(Out)/Base.moqs
 Basis:
 	@mkdir -p $(Out)
 	@mkdir -p $(Tmp)
-	@mkdir -p $(Bin)
+	@mkdir -p $(Mod)
 
 
 Clean:
@@ -65,22 +54,21 @@ $(Out)/Base.moqs: $(Out)/Base.moq
 	@tar -cf $(Out)/Base.moqs  -C $(Out) Base.moq Base.sig
 
 
-$(Out)/Base.moq: Package.conf $(Bin)/Main.elf
+$(Out)/Base.moq: Package.conf $(Mod)/Main.ko
 	@echo -e $(L_MQ) "Base.moq $(GRAY)($(notdir $^))$(RESET)"
-	@$(MQ) Package.conf $(Bin) \
+	@$(MQ) Package.conf $(Mod) \
 		$(MQ2)
 
 
+obj-m += $(Tmp)/Main.o
 
-$(Bin)/Main.elf: $(Objs)
-	@echo -e $(L_LD) "Main.elf $(GRAY)($(notdir $^))$(RESET)"
-	@$(CP) -o $(Bin)/Main.elf \
-		$(Objs) $(Links)
+$(Mod)/Main.ko: $(Srcs)
+	@echo -e $(L_CC) "Main.ko $(GRAY)($(notdir $^))$(RESET)"
+	@cp $(Srcs)  $(Tmp)/
 
+	@$(MAKE) -C $(KDIR) M=$(CWD) CC=/usr/bin/gcc EXTRA_CFLAGS"-DModule=\"$(Module)\"" modules > /dev/null
 
+	@find -iname "*module*" -exec rm {} \;
 
-$(Tmp)/%.o: */%.cc $(Deps)
-	@echo -e $(L_CP) "$(notdir $@) $(GRAY)($(notdir $<))$(RESET)"
-	@$(CP) -c $(Incs) $< \
-		-o $@
+	@cp $(Tmp)/Main.ko $(Mod)/Main.ko
 

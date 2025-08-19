@@ -38,7 +38,7 @@ $(Out)/Base.moqs: $(Out)/Base.moq
 	@tar -cf $(Out)/Base.moqs  -C $(Out) Base.moq Base.sig
 
 
-$(Out)/Base.moq: Package.conf Inc/FWK.Argon.pp Inc/FWK/Argon.hh
+$(Out)/Base.moq: Package.conf Inc/FWK/Argon.hh
 	@echo -e $(L_MQ) "Base.moq $(GRAY)($(notdir $^))$(RESET)"
 	@$(MQ) Package.conf Inc \
 		$(MQ2)

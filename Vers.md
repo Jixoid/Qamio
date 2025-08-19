@@ -1,4 +1,10 @@
 
+## v0.4.4:0 [Daily]
+ - Added: fluxgate kernel driver
+ - Suspend: Pascal fpc compability
+ - Renamed: Linux Module, kmod -> lkm
+
+___
 ### v0.4.3:1 [Daily]
  - Renamed: Compile Time
    - Package.moq -> Base.moq

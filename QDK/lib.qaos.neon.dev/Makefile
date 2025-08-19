@@ -38,7 +38,7 @@ $(Out)/Base.moqs: $(Out)/Base.moq
 	@tar -cf $(Out)/Base.moqs  -C $(Out) Base.moq Base.sig
 
 
-$(Out)/Base.moq: Package.conf Inc/Neon.h Inc/Neon.pp Inc/Neon_Error.h Inc/Neon.Error.pp
+$(Out)/Base.moq: Package.conf Inc/Neon.h Inc/Neon_Error.h
 	@echo -e $(L_MQ) "Base.moq $(GRAY)($(notdir $^))$(RESET)"
 	@$(MQ) Package.conf Inc \
 		$(MQ2)

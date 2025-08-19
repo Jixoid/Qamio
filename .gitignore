@@ -2,6 +2,7 @@
 .obsidian
 .vscode
 .stfolder*
+.directory
 
 
 # Compiled files and Not applyed plans

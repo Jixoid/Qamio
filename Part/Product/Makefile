@@ -17,7 +17,7 @@ include ../../Make.inc
 # Config
 
 Plan = $(shell ls | grep "^@")
-Srcs = $(shell ls | grep "^kmod.") $(shell ls | grep "^com.")
+Srcs = $(shell ls | grep "^lkm.") $(shell ls | grep "^com.")
 
 
 
