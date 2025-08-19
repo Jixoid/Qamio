@@ -43,7 +43,7 @@ Objs:= $(addsuffix .o, $(Objs))
 
 # Targets
 
-Build: Basis $(Out)/Package.moqs
+Build: Basis $(Out)/Base.moqs
 
 
 Basis:
@@ -58,29 +58,29 @@ Clean:
 
 
 # Files
-$(Out)/Package.moqs: $(Out)/Package.moq
-	@echo -e $(L_SG) "Package.moqs"
+$(Out)/Base.moqs: $(Out)/Base.moq
+	@echo -e $(L_SG) "Base.moqs $(GRAY)(Base.moq Base.sig)$(RESET)"
 	@$(SHA)
 	@$(SIG)
-	@rm -f $(Out)/Package.moqs
-	@tar -cf $(Out)/Package.moqs  -C $(Out) Package.moq Package.moq.sig
+	@rm -f $(Out)/Base.moqs
+	@tar -cf $(Out)/Base.moqs  -C $(Out) Base.moq Base.sig
 
 
-$(Out)/Package.moq: Package.conf $(Bin)/Main.elf
-	@echo -e $(L_MQ) "Package.moq"
+$(Out)/Base.moq: Package.conf $(Bin)/Main.elf
+	@echo -e $(L_MQ) "Base.moq $(GRAY)($(notdir $^))$(RESET)"
 	@$(MQ) Package.conf $(Bin) \
 		$(MQ2)
 
 
 
 $(Bin)/Main.elf: $(Objs)
-	@echo -e $(L_LD) "Main.elf"
+	@echo -e $(L_LD) "Main.elf $(GRAY)($(notdir $^))$(RESET)"
 	@$(CC) -o $(Bin)/Main.elf \
 		$(Objs) $(Links)
 
 
 
 $(Tmp)/%.o: */%.pp $(Deps)
-	@echo -e $(L_PP) "$(notdir $@)"
+	@echo -e $(L_PP) "$(notdir $@) $(GRAY)($(notdir $<))$(RESET)"
 	@$(PP) -E $(Incs) $< \
 		-o$@

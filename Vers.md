@@ -1,4 +1,12 @@
 
+### v0.4.3:1 [Daily]
+ - Renamed: Compile Time
+   - Package.moq -> Base.moq
+   - Package.moqs -> Base.moqs
+   - Package.moq.sig -> Base.sig
+ - Reorganized: Make style, added requires
+
+___
 ## v0.4.3:0 [Daily]
  - Added: Package siganute (!Dev/key_priv.pem !Dev/key_public.pem)
  - Uses:  Moq, tar -> squashfs

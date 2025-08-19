@@ -49,13 +49,13 @@ Build: Basis
     	continue; \
 		fi; \
 		\
-		if [ ! -f "$$target/$(Out)/Package.moq" ]; then \
+		if [ ! -f "$$target/$(Out)/Base.moqs" ]; then \
     	echo "❌ Paket dosyası durumlanamadı"; \
 			rm -rf $(Out)/Moq/$$target; \
     	exit 1; \
 		fi; \
 		\
-		if [ "$(Out)/Pkg/$$target/Base.sig" -nt "$$target/$(Out)/Package.moq" ]; then \
+		if [ "$(Out)/Pkg/$$target/Base.sig" -nt "$$target/$(Out)/Base.sig" ]; then \
 			continue; \
 		fi; \
 		\
@@ -65,10 +65,10 @@ Build: Basis
 		mkdir  $(Out)/Pkg/$$target; \
 			\
 			rm -f $(Out)/Pkg/$$target/Base.moq; \
-			cp $$target/$(Out)/Package.moq  $(Out)/Pkg/$$target/Base.moq; \
+			cp $$target/$(Out)/Base.moq  $(Out)/Pkg/$$target/Base.moq; \
 			\
 			rm -f $(Out)/Pkg/$$target/Base.sig; \
-			cp $$target/$(Out)/Package.moq.sig  $(Out)/Pkg/$$target/Base.sig; \
+			cp $$target/$(Out)/Base.sig  $(Out)/Pkg/$$target/Base.sig; \
 	done
 
 	@rm -rf $(Out)/Conf

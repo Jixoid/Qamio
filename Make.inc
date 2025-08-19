@@ -124,10 +124,10 @@ AR = $(CTarget)-linux-gnu-ar $(CONFIG_AR_Params)
 LD = $(CTarget)-linux-gnu-ld $(CONFIG_LD_Params)
 
 MQ  = mksquashfs
-MQ2 = $(Out)/Package.moq -quiet -comp xz -noappend; echo -ne "\033[A\033[2K"
+MQ2 = $(Out)/Base.moq -quiet -comp xz -noappend; echo -ne "\033[A\033[2K"
 
-SHA = openssl dgst -sha512 -binary $(Out)/Package.moq > $(Out)/Package.moq.sha512
-SIG = openssl pkeyutl -sign -in $(Out)/Package.moq.sha512 -inkey $(Locate)/!Dev/Key_priv.pem -out $(Out)/Package.moq.sig
+SHA = openssl dgst -sha512 -binary $(Out)/Base.moq > $(Out)/Base.moq.sha512
+SIG = openssl pkeyutl -sign -in $(Out)/Base.moq.sha512 -inkey $(Locate)/!Dev/Key_priv.pem -out $(Out)/Base.sig
 
 
 L_CC = "    ⚙️ $(GRAY)CC$(RESET)"

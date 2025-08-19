@@ -44,7 +44,7 @@ Objs:= $(addsuffix .o, $(Objs))
 
 # Targets
 
-Build: Basis $(Out)/Package.moqs
+Build: Basis $(Out)/Base.moqs
 
 
 Basis:
@@ -59,16 +59,16 @@ Clean:
 
 
 # Files
-$(Out)/Package.moqs: $(Out)/Package.moq
-	@echo -e $(L_SG) "Package.moqs"
+$(Out)/Base.moqs: $(Out)/Base.moq
+	@echo -e $(L_SG) "Base.moqs $(GRAY)(Base.moq Base.sig)$(RESET)"
 	@$(SHA)
 	@$(SIG)
-	@rm -f $(Out)/Package.moqs
-	@tar -cf $(Out)/Package.moqs  -C $(Out) Package.moq Package.moq.sig
+	@rm -f $(Out)/Base.moqs
+	@tar -cf $(Out)/Base.moqs  -C $(Out) Base.moq Base.sig
 
 
-$(Out)/Package.moq: Package.conf $(Nuc)/Main.qo
-	@echo -e $(L_MQ) "Package.moq"
+$(Out)/Base.moq: Package.conf $(Nuc)/Main.qo
+	@echo -e $(L_MQ) "Base.moq $(GRAY)($(notdir $^))$(RESET)"
 	@$(MQ) Package.conf $(Nuc) $(EXT)/ext.libdrm/$(Lib) \
 		$(MQ2)
 		
@@ -76,14 +76,14 @@ $(Out)/Package.moq: Package.conf $(Nuc)/Main.qo
 
 
 $(Nuc)/Main.qo: $(Objs)
-	@echo -e $(L_LD) "Main.qo"
+	@echo -e $(L_LD) "Main.qo $(GRAY)($(notdir $^))$(RESET)"
 	@$(CP) -shared -o $(Nuc)/Main.qo \
 		$(Objs) $(Links)
 
 
 
 $(Tmp)/%.o: */%.cc $(Deps)
-	@echo -e $(L_CP) "$(notdir $@)"
+	@echo -e $(L_CP) "$(notdir $@) $(GRAY)($(notdir $<))$(RESET)"
 	@$(CP) -c -DModule=\"$(Module)\" $(Incs) $< \
 		-o $@
 
