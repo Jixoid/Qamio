@@ -2,7 +2,7 @@ include ../../Make.inc
 
 
 VER   	:= $$(curl -s https://www.kernel.org/pub/linux/kernel/v6.x/ | grep -oP 'linux-\K[0-9]+\.[0-9]+\.[0-9]+' | sort -V | tail -n1)
-TARBALL := $(Out)/linux.tar.xz
+TARBALL := $(GOut)/linux.tar.xz
 DIR     := $(Out)/linux
 STAMP   := $(Out)/linux.stamp
 
@@ -42,7 +42,7 @@ $(STAMP): $(DIR)
 	fi
 
 
-	@cp $$(find $(DIR) -type f -name bzImage)  $(Locate)/!Dev/Linux.elf
+	@cp $$(find $(DIR) -type f -name bzImage)  $(Locate)/!Dev/Linux-$(Arch).elf
 	@find $(DIR) -type f -name "*.ko" -exec cp {} $(Lib)/ \;
 		
 	@echo

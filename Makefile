@@ -34,7 +34,7 @@ def.list: .config
 
 
 Compile: def.list
-	@echo "♦️ Compile"
+	@echo "♦️ Compile  Target: $(Arch)"
 	@echo
 
 
@@ -254,7 +254,7 @@ Start:
 	@echo "qamio emulator"
 	@echo
 
-	@qemu-system-x86_64 \
+	@qemu-system-$(CTarget) \
 		\
 		-accel kvm \
 		-cpu host \
@@ -263,7 +263,7 @@ Start:
 		-m 6G \
 		-usb \
 		\
-		-kernel  !Dev/Linux.elf \
+		-kernel  !Dev/Linux-$(Arch).elf \
 		-append "root=/dev/sda rw  selinux=0  init=/Qiniter.elf  console=ttyS0  loglevel=7" \
 		\
 		-drive file=!Dev/Image/Disk1.img,format=raw \

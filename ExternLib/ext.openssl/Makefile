@@ -2,7 +2,7 @@ include ../../Make.inc
 
 
 VER   	:= $$(curl -s https://openssl-library.org/source/ | grep -oP 'openssl-\K[0-9]+\.[0-9]+\.[0-9]+(?=\.tar\.gz)' | sort -V | tail -n1)
-TARBALL := $(Out)/openssl.tar.gz
+TARBALL := $(GOut)/openssl.tar.gz
 DIR     := $(Out)/openssl
 STAMP   := $(Out)/openssl.stamp
 

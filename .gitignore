@@ -3,6 +3,7 @@
 .vscode
 .stfolder*
 .directory
+.vscode-ctags
 
 
 # Compiled files and Not applyed plans
@@ -16,6 +17,7 @@
 **.elf*
 &Conf/CPU_*.kconfig
 &Conf/CPU_*.inc
+def.list
 
 
 # Configs

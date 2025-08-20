@@ -2,7 +2,7 @@ include ../../Make.inc
 
 
 VER   	:= $$(curl -s https://dri.freedesktop.org/libdrm/ | grep -oP 'libdrm-\K[0-9]+\.[0-9]+\.[0-9]+(?=\.tar\.xz)' | sort -V | tail -n1)
-TARBALL := $(Out)/libdrm.tar.xz
+TARBALL := $(GOut)/libdrm.tar.xz
 DIR     := $(Out)/libdrm
 STAMP   := $(Out)/libdrm.stamp
 

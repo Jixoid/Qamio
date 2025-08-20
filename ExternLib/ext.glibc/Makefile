@@ -2,7 +2,7 @@ include ../../Make.inc
 
 
 VER   	:= $$(curl -s https://ftp.gnu.org/gnu/glibc/ | grep -oP 'glibc-\K[0-9]+\.[0-9]+(?=\.tar\.xz)' | sort -V | tail -n1)
-TARBALL := $(Out)/glibc.tar.xz
+TARBALL := $(GOut)/glibc.tar.xz
 DIR     := $(Out)/glibc
 STAMP   := $(Out)/glibc.stamp
 
@@ -60,7 +60,9 @@ $(DIR): $(TARBALL)
 		mkdir -p build && \
 		cd build && \
 		\
-		../configure --prefix $$(pwd) \
+		../configure \
+			--host=$(CTarget)-linux-gnu \
+			--prefix $$(pwd) \
 		\
 		|| { echo -n 'Press any key to close... '; read -n 1; exit 1; } " &> /dev/null
 

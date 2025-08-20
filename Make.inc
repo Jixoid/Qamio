@@ -92,7 +92,7 @@ Mod = $(Out)/Mod
 
 
 CArg = -fPIC -IInc $(_O_Level) \
-  \
+  --target=$(CTarget) -I/usr/include/c++/15 -I/usr/include/c++/15/$(CTarget)-redhat-linux/ \
   \
   $(addprefix -D,$(shell cat $(Locate)/def.list)) \
   \

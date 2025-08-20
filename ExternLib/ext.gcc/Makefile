@@ -2,7 +2,7 @@ include ../../Make.inc
 
 
 VER   	:= $$(curl -s https://ftp.gnu.org/gnu/gcc/ | grep -oP 'gcc-\K[0-9]+\.[0-9]+\.[0-9]+' | sort -V | tail -n1)
-TARBALL := $(Out)/gcc.tar.xz
+TARBALL := $(GOut)/gcc.tar.xz
 DIR     := $(Out)/gcc
 STAMP   := $(Out)/gcc.stamp
 
@@ -65,7 +65,11 @@ $(DIR): $(TARBALL)
 		mkdir -p build && \
 		cd build && \
 		\
-		../configure --disable-multilib --enable-languages=c,c++ --prefix=$$(pwd) \
+		../configure \
+			--target=$(CTarget)-linux-gnu \
+			--disable-multili \
+			--enable-languages=c,c++ \
+			--prefix=$$(pwd) \
 		\
 		|| { echo -n 'Press any key to close... '; read -n 1; exit 1; } " &> /dev/null
 

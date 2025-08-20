@@ -1,5 +1,9 @@
 
-## v0.4.4:0 [Daily]
+### v0.4.4:1 [Daily]
+ - Minor improvements for cross compile
+
+___
+## v0.4.4:0 [Daily Alpha]
  - Added: fluxgate kernel driver
  - Suspend: Pascal fpc compability
  - Renamed: Linux Module, kmod -> lkm
