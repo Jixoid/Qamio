@@ -17,7 +17,7 @@
 #include <filesystem>
 #include <vector>
 
-#include <termio.h>
+#include <termios.h>
 #include <unistd.h>
 
 #include "Basis.h"

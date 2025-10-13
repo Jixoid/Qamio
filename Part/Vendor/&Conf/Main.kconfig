@@ -16,6 +16,7 @@ menu "Vendor (JixUI v0.1.0:0)"
 
 source "Part/Vendor/&Conf/Graphic.kconfig"
 source "Part/Vendor/&Conf/Display.kconfig"
+source "Part/Vendor/&Conf/Input.kconfig"
 
 
 endmenu

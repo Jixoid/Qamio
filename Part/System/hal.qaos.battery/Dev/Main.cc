@@ -49,7 +49,7 @@ battery::sHAL HAL = {
     Drivers.push_back(Driver);
 
     // Log
-    Log2(format("RegDriver({}): 0x{:X}", battery::Domain, (uPtr)Driver), kernel::lDebug);
+    Log2(format("RegDriver({}): 0x{:X}", battery::Domain, (u0)Driver), kernel::lDebug);
 
     return true;
   },
@@ -66,7 +66,7 @@ battery::sHAL HAL = {
     Drivers.erase(X);
 
     // Log
-    Log2(format("DelDriver({}): 0x{:X}", battery::Domain, (uPtr)Driver), kernel::lDebug);
+    Log2(format("DelDriver({}): 0x{:X}", battery::Domain, (u0)Driver), kernel::lDebug);
 
     return true;
   },

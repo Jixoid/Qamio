@@ -90,9 +90,9 @@ Nuc = $(Out)/Nuc
 Mod = $(Out)/Mod
 
 
-
+#--target=$(CTarget) -I/usr/include/c++/15 -I/usr/include/c++/15/$(CTarget)-redhat-linux/
 CArg = -fPIC -IInc $(_O_Level) \
-  --target=$(CTarget) -I/usr/include/c++/15 -I/usr/include/c++/15/$(CTarget)-redhat-linux/ \
+   \
   \
   $(addprefix -D,$(shell cat $(Locate)/def.list)) \
   \
@@ -117,7 +117,7 @@ PArg = -fPIC -FuInc $(_O_Level) \
 
 
 CC = clang    $(CArg) $(CONFIG_CC_Params) -std=c23
-CP = clang++  $(CArg) $(CONFIG_CP_Params) -std=c++23
+CX = clang++  $(CArg) $(CONFIG_CP_Params) -std=c++23
 PP = fpc      $(PArg) $(CONFIG_PP_Params) -Mobjfpc
 
 AR = $(CTarget)-linux-gnu-ar $(CONFIG_AR_Params)
@@ -130,8 +130,13 @@ SHA = openssl dgst -sha512 -binary $(Out)/Base.moq > $(Out)/Base.moq.sha512
 SIG = openssl pkeyutl -sign -in $(Out)/Base.moq.sha512 -inkey $(Locate)/!Dev/Key_priv.pem -out $(Out)/Base.sig
 
 
+L_EXT = "    📤 $(GRAY)EXT$(RESET)"
+L_CFG = "    🔧 $(GRAY)CFG$(RESET)"
+L_DWL = "    ⬇️ $(GRAY)DWL$(RESET)"
+L_BLD = "    🛠️ $(GRAY)BLD$(RESET)"
+
 L_CC = "    ⚙️ $(GRAY)CC$(RESET)"
-L_CP = "    ⚙️ $(GRAY)CP$(RESET)"
+L_CX = "    ⚙️ $(GRAY)CX$(RESET)"
 L_PP = "    ⚙️ $(GRAY)PP$(RESET)"
 
 L_AR = "    🔗 $(GRAY)AR$(RESET)"

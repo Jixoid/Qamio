@@ -31,23 +31,23 @@ Clean:
 
 # Files
 $(Out)/Base.moqs: $(Out)/Base.moq
-	@echo -e $(L_SG) "Base.moqs $(GRAY)(Base.moq Base.sig)$(RESET)"
+	@echo -e $(L_SG) "$(notdir $@) $(GRAY)(Base.moq Base.sig)$(RESET)"
 	@$(SHA)
 	@$(SIG)
-	@rm -f $(Out)/Base.moqs
-	@tar -cf $(Out)/Base.moqs  -C $(Out) Base.moq Base.sig
+	@rm -f $@
+	@tar -cf $@  -C $(Out) Base.moq Base.sig
 
 
 $(Out)/Base.moq: Package.conf $(Mod)/virtio_dma.ko $(Mod)/virtio_gpu.ko
-	@echo -e $(L_MQ) "Base.moq $(GRAY)($(notdir $^))$(RESET)"
+	@echo -e $(L_MQ) "$(notdir $@) $(GRAY)($(notdir $^))$(RESET)"
 	@$(MQ) Package.conf $(Mod) \
 		$(MQ2)
 
 
 $(Mod)/virtio_dma.ko: $(EXT)/ext.linux/$(Lib)/virtio_dma_buf.ko
-	@cp $(EXT)/ext.linux/$(Lib)/virtio_dma_buf.ko  $(Mod)/virtio_dma.ko
+	@cp $< $@
 
 
 $(Mod)/virtio_gpu.ko: $(EXT)/ext.linux/$(Lib)/virtio-gpu.ko
-	@cp $(EXT)/ext.linux/$(Lib)/virtio-gpu.ko  $(Mod)/virtio_gpu.ko
+	@cp $< $@
 

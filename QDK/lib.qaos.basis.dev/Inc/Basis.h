@@ -46,16 +46,27 @@ typedef  char  c8;
 
 
 // System
-typedef  intptr_t   iPtr;
-typedef  uintptr_t  uPtr;
+#if __WORDSIZE == 64
+  typedef u64 u0;
+  typedef i64 i0;
+#else
+  typedef u32 u0;
+  typedef i32 i0;
+#endif
 
-typedef  uPtr  handle;
-typedef  uPtr  ohid;
+typedef  u0  handle;
+typedef  u0  ohid;
 
 
 // Float
 typedef  float   f32;
 typedef  double  f64;
+
+#if __WORDSIZE == 64
+  typedef f64 f0;
+#else
+  typedef f32 f0;
+#endif
 
 
 
@@ -82,7 +93,7 @@ typedef  void*  point;
 typedef struct
 {
   point Point;
-  uPtr  Size;
+  u0    Size;
 } data_;
 
 

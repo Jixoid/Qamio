@@ -1,4 +1,11 @@
 
+### v0.4.4:2 [Daily Alpha]
+ - Reorganized: Make style, Make syntax
+ - Added:
+   - i915 support (Intel Graphics)
+   - Input devices support
+
+___
 ### v0.4.4:1 [Daily]
  - Minor improvements for cross compile
 

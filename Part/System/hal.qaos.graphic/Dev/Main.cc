@@ -49,7 +49,7 @@ graphic::sHAL HAL = {
     Drivers.push_back(Driver);
 
     // Log
-    Log2(format("RegDriver({}): 0x{:X}", graphic::Domain, (uPtr)Driver), kernel::lDebug);
+    Log2(format("RegDriver({}): 0x{:X}", graphic::Domain, (u0)Driver), kernel::lDebug);
 
     return true;
   },
@@ -66,7 +66,7 @@ graphic::sHAL HAL = {
     Drivers.erase(X);
 
     // Log
-    Log2(format("DelDriver({}): 0x{:X}", graphic::Domain, (uPtr)Driver), kernel::lDebug);
+    Log2(format("DelDriver({}): 0x{:X}", graphic::Domain, (u0)Driver), kernel::lDebug);
 
     return true;
   },
@@ -149,100 +149,104 @@ graphic::sHAL HAL = {
     },
 
 
-    // API
-    .Pixel = [](graphic::sess Sess, graphic::point2d Point) -> graphic::color
-    {
-      return ((graphic::sDriver*)Sess.Drv)->Pixel(Sess.Obj, Point);
-    },
-
-    .Clear = [](graphic::sess Sess)
-    {
-      ((graphic::sDriver*)Sess.Drv)->Clear(Sess.Obj);
-    },
-
-
-    // Size
-    .SizeGet = [](graphic::sess Sess) -> graphic::size2d
-    {
-      return ((graphic::sDriver*)Sess.Drv)->SizeGet(Sess.Obj);
-    },
-
-    .SizeSet = [](graphic::sess Sess, u16 Width, u16 Height)
-    {
-      ((graphic::sDriver*)Sess.Drv)->SizeSet(Sess.Obj, Width, Height);
-    },
-
-
     // Pre Config
-    .Set_Source_RGB = [](graphic::sess Sess, graphic::color Color)
+    .Set_Color = [](graphic::sess Sess, graphic::color Color)
     {
-      ((graphic::sDriver*)Sess.Drv)->Set_Source_RGB(Sess.Obj, Color);
+      ((graphic::sDriver*)Sess.Drv)->Set_Color(Sess.Obj, Color);
     },
 
-    .Set_Source_RGBA = [](graphic::sess Sess, graphic::color Color)
-    {
-      ((graphic::sDriver*)Sess.Drv)->Set_Source_RGBA(Sess.Obj, Color);
-    },
-
-    .Set_Source_Sur = [](graphic::sess Sess, graphic::sess Src, graphic::point2d Point)
+    .Set_Source = [](graphic::sess Sess, graphic::sess Src)
     {
       if (Sess.Drv != Src.Drv)
         return;
 
-      ((graphic::sDriver*)Sess.Drv)->Set_Source_Sur(Sess.Obj, Src.Obj, Point);
+      ((graphic::sDriver*)Sess.Drv)->Set_Source(Sess.Obj, Src.Obj);
     },
 
-    .Set_Font_Size = [](graphic::sess Sess, f32 Size)
+    .Set_FontSize = [](graphic::sess Sess, f32 Size)
     {
-      ((graphic::sDriver*)Sess.Drv)->Set_Font_Size(Sess.Obj, Size);
+      ((graphic::sDriver*)Sess.Drv)->Set_FontSize(Sess.Obj, Size);
+    },
+
+    .Set_LineSize = [](graphic::sess Sess, f32 Size)
+    {
+      ((graphic::sDriver*)Sess.Drv)->Set_LineSize(Sess.Obj, Size);
+    },
+
+
+    // Func
+    .Get_Size = [](graphic::sess Sess, graphic::size2_i32 *Ret)
+    {
+      return ((graphic::sDriver*)Sess.Drv)->Get_Size(Sess.Obj, Ret);
+    },
+
+    .Set_Size = [](graphic::sess Sess, u16 Width, u16 Height)
+    {
+      ((graphic::sDriver*)Sess.Drv)->Set_Size(Sess.Obj, Width, Height);
+    },
+
+    .Set_Pos = [](graphic::sess Sess, graphic::poit2_f32 Val)
+    {
+      ((graphic::sDriver*)Sess.Drv)->Set_Pos(Sess.Obj, Val);
+    },
+
+    .Set_rPos = [](graphic::sess Sess, graphic::poit2_f32 Val)
+    {
+      ((graphic::sDriver*)Sess.Drv)->Set_rPos(Sess.Obj, Val);
     },
 
 
     // Basis
-    .Basis_Move = [](graphic::sess Sess, graphic::point2d Point)
+    .Draw_Rect = [](graphic::sess Sess, graphic::rect2_f32 Rect)
     {
-      ((graphic::sDriver*)Sess.Drv)->Basis_Move(Sess.Obj, Point);
+      ((graphic::sDriver*)Sess.Drv)->Draw_Rect(Sess.Obj, Rect);
+    },
+
+    .Draw_RectRound = [](graphic::sess Sess, graphic::rect2_f32 Rect, f32 Radius)
+    {
+      ((graphic::sDriver*)Sess.Drv)->Draw_RectRound(Sess.Obj, Rect, Radius);
+    },
+
+    .Draw_RectRound4 = [](graphic::sess Sess, graphic::rect2_f32 Rect, f32 R_LT, f32 R_LB, f32 R_RT, f32 R_RB)
+    {
+      ((graphic::sDriver*)Sess.Drv)->Draw_RectRound4(Sess.Obj, Rect, R_LT, R_LB, R_RT, R_RB);
+    },
+
+    .Draw_Line = [](graphic::sess Sess, graphic::poit2_f32 P1, graphic::poit2_f32 P2)
+    {
+      ((graphic::sDriver*)Sess.Drv)->Draw_Line(Sess.Obj, P1,P2);
+    },
+
+    .Draw_ToLine = [](graphic::sess Sess, graphic::poit2_f32 P)
+    {
+      ((graphic::sDriver*)Sess.Drv)->Draw_ToLine(Sess.Obj, P);
+    },
+
+    .Draw_Arc = [](graphic::sess Sess, graphic::poit2_f32 Point, f32 Round, f32 Angle1, f32 Angle2)
+    {
+      ((graphic::sDriver*)Sess.Drv)->Draw_Arc(Sess.Obj, Point, Round, Angle1, Angle2);
+    },
+
+    .Draw_Text = [](graphic::sess Sess, const char* Text)
+    {
+      ((graphic::sDriver*)Sess.Drv)->Draw_Text(Sess.Obj, Text);
+    },
+
+    .Calc_Text = [](graphic::sess Sess, const char* Text, graphic::size2_f32 *Ret)
+    {
+      return ((graphic::sDriver*)Sess.Drv)->Calc_Text(Sess.Obj, Text, Ret);
     },
 
 
-    .Basis_Line = [](graphic::sess Sess, graphic::point2d Point)
+    // API
+    .Stroke = [](graphic::sess Sess)
     {
-      ((graphic::sDriver*)Sess.Drv)->Basis_Line(Sess.Obj, Point);
+      ((graphic::sDriver*)Sess.Drv)->Stroke(Sess.Obj);
     },
 
-    .Basis_Rect = [](graphic::sess Sess, graphic::rect2d Rect)
+    .Fill = [](graphic::sess Sess)
     {
-      ((graphic::sDriver*)Sess.Drv)->Basis_Rect(Sess.Obj, Rect);
-    },
-
-    .Basis_Arc = [](graphic::sess Sess, graphic::point2d Point, f32 Round, f32 Angle1, f32 Angle2)
-    {
-      ((graphic::sDriver*)Sess.Drv)->Basis_Arc(Sess.Obj, Point, Round, Angle1, Angle2);
-    },
-
-
-    .Basis_RectR = [](graphic::sess Sess, graphic::rect2d Rect, f32 Round)
-    {
-      ((graphic::sDriver*)Sess.Drv)->Basis_RectR(Sess.Obj, Rect, Round);
-    },
-
-
-    // Text
-    .Text_Size = [](graphic::sess Sess, const char* Text) -> graphic::size2d
-    {
-      return ((graphic::sDriver*)Sess.Drv)->Text_Size(Sess.Obj, Text);
-    },
-
-    .Text = [](graphic::sess Sess, const char* Text)
-    {
-      ((graphic::sDriver*)Sess.Drv)->Text(Sess.Obj, Text);
-    },
-
-
-    // OK
-    .Flush = [](graphic::sess Sess)
-    {
-      ((graphic::sDriver*)Sess.Drv)->Flush(Sess.Obj);
+      ((graphic::sDriver*)Sess.Drv)->Fill(Sess.Obj);
     },
 
     .Paint = [](graphic::sess Sess)
@@ -255,14 +259,30 @@ graphic::sHAL HAL = {
       ((graphic::sDriver*)Sess.Drv)->Paint_A(Sess.Obj, Alpha);
     },
 
-    .Fill = [](graphic::sess Sess)
+    .Clip = [](graphic::sess Sess)
     {
-      ((graphic::sDriver*)Sess.Drv)->Fill(Sess.Obj);
+      ((graphic::sDriver*)Sess.Drv)->Clip(Sess.Obj);
     },
 
-    .Stroke = [](graphic::sess Sess)
+    .Clip_Reset = [](graphic::sess Sess)
     {
-      ((graphic::sDriver*)Sess.Drv)->Stroke(Sess.Obj);
+      ((graphic::sDriver*)Sess.Drv)->Clip_Reset(Sess.Obj);
+    },
+
+
+    .Pixel = [](graphic::sess Sess, graphic::poit2_i32 Point) -> graphic::color
+    {
+      return ((graphic::sDriver*)Sess.Drv)->Pixel(Sess.Obj, Point);
+    },
+
+    .Clear = [](graphic::sess Sess)
+    {
+      ((graphic::sDriver*)Sess.Drv)->Clear(Sess.Obj);
+    },
+
+    .Flush = [](graphic::sess Sess)
+    {
+      ((graphic::sDriver*)Sess.Drv)->Flush(Sess.Obj);
     },
 
   },

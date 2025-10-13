@@ -48,7 +48,7 @@ void enableRawMode()
 
 void DrawMenu(string Caption, vector<string> List, u32 Index)
 {
-  printf("\033[2J\033[H");
+  //printf("\033[2J\033[H");
   cout << "\033[1;34m""QIniter""\033[1;30m"": ""\033[0m"+Caption+"\033[0m" << endl << endl;
 
 

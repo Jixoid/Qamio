@@ -111,7 +111,7 @@ void cNucMng::GetNucList() { for (string Part: {"System", "Vendor", "Product"})
 
 void cNucMng::LoadModules() { for (auto &Pkg: Nucleols)
 {
-  Log2(Pkg.Part+"::"+Pkg.Package, kernel::lIBeg);
+  //Log2(Pkg.Part+"::"+Pkg.Package, kernel::lIBeg);
 
   // Load
   Pkg.Handle = (point)dlopen(("/" +Pkg.Part+ "/Moq/" +Pkg.Package+ "/Nuc/Main.qo").c_str(), RTLD_NOW );
@@ -126,17 +126,17 @@ void cNucMng::LoadModules() { for (auto &Pkg: Nucleols)
     Log2("NucStd not found", kernel::lPanic);
 
 
-  Log2(Pkg.Part+"::"+Pkg.Package, kernel::lIEnd);
+  //Log2(Pkg.Part+"::"+Pkg.Package, kernel::lIEnd);
 }}
 
 void cNucMng::UnloadModules() { for (auto &Pkg: Nucleols)
 {
-  Log2(Pkg.Part+"::"+Pkg.Package, kernel::lIBeg);
+  //Log2(Pkg.Part+"::"+Pkg.Package, kernel::lIBeg);
 
   if (dlclose(Pkg.Handle) != 0)
     Log2(dlerror(), kernel::lPanic);
 
-  Log2(Pkg.Part+"::"+Pkg.Package, kernel::lIEnd);
+  //Log2(Pkg.Part+"::"+Pkg.Package, kernel::lIEnd);
 }}
 
 
@@ -149,7 +149,7 @@ void cNucMng::Check() { for (auto &Pkg: Nucleols)
 
 void cNucMng::Push() { for (auto &Pkg: Nucleols)  if (!Pkg.Detached && Pkg.Funcs->Push != Nil)
 {
-  Log2(Pkg.Package, kernel::lIBeg);
+  //Log2(Pkg.Package, kernel::lIBeg);
 
   try {
     Pkg.Funcs->Push();
@@ -158,12 +158,12 @@ void cNucMng::Push() { for (auto &Pkg: Nucleols)  if (!Pkg.Detached && Pkg.Funcs
     Log2("Func is not worked", kernel::lPanic);
   }
 
-  Log2(Pkg.Package, kernel::lIEnd);
+  //Log2(Pkg.Package, kernel::lIEnd);
 }}
 
 void cNucMng::Pop() { for (auto &Pkg: Nucleols)  if (!Pkg.Detached && Pkg.Funcs->Pop != Nil)
 {
-  Log2(Pkg.Package, kernel::lIBeg);
+  //Log2(Pkg.Package, kernel::lIBeg);
 
   try {
     Pkg.Funcs->Pop();
@@ -172,12 +172,12 @@ void cNucMng::Pop() { for (auto &Pkg: Nucleols)  if (!Pkg.Detached && Pkg.Funcs-
     Log2("Func is not worked", kernel::lPanic);
   }
   
-  Log2(Pkg.Package, kernel::lIEnd);
+  //Log2(Pkg.Package, kernel::lIEnd);
 }}
 
 void cNucMng::Push_Drv() { for (auto &Pkg: Nucleols)  if (!Pkg.Detached && Pkg.Funcs->Push_Drv != Nil)
 {
-  Log2(Pkg.Package, kernel::lIBeg);
+  //Log2(Pkg.Package, kernel::lIBeg);
 
   try {
     Pkg.Funcs->Push_Drv();
@@ -186,14 +186,14 @@ void cNucMng::Push_Drv() { for (auto &Pkg: Nucleols)  if (!Pkg.Detached && Pkg.F
     Log2("Func is not worked", kernel::lPanic);
   }
 
-  Log2(Pkg.Package, kernel::lIEnd);
+  //Log2(Pkg.Package, kernel::lIEnd);
 }}
 
 
 
 void cNucMng::Load() { for (auto &Pkg: Nucleols)  if (!Pkg.Detached && Pkg.Funcs->Load != Nil)
 {
-  Log2(Pkg.Package, kernel::lIBeg);
+  //Log2(Pkg.Package, kernel::lIBeg);
 
   try {
     Pkg.Funcs->Load();
@@ -202,12 +202,12 @@ void cNucMng::Load() { for (auto &Pkg: Nucleols)  if (!Pkg.Detached && Pkg.Funcs
     Log2("Func is not worked", kernel::lPanic);
   }
 
-  Log2(Pkg.Package, kernel::lIEnd);
+  //Log2(Pkg.Package, kernel::lIEnd);
 }}
 
 void cNucMng::Unload() { for (auto &Pkg: Nucleols)  if (!Pkg.Detached && Pkg.Funcs->Unload != Nil)
 {
-  Log2(Pkg.Package, kernel::lIBeg);
+  //Log2(Pkg.Package, kernel::lIBeg);
 
   try {
     Pkg.Funcs->Unload();
@@ -216,13 +216,13 @@ void cNucMng::Unload() { for (auto &Pkg: Nucleols)  if (!Pkg.Detached && Pkg.Fun
     Log2("Func is not worked", kernel::lPanic);
   }
 
-  Log2(Pkg.Package, kernel::lIEnd);
+  //Log2(Pkg.Package, kernel::lIEnd);
 }}
 
 
 void cNucMng::Start() { for (auto &Pkg: Nucleols)  if (!Pkg.Detached && Pkg.Funcs->Start != Nil)
 {
-  Log2(Pkg.Package, kernel::lIBeg);
+  //Log2(Pkg.Package, kernel::lIBeg);
 
   try {
     Pkg.Funcs->Start();
@@ -231,12 +231,12 @@ void cNucMng::Start() { for (auto &Pkg: Nucleols)  if (!Pkg.Detached && Pkg.Func
     Log2("Func is not worked", kernel::lPanic);
   }
 
-  Log2(Pkg.Package, kernel::lIEnd);
+  //Log2(Pkg.Package, kernel::lIEnd);
 }}
 
 void cNucMng::Stop() { for (auto &Pkg: Nucleols)  if (!Pkg.Detached && Pkg.Funcs->Stop != Nil)
 {
-  Log2(Pkg.Package, kernel::lIBeg);
+  //Log2(Pkg.Package, kernel::lIBeg);
 
   try {
     Pkg.Funcs->Stop();
@@ -245,6 +245,6 @@ void cNucMng::Stop() { for (auto &Pkg: Nucleols)  if (!Pkg.Detached && Pkg.Funcs
     Log2("Func is not worked", kernel::lPanic);
   }
 
-  Log2(Pkg.Package, kernel::lIEnd);
+  //Log2(Pkg.Package, kernel::lIEnd);
 }}
 

@@ -9,12 +9,12 @@
 # Compiled files and Not applyed plans
 **@*
 **!*
-**.o*
-**.a*
+**.o
+**.a
 **.so*
-**.ko*
-**.qo*
-**.elf*
+**.ko
+**.qo
+**.elf
 &Conf/CPU_*.kconfig
 &Conf/CPU_*.inc
 def.list

@@ -377,7 +377,7 @@ extern "C" jc_stc jc_ParseRaw(const char* FPath)
       Temp += "\n";
 
     // Line Scan
-    for (uPtr x = 0; x < Line.size(); ++x)
+    for (u0 x = 0; x < Line.size(); ++x)
     {
       // String
       if (Line[x] == '"')
@@ -454,8 +454,8 @@ extern "C" jc_stc jc_ParseRaw(const char* FPath)
   #define Next()  Step++; if (isEnd) goto _l_Escape;
   #define Word  Tokens[Step]
 
-  uPtr Size = Tokens.size();
-  uPtr Step = 0;
+  u0 Size = Tokens.size();
+  u0 Step = 0;
 
   // Root
   cObj *Cov = Root;

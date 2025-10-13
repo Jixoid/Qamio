@@ -29,7 +29,8 @@ Dirs = \
 	$(QDK)/com.qaos.user.dev/Inc \
 	$(QDK)/hal.qaos.display.dev/Inc \
 	$(QDK)/hal.qaos.graphic.dev/Inc \
-	$(QDK)/com.qaos.composer.display.dev/Inc
+	$(QDK)/com.qaos.composer.display.dev/Inc \
+	$(QDK)/fwk.qaos.argon.dev/Inc
 
 Links = \
 	-L$(SYS)/lib.qaos.neon/$(Lib)  -lNeon  -Wl,-rpath,/System/Moq/lib.qaos.neon/Lib	
@@ -62,29 +63,29 @@ Clean:
 
 # Files
 $(Out)/Base.moqs: $(Out)/Base.moq
-	@echo -e $(L_SG) "Base.moqs $(GRAY)(Base.moq Base.sig)$(RESET)"
+	@echo -e $(L_SG) "$(notdir $@) $(GRAY)(Base.moq Base.sig)$(RESET)"
 	@$(SHA)
 	@$(SIG)
-	@rm -f $(Out)/Base.moqs
-	@tar -cf $(Out)/Base.moqs  -C $(Out) Base.moq Base.sig
+	@rm -f $@
+	@tar -cf $@  -C $(Out) Base.moq Base.sig
 
 
 $(Out)/Base.moq: Package.conf $(Nuc)/Main.qo
-	@echo -e $(L_MQ) "Base.moq $(GRAY)($(notdir $^))$(RESET)"
+	@echo -e $(L_MQ) "$(notdir $@) $(GRAY)($(notdir $^))$(RESET)"
 	@$(MQ) Package.conf $(Nuc) \
 		$(MQ2)
 
 
 
 $(Nuc)/Main.qo: $(Objs)
-	@echo -e $(L_LD) "Main.qo $(GRAY)($(notdir $^))$(RESET)"
-	@$(CP) -shared -o $(Nuc)/Main.qo \
+	@echo -e $(L_LD) "$(notdir $@) $(GRAY)($(notdir $^))$(RESET)"
+	@$(CX) -shared -o $@ \
 		$(Objs) $(Links)
 
 
 
 $(Tmp)/%.o: */%.cc $(Deps)
-	@echo -e $(L_CP) "$(notdir $@) $(GRAY)($(notdir $<))$(RESET)"
-	@$(CP) -c -DModule=\"$(Module)\" $(Incs) $< \
+	@echo -e $(L_CX) "$(notdir $@) $(GRAY)($(notdir $<))$(RESET)"
+	@$(CX) -c -DModule=\"$(Module)\" $(Incs) $< \
 		-o $@
 

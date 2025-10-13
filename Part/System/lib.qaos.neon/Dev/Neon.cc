@@ -117,9 +117,6 @@ extern "C" contact_p neon_Connect(const char *ID)
     LastError = neon_errors::neConnect; // Can't get host information
     return Nil;
   }
-  
-
-  clog << "@Neon: Connect: " << ID << endl;
 
   LastError = neon_errors::neOK;
   return Ret;
@@ -167,8 +164,6 @@ extern "C" contact_p neon_Server(const char *ID, u32 ConnectCount)
     return Nil;
   }
 
-
-  clog << "@Neon: Server: " << ID << endl;
 
   LastError = neon_errors::neOK;
   return Ret;
@@ -337,9 +332,6 @@ extern "C" bool     neon_Process(contact_p __Con, bool *Work, neon_mAccept Accep
         close(SubSocket);
         continue;
       }
-    
-
-    clog << "@Neon: New connection has been established" << endl;
 
 
     // Yeni Bağlantı

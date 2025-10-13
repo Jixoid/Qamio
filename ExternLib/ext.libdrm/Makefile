@@ -24,7 +24,8 @@ Clean:
 
 # Files
 $(STAMP): $(DIR)
-	@echo "  - 🔨 Compiling (-j$(shell nproc))"
+	@echo -e $(L_BLD) "$(notdir $(DIR)) $(GRAY)(-j$(shell nproc))$(RESET)"
+	
 	@konsole -e bash -c " \
 		cd $(DIR)/build && \
 		\
@@ -46,12 +47,11 @@ $(STAMP): $(DIR)
 
 
 $(DIR): $(TARBALL)
-	@echo "  - ⚙️ Extract and Configure"
-
+	@echo -e $(L_EXT) "$(notdir $(TARBALL))"
 	@tar -xf $(TARBALL) -C $(Out)
-
 	@mv $(DIR)-* $(DIR)
 
+	@echo -e $(L_CFG) "$(notdir $(DIR))"
 	@konsole -e bash -c " \
 		cd $(DIR) && \
 		\
@@ -72,15 +72,15 @@ $(TARBALL):
 	@mkdir -p $(Out)
 	@mkdir -p $(Lib)
 
-	@echo "  - 🌐 https://dri.freedesktop.org/libdrm"
-	@echo "  - 🌟 Thanks to freedesktop.org"
+	@echo "    🌐 https://dri.freedesktop.org/libdrm"
+	@echo "    🌟 Thanks to freedesktop.org"
 	
 	@set -e; \
 	if [ ! -f "$(TARBALL)" ]; then \
-		echo -e "  - ⬇️ Downloading\033[1A"; \
+		echo -e $(L_DWL) "libdrm \e[1A"; \
 		\
-		echo "  - ⬇️ Downloading libdrm-$(VER)"; \
+		echo -e $(L_DWL) "libdrm-$(VER).tar.xz"; \
 		curl --progress-bar -L https://dri.freedesktop.org/libdrm/libdrm-$(VER).tar.xz -o "$(TARBALL)"; \
 		\
-		echo -ne "\033[1A\033[2K"; \
+		echo -ne "\e[1A\e[2K"; \
 	fi

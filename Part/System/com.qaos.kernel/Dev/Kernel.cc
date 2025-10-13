@@ -85,12 +85,12 @@ void Start(char* Path)
 namespace qaos::kernel
 {
   // Memory
-  point alloc(uPtr Size)
+  point alloc(u0 Size)
   {
     return malloc(Size);
   }
 
-  point rlloc(uPtr Size, point Point)
+  point rlloc(u0 Size, point Point)
   {
     return realloc(Point, Size);
   }

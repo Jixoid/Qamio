@@ -90,8 +90,8 @@ struct __scr
 
 struct __gpu
 {
-  int   Handle;
-  char* Dev;
+  int    Handle;
+  string Dev;
   drmModeRes* Res;
 };
 
@@ -149,20 +149,20 @@ display::sDriver DRV = {
     for (int i = 0; i < CardC; ++i)
       OpenGPU.push_back({
         .Handle = 0,
-        .Dev    = A[i]->nodes[DRM_NODE_PRIMARY],
+        .Dev    = string(A[i]->nodes[DRM_NODE_PRIMARY]),
         .Res    = Nil,
       });
 
-    drmFreeDevices(A, CardC);
+    drmFreeDevices(A, CardC);    
+    
+    Log2("Finded gpu count: " +to_string(OpenGPU.size()), kernel::lDebug);
 
 
-    // Open all
-    Log("Finded gpu count: " +to_string(OpenGPU.size()));
 
     for (auto &X: OpenGPU)
     {
       // Open device
-      X.Handle = open(X.Dev, O_RDWR | __O_CLOEXEC);
+      X.Handle = open(X.Dev.c_str(), O_RDWR | __O_CLOEXEC);
       if (X.Handle < 0)
         Log2("Can't open device: " +string(X.Dev), kernel::lPanic);
 
@@ -208,7 +208,7 @@ display::sDriver DRV = {
     Ret->Enc = Nil;
 
     
-    Log2("ScrSess: " +to_string((uPtr)Ret), kernel::lIBeg);
+    Log2("ScrSess: " +to_string((u0)Ret), kernel::lIBeg);
 
 
     // Connector
@@ -237,7 +237,7 @@ display::sDriver DRV = {
     Self->Scr->Sess = Nil;
 
 
-    Log2("ScrSess: " +to_string((uPtr)__Self), kernel::lIEnd);
+    Log2("ScrSess: " +to_string((u0)__Self), kernel::lIEnd);
 
     delete Self;
   },
@@ -363,7 +363,7 @@ display::sDriver DRV = {
     //Graphic.Window.Swap(Session->Window);
 
 
-    Log("ScrSess: " +to_string((uPtr)__Self));
+    Log("ScrSess: " +to_string((u0)__Self));
 
     return true;
   },
@@ -386,7 +386,7 @@ display::sDriver DRV = {
     //// Free Window
     //Self->Window->Dis(Self->Window); Self->Window = Nil;
 
-    Log("ScrSess: " +to_string((uPtr)__Self));
+    Log("ScrSess: " +to_string((u0)__Self));
   },
 
   .IsConnected = [](point __Self) -> bool

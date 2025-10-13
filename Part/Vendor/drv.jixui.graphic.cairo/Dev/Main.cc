@@ -234,37 +234,39 @@ graphic::sDriver DRV = {
   },
 
 
-  // API
-  .Pixel = [](point __Self, graphic::point2d Point) -> graphic::color
+  // Pre Config
+  .Set_Color = [](point __Self, graphic::color Color)
   {
-    u32* Data = (u32*)cairo_image_surface_get_data(Self->Sur);
-
-    u32 Ret = *(u32*)(Data +((u16)Point.Y *4) +(u16)Point.X);
-    
-    return graphic::color(Ret);
+    cairo_set_source_rgb(Self->Car, Color.R, Color.G, Color.B);
   },
 
-  .Clear = [](point __Self)
+  .Set_Source = [](point __Self, point __Src)
   {
-    cairo_set_operator(Self->Car, CAIRO_OPERATOR_SOURCE);
-    
-    cairo_set_source_rgba(Self->Car, 0,0,0,0);
-    cairo_paint(Self->Car);
+    f64 CX,CY;
+    cairo_get_current_point(Self->Car, &CX,&CY);
 
-    cairo_set_operator(Self->Car, CAIRO_OPERATOR_OVER);
+    cairo_set_source_surface(Self->Car, Src->Sur, CX, CY);
+  },
+
+  .Set_FontSize = [](point __Self, f32 Size)
+  {
+    cairo_set_font_size(Self->Car, Size);
+  },
+
+  .Set_LineSize = [](point __Self, f32 Size)
+  {
+    cairo_set_line_width(Self->Car, Size);
   },
 
 
   // Size
-  .SizeGet = [](point __Self) -> graphic::size2d
+  .Get_Size = [](point __Self, graphic::size2_i32 *Ret)
   {
-    return {
-      .W = f32(Self->Width),
-      .H = f32(Self->Height),
-    };
+    Ret->W = f32(Self->Width);
+    Ret->H = f32(Self->Height);
   },
 
-  .SizeSet = [](point __Self, u16 Width, u16 Height)
+  .Set_Size = [](point __Self, u16 Width, u16 Height)
   {
     // Dispose
     cairo_destroy(Self->Car);
@@ -287,87 +289,97 @@ graphic::sDriver DRV = {
     Self->Height = Height;
   },
 
-
-  // Pre Config
-  .Set_Source_RGB = [](point __Self, graphic::color Color)
-  {
-    cairo_set_source_rgb(Self->Car, Color.R, Color.G, Color.B);
-  },
-
-  .Set_Source_RGBA = [](point __Self, graphic::color Color)
-  {
-    cairo_set_source_rgba(Self->Car, Color.R, Color.G, Color.B, Color.A);
-  },
-
-  .Set_Source_Sur = [](point __Self, point __Src, graphic::point2d Point)
-  {
-    cairo_set_source_surface(Self->Car, Src->Sur, Point.X, Point.Y);
-  },
-
-
-  .Set_Font_Size = [](point __Self, f32 Size)
-  {
-    cairo_set_font_size(Self->Car, Size);
-  },
-
-
-  // Basis
-  .Basis_Move = [](point __Self, graphic::point2d Point)
+  .Set_Pos = [](point __Self, graphic::poit2_f32 Point)
   {
     cairo_move_to(Self->Car, Point.X, Point.Y);
   },
 
-
-  .Basis_Line = [](point __Self, graphic::point2d Point)
+  .Set_rPos = [](point __Self, graphic::poit2_f32 Point)
   {
-    cairo_line_to(Self->Car, Point.X, Point.Y);
+    cairo_rel_move_to(Self->Car, Point.X, Point.Y);
   },
 
-  .Basis_Rect = [](point __Self, graphic::rect2d Rect)
+
+  // Draw
+  .Draw_Rect = [](point __Self, graphic::rect2_f32 Rect)
   {
-    cairo_rectangle(Self->Car, Rect.X, Rect.Y, Rect.W, Rect.H);
+    cairo_rectangle(Self->Car, Rect.X1, Rect.Y1, Rect.X2 -Rect.X1, Rect.Y2 -Rect.Y1);
   },
 
-  .Basis_Arc = [](point __Self, graphic::point2d Point, f32 Round, f32 Angle1, f32 Angle2)
+  .Draw_RectRound = [](point __Self, graphic::rect2_f32 Rect, f32 Round)
+  {
+    if (Round > (Rect.X2 -Rect.X1) /2.0)
+      Round = (Rect.X2 -Rect.X1) /2.0;
+    
+    if (Round > (Rect.Y2 -Rect.Y1) /2.0)
+      Round = (Rect.Y2 -Rect.Y1) /2.0;
+
+
+    //cairo_new_sub_path(Self->Car);
+    cairo_arc(Self->Car, Rect.X2 -Round, Rect.Y1 +Round, Round, -90 *(M_PI /180.0), 0);
+    cairo_arc(Self->Car, Rect.X2 -Round, Rect.Y2 -Round, Round, 0, 90 *(M_PI /180.0));
+    cairo_arc(Self->Car, Rect.X1 +Round, Rect.Y2 -Round, Round, 90 *(M_PI /180.0), 180 *(M_PI /180.0));
+    cairo_arc(Self->Car, Rect.X1 +Round, Rect.Y1 +Round, Round, 180 *(M_PI /180.0), 270 *(M_PI /180.0));
+    //cairo_close_path(Self->Car);
+  },
+
+  .Draw_RectRound4 = [](point __Self, graphic::rect2_f32 Area, f32 R_LT, f32 R_LB, f32 R_RT, f32 R_RB)
+  {
+    f32 W = (Area.X2 -Area.X1);
+    f32 H = (Area.Y2 -Area.Y1);
+
+    f32 scale = 1.0f;
+
+    // Dikey limit
+    if (R_LT +R_LB > H) 
+      scale = min(scale, H /(R_LT +R_LB));
+    if (R_RT +R_RB > H) 
+      scale = min(scale, H /(R_RT +R_RB));
+
+    // Yatay limit
+    if (R_LT +R_RT > W) 
+      scale = min(scale, W /(R_LT +R_RT));
+    if (R_LB +R_RB > W) 
+      scale = min(scale, W /(R_LB +R_RB));
+
+
+    R_LT *= scale;
+    R_LB *= scale;
+    R_RT *= scale;
+    R_RB *= scale;
+
+
+    //cairo_new_path(Self->Car);
+
+    cairo_arc(Self->Car, Area.X1 +R_LT, Area.Y1 +R_LT, R_LT, M_PI, 3 * M_PI / 2);
+    cairo_line_to(Self->Car, Area.X2 -R_RT, Area.Y1);
+    cairo_arc(Self->Car, Area.X2 -R_RT, Area.Y1 +R_RT, R_RT, 3 * M_PI / 2, 0);
+    cairo_line_to(Self->Car, Area.X2, Area.Y2 -R_RB);
+    cairo_arc(Self->Car, Area.X2 -R_RB, Area.Y2 -R_RB, R_RB, 0, M_PI / 2);
+    cairo_line_to(Self->Car, Area.X1 +R_LB, Area.Y2);
+    cairo_arc(Self->Car, Area.X1 +R_LB, Area.Y2 -R_LB, R_LB, M_PI / 2, M_PI);
+    cairo_line_to(Self->Car, Area.X1, Area.Y1 +R_LT);
+
+    //cairo_close_path(Self->Car);
+  },
+
+  .Draw_Line = [](point __Self, graphic::poit2_f32 P1, graphic::poit2_f32 P2)
+  {
+    cairo_move_to(Self->Car, P1.X, P1.Y);
+    cairo_line_to(Self->Car, P2.X, P2.Y);
+  },
+
+  .Draw_ToLine = [](point __Self, graphic::poit2_f32 P)
+  {
+    cairo_line_to(Self->Car, P.X, P.Y);
+  },
+
+  .Draw_Arc = [](point __Self, graphic::poit2_f32 Point, f32 Round, f32 Angle1, f32 Angle2)
   {
     cairo_arc(Self->Car, Point.X, Point.Y, Round, Angle1, Angle2);
   },
 
-
-  .Basis_RectR = [](point __Self, graphic::rect2d Rect, f32 Round)
-  {
-    if (Round > Rect.W /2.0)
-      Round = Rect.W /2.0;
-    
-    if (Round > Rect.H /2.0)
-      Round = Rect.H /2.0;
-
-
-    cairo_new_sub_path(Self->Car);
-    cairo_arc(Self->Car, Rect.X +Rect.W -Round, Rect.Y +Round, Round, -90 *(M_PI /180.0), 0);
-    cairo_arc(Self->Car, Rect.X +Rect.W -Round, Rect.Y +Rect.H -Round, Round, 0, 90 *(M_PI /180.0));
-    cairo_arc(Self->Car, Rect.X +Round, Rect.Y +Rect.H -Round, Round, 90 *(M_PI /180.0), 180 *(M_PI /180.0));
-    cairo_arc(Self->Car, Rect.X +Round, Rect.Y +Round, Round, 180 *(M_PI /180.0), 270 *(M_PI /180.0));
-    cairo_close_path(Self->Car);
-  },
-
-
-  // Text
-  .Text_Size = [](point __Self, const char* Text) -> graphic::size2d
-  {
-    cairo_text_extents_t Ex;
-
-    // Get
-    cairo_text_extents(Self->Car, Text, &Ex);
-
-
-    return {
-      .W = f32(Ex.width),
-      .H = f32(Ex.height),
-    };
-  },
-  
-  .Text = [](point __Self, const char* Text)
+  .Draw_Text = [](point __Self, const char* Text)
   {
     cairo_text_extents_t Ex;
 
@@ -378,11 +390,28 @@ graphic::sDriver DRV = {
     cairo_show_text(Self->Car, Text);
   },
 
-
-  // OK
-  .Flush = [](point __Self)
+  .Calc_Text = [](point __Self, const char* Text, graphic::size2_f32 *Ret)
   {
-    cairo_surface_flush(Self->Sur);
+    cairo_text_extents_t Ex;
+
+    // Get
+    cairo_text_extents(Self->Car, Text, &Ex);
+
+
+    Ret->W = f32(Ex.width);
+    Ret->H = f32(Ex.height);
+  },
+
+
+  // API
+  .Stroke = [](point __Self)
+  {
+    cairo_stroke(Self->Car);
+  },
+
+  .Fill = [](point __Self)
+  {
+    cairo_fill(Self->Car);
   },
 
   .Paint = [](point __Self)
@@ -395,14 +424,40 @@ graphic::sDriver DRV = {
     cairo_paint_with_alpha(Self->Car, Alpha);
   },
 
-  .Fill = [](point __Self)
+  .Clip = [](point __Self)
   {
-    cairo_fill(Self->Car);
+    cairo_clip(Self->Car);
   },
 
-  .Stroke = [](point __Self)
+  .Clip_Reset = [](point __Self)
   {
-    cairo_stroke(Self->Car);
+    cairo_reset_clip(Self->Car);
+  },
+
+
+  
+  .Pixel = [](point __Self, graphic::poit2_i32 Point) -> graphic::color
+  {
+    u32* Data = (u32*)cairo_image_surface_get_data(Self->Sur);
+
+    u32 Ret = *(u32*)(Data +((u16)Point.Y *4) +(u16)Point.X);
+    
+    return graphic::color(Ret);
+  },
+
+  .Clear = [](point __Self)
+  {
+    cairo_set_operator(Self->Car, CAIRO_OPERATOR_SOURCE);
+    
+    cairo_set_source_rgba(Self->Car, 0,0,0,0);
+    cairo_paint(Self->Car);
+
+    cairo_set_operator(Self->Car, CAIRO_OPERATOR_OVER);
+  },
+
+  .Flush = [](point __Self)
+  {
+    cairo_surface_flush(Self->Sur);
   },
 
 

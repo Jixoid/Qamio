@@ -47,15 +47,15 @@ Clean:
 
 # Files
 $(Out)/Base.moqs: $(Out)/Base.moq
-	@echo -e $(L_SG) "Base.moqs $(GRAY)(Base.moq Base.sig)$(RESET)"
+	@echo -e $(L_SG) "$(notdir $@) $(GRAY)(Base.moq Base.sig)$(RESET)"
 	@$(SHA)
 	@$(SIG)
-	@rm -f $(Out)/Base.moqs
-	@tar -cf $(Out)/Base.moqs  -C $(Out) Base.moq Base.sig
+	@rm -f $@
+	@tar -cf $@  -C $(Out) Base.moq Base.sig
 
 
 $(Out)/Base.moq: Package.conf $(Mod)/Main.ko
-	@echo -e $(L_MQ) "Base.moq $(GRAY)($(notdir $^))$(RESET)"
+	@echo -e $(L_MQ) "$(notdir $@) $(GRAY)($(notdir $^))$(RESET)"
 	@$(MQ) Package.conf $(Mod) \
 		$(MQ2)
 
@@ -63,12 +63,12 @@ $(Out)/Base.moq: Package.conf $(Mod)/Main.ko
 obj-m += $(Tmp)/Main.o
 
 $(Mod)/Main.ko: $(Srcs)
-	@echo -e $(L_CC) "Main.ko $(GRAY)($(notdir $^))$(RESET)"
+	@echo -e $(L_CC) "$(notdir $@) $(GRAY)($(notdir $^))$(RESET)"
 	@cp $(Srcs)  $(Tmp)/
 
 	@$(MAKE) -C $(KDIR) M=$(CWD) CC=/usr/bin/gcc EXTRA_CFLAGS"-DModule=\"$(Module)\"" modules > /dev/null
 
 	@find -iname "*module*" -exec rm {} \;
 
-	@cp $(Tmp)/Main.ko $(Mod)/Main.ko
+	@cp $(Tmp)/Main.ko $@
 

@@ -56,35 +56,35 @@ Clean:
 
 # Files
 $(Out)/Base.moqs: $(Out)/Base.moq
-	@echo -e $(L_SG) "Base.moqs $(GRAY)(Base.moq Base.sig)$(RESET)"
+	@echo -e $(L_SG) "$(notdir $@) $(GRAY)(Base.moq Base.sig)$(RESET)"
 	@$(SHA)
 	@$(SIG)
-	@rm -f $(Out)/Base.moqs
-	@tar -cf $(Out)/Base.moqs  -C $(Out) Base.moq Base.sig
+	@rm -f $@
+	@tar -cf $@  -C $(Out) Base.moq Base.sig
 
 
 $(Out)/Base.moq: Package.conf $(Lib)/libNeon.so $(Lib)/libNeon.a
-	@echo -e $(L_MQ) "Base.moq $(GRAY)($(notdir $^))$(RESET)"
+	@echo -e $(L_MQ) "$(notdir $@) $(GRAY)($(notdir $^))$(RESET)"
 	@$(MQ) Package.conf $(Lib) \
 		$(MQ2)
 
 
 
 $(Lib)/libNeon.so: $(Objs)
-	@echo -e $(L_LD) "libNeon.so $(GRAY)($(notdir $^))$(RESET)"
-	@$(CP) -shared -o $(Lib)/libNeon.so \
+	@echo -e $(L_LD) "$(notdir $@) $(GRAY)($(notdir $^))$(RESET)"
+	@$(CX) -shared -o $@ \
 		$(Objs) $(Links)
 
 
 $(Lib)/libNeon.a: $(Objs)
-	@echo -e $(L_AR) "libNeon.a $(GRAY)($(notdir $^))$(RESET)"
-	@$(AR) rcs $(Lib)/libNeon.a \
+	@echo -e $(L_AR) "$(notdir $@) $(GRAY)($(notdir $^))$(RESET)"
+	@$(AR) rcs $@ \
 		$(Objs)
 
 
 
 $(Tmp)/%.o: */%.cc $(Deps)
-	@echo -e $(L_CP) "$(notdir $@) $(GRAY)($(notdir $<))$(RESET)"
-	@$(CP) -c -DModule=\"$(Module)\" $(Incs) $< \
+	@echo -e $(L_CX) "$(notdir $@) $(GRAY)($(notdir $<))$(RESET)"
+	@$(CX) -c -DModule=\"$(Module)\" $(Incs) $< \
 		-o $@
 

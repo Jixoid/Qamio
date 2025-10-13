@@ -31,19 +31,42 @@ Clean:
 
 # Files
 $(Out)/Base.moqs: $(Out)/Base.moq
-	@echo -e $(L_SG) "Base.moqs $(GRAY)(Base.moq Base.sig)$(RESET)"
+	@echo -e $(L_SG) "$(notdir $@) $(GRAY)(Base.moq Base.sig)$(RESET)"
 	@$(SHA)
 	@$(SIG)
-	@rm -f $(Out)/Base.moqs
-	@tar -cf $(Out)/Base.moqs  -C $(Out) Base.moq Base.sig
+	@rm -f $@
+	@tar -cf $@  -C $(Out) Base.moq Base.sig
 
 
-$(Out)/Base.moq: Package.conf $(Mod)/drm_dma_helper.ko
-	@echo -e $(L_MQ) "Base.moq $(GRAY)($(notdir $^))$(RESET)"
+$(Out)/Base.moq: Package.conf $(Mod)/drm_dma_helper.ko $(Mod)/drm_buddy.ko $(Mod)/drm_display_helper.ko $(Mod)/ttm.ko $(Mod)/cec.ko \
+	$(Mod)/drm_ttm_helper.ko $(Mod)/drm_exec.ko $(Mod)/drm_suballoc_helper.ko
+	
+	@echo -e $(L_MQ) "$(notdir $@) $(GRAY)($(notdir $^))$(RESET)"
 	@$(MQ) Package.conf $(Mod) \
 		$(MQ2)
 
 
 $(Mod)/drm_dma_helper.ko: $(EXT)/ext.linux/$(Lib)/drm_dma_helper.ko
-	@cp $(EXT)/ext.linux/$(Lib)/drm_dma_helper.ko  $(Mod)/drm_dma_helper.ko
+	@cp $< $@
+
+$(Mod)/drm_buddy.ko: $(EXT)/ext.linux/$(Lib)/drm_buddy.ko
+	@cp $< $@
+
+$(Mod)/drm_display_helper.ko: $(EXT)/ext.linux/$(Lib)/drm_display_helper.ko
+	@cp $< $@
+
+$(Mod)/ttm.ko: $(EXT)/ext.linux/$(Lib)/ttm.ko
+	@cp $< $@
+
+$(Mod)/cec.ko: $(EXT)/ext.linux/$(Lib)/cec.ko
+	@cp $< $@
+
+$(Mod)/drm_ttm_helper.ko: $(EXT)/ext.linux/$(Lib)/drm_ttm_helper.ko
+	@cp $< $@
+
+$(Mod)/drm_exec.ko: $(EXT)/ext.linux/$(Lib)/drm_exec.ko
+	@cp $< $@
+
+$(Mod)/drm_suballoc_helper.ko: $(EXT)/ext.linux/$(Lib)/drm_suballoc_helper.ko
+	@cp $< $@
 

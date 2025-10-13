@@ -15,6 +15,7 @@
 #include <vector>
 #include <format>
 #include <thread>
+#include <cmath>
 
 #include <termios.h>
 #include <sys/wait.h>
@@ -30,6 +31,8 @@
 #include "HAL/Display.hh"
 #include "HAL/Graphic.hh"
 
+#include "FWK/Argon.hh"
+
 
 using namespace std;
 using namespace jix;
@@ -37,6 +40,7 @@ using namespace jix;
 using namespace qaos;
 using namespace com;
 using namespace hal;
+using namespace fwk;
 
 
 #define Log(X)     kernel::Logger(__func__, X)
@@ -52,6 +56,20 @@ display::sHAL *Display;
 graphic::sHAL *Graphic;
 
 
+struct bi_form
+{
+  graphic::poit2_i32 Pos, EPos;
+  graphic::size2_u32 Size;
+
+  string Title;
+};
+
+vector<bi_form> Forms;
+
+
+graphic::poit2_i32 CursorPos = {0,0};
+
+
 
 bool n_Accept(idA Aid)
 {
@@ -61,6 +79,33 @@ bool n_Accept(idA Aid)
 void n_Handler(contact_p Con, data_ Data)
 {
   Log("Received data [Size: "+to_string(Data.Size)+"]");
+
+
+
+  switch (*(argon::commands*)Data.Point)
+  {
+  case argon::commands::acNew:
+  {
+    bi_form AForm;
+    argon::WIN_New *Req = (argon::WIN_New*)Data.Point;
+
+    AForm.Pos = {120,120};
+    AForm.Size = {Req->W, Req->H};
+    AForm.EPos = {AForm.Pos.X +(i32)AForm.Size.W, AForm.Pos.Y +(i32)AForm.Size.H};
+    AForm.Title = "FormTest";
+
+    //Forms.push_back(AForm);
+    Forms.push_back(AForm);
+
+    Log("Created new argon window");
+
+    break;
+  }
+  
+  default:
+    break;
+  }
+
 }
 
 
@@ -80,7 +125,7 @@ void MessageHandler(bool *Started)
 
 
 
-idP StartApp(char* FPath)
+idP StartApp(string FPath)
 {
   pid_t pid = fork();
 
@@ -93,10 +138,8 @@ idP StartApp(char* FPath)
   if (pid == 0)
   {
     // Çocuk işlem (child)
-    cout << "Çocuk işlem başlıyor, PID: " << getpid() << endl;
-
     char* args[] = {
-      FPath,
+      (char*)FPath.c_str(),
       Nil,
     };
 
@@ -106,18 +149,14 @@ idP StartApp(char* FPath)
       exit(EXIT_FAILURE);
     }
 
-  } else {
-
-    // Ana işlem (parent)
-    cout << "Ana işlem, PID: " << getpid() << ", Çocuk PID: " << pid << endl;
-
+  } else
+  {
     // Çocuğu bekle
     int status;
     waitpid(pid, &status, 0);
 
-    if (WIFEXITED(status)) {
-      cout << "Çocuk işlem normal çıktı, çıkış kodu: " << WEXITSTATUS(status) << endl;
-    } else {
+    if (!WIFEXITED(status))
+    {
       cout << "Çocuk işlem beklenmedik şekilde sonlandı." << endl;
     }
   }
@@ -152,19 +191,6 @@ sysui::sDriver DRV = {
     }
     
 
-    // Draw Screen
-    auto Buf = Comp_Display->DisplayG(DisSess, 0);
-
-    auto Size = Graphic->DRV.SizeGet(Buf);
-
-    Graphic->DRV.Set_Source_RGB(Buf, graphic::color(0.22,0.22,0.22));
-    Graphic->DRV.Basis_Rect(Buf, graphic::rect2d{0,0, Size.W, Size.H});
-    Graphic->DRV.Fill(Buf);
-
-    Graphic->DRV.Flush(Buf);
-    Comp_Display->DisplaySwap(DisSess, 0);
-    
-
     
     // Run Server
     bool Started = false;
@@ -175,9 +201,119 @@ sysui::sDriver DRV = {
 
     // Start App
     StartApp("/Vendor/Moq/com.jixui.app/Bin/Main.elf");
-  
 
-    sleep(3600);
+
+    // Draw Screen
+    while (true)
+    {
+      auto Buf = Comp_Display->DisplayG(DisSess, 0);
+
+      graphic::size2_i32 Size;
+      Graphic->DRV.Get_Size(Buf, &Size);
+
+
+      Graphic->DRV.Set_Color(Buf, graphic::color(0.22,0.22,0.22));
+      Graphic->DRV.Draw_Rect(Buf, {0,0, (f32)Size.W, (f32)Size.H});
+      Graphic->DRV.Fill(Buf);
+
+      
+
+      for (auto &X: Forms)
+      {
+        Graphic->DRV.Set_Color(Buf, graphic::color(1,1,1));
+        Graphic->DRV.Draw_RectRound(Buf, {(f32)X.Pos.X, (f32)X.Pos.Y, (f32)X.EPos.X, (f32)X.EPos.Y}, 12);
+        Graphic->DRV.Clip(Buf);
+
+        Graphic->DRV.Set_Color(Buf, graphic::color(0.15,0.15,0.15));
+        Graphic->DRV.Draw_Rect(Buf, {(f32)X.Pos.X, (f32)X.Pos.Y, (f32)X.EPos.X, (f32)X.EPos.Y});
+        Graphic->DRV.Fill(Buf);
+
+        Graphic->DRV.Set_Color(Buf, graphic::color(0.10,0.10,0.10));
+        Graphic->DRV.Draw_Rect(Buf, {(f32)X.Pos.X, (f32)X.Pos.Y, (f32)X.EPos.X, (f32)X.Pos.Y +30});
+        Graphic->DRV.Fill(Buf);
+
+        Graphic->DRV.Set_FontSize(Buf, 14);
+
+        graphic::size2_f32 TSize;
+        Graphic->DRV.Calc_Text(Buf, X.Title.c_str(), &TSize);
+
+        Graphic->DRV.Set_Color(Buf, graphic::color(1,1,1));
+        Graphic->DRV.Set_Pos(Buf, {X.Pos.X +((30 -TSize.H) /2), X.Pos.Y +((30 -TSize.H) /2)});
+        Graphic->DRV.Draw_Text(Buf, X.Title.c_str());
+
+
+        {
+          const graphic::poit2_f32 O = {(f32)X.EPos.X -15, (f32)X.Pos.Y +15};
+
+          Graphic->DRV.Set_Color(Buf, graphic::color(0.125,0.125,0.125));
+          Graphic->DRV.Draw_Arc(Buf, O, 11, 0,M_PI*2);
+          Graphic->DRV.Fill(Buf);
+
+
+          Graphic->DRV.Set_LineSize(Buf, 1);
+
+          Graphic->DRV.Set_Color(Buf, graphic::color(1,1,1));
+          Graphic->DRV.Draw_Line(Buf, {O.X -4, O.Y -4}, {O.X +4, O.Y +4});
+          Graphic->DRV.Draw_Line(Buf, {O.X -4, O.Y +4}, {O.X +4, O.Y -4});
+          Graphic->DRV.Stroke(Buf);
+
+          Graphic->DRV.Set_LineSize(Buf, 2);
+        }
+
+        {
+          const graphic::poit2_f32 O = {(f32)X.EPos.X -45 +3, (f32)X.Pos.Y +15};
+
+          Graphic->DRV.Set_Color(Buf, graphic::color(0.125,0.125,0.125));
+          Graphic->DRV.Draw_Arc(Buf, O, 11, 0,M_PI*2);
+          Graphic->DRV.Fill(Buf);
+
+          
+          Graphic->DRV.Set_LineSize(Buf, 1);
+
+          Graphic->DRV.Set_Color(Buf, graphic::color(1,1,1));
+          Graphic->DRV.Set_Pos(Buf, {O.X -5, O.Y +2});
+          Graphic->DRV.Draw_ToLine(Buf, {O.X, O.Y -3});
+          Graphic->DRV.Draw_ToLine(Buf, {O.X +5, O.Y +2});
+          Graphic->DRV.Stroke(Buf);
+
+          Graphic->DRV.Set_LineSize(Buf, 2);
+        }
+
+        {
+          const graphic::poit2_f32 O = {(f32)X.EPos.X -75 +6, (f32)X.Pos.Y +15};
+
+          Graphic->DRV.Set_Color(Buf, graphic::color(0.125,0.125,0.125));
+          Graphic->DRV.Draw_Arc(Buf, O, 11, 0,M_PI*2);
+          Graphic->DRV.Fill(Buf);
+
+
+          Graphic->DRV.Set_LineSize(Buf, 1);
+
+          Graphic->DRV.Set_Color(Buf, graphic::color(1,1,1));
+          Graphic->DRV.Set_Pos(Buf, {O.X -5, O.Y -2});
+          Graphic->DRV.Draw_ToLine(Buf, {O.X, O.Y +3});
+          Graphic->DRV.Draw_ToLine(Buf, {O.X +5, O.Y -2});
+          Graphic->DRV.Stroke(Buf);
+
+          Graphic->DRV.Set_LineSize(Buf, 2);
+        }
+
+        Graphic->DRV.Clip_Reset(Buf);
+      }
+
+
+      Graphic->DRV.Set_Color(Buf, graphic::color(1,1,1));
+      Graphic->DRV.Draw_Rect(Buf, {(f32)CursorPos.X, (f32)CursorPos.Y, (f32)CursorPos.X +32, (f32)CursorPos.Y +32});
+      Graphic->DRV.Fill(Buf);
+
+      
+
+      Graphic->DRV.Flush(Buf);
+      Comp_Display->DisplaySwap(DisSess, 0);
+
+      usleep(16);
+    }
+
   },
 
 };

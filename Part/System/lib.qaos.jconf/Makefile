@@ -55,35 +55,35 @@ Clean:
 
 # Files
 $(Out)/Base.moqs: $(Out)/Base.moq
-	@echo -e $(L_SG) "Base.moqs $(GRAY)(Base.moq Base.sig)$(RESET)"
+	@echo -e $(L_SG) "$(notdir $@) $(GRAY)(Base.moq Base.sig)$(RESET)"
 	@$(SHA)
 	@$(SIG)
-	@rm -f $(Out)/Base.moqs
-	@tar -cf $(Out)/Base.moqs  -C $(Out) Base.moq Base.sig
+	@rm -f $@
+	@tar -cf $@  -C $(Out) Base.moq Base.sig
 
 
 $(Out)/Base.moq: Package.conf $(Lib)/libJConf.a $(Lib)/libJConf.so
-	@echo -e $(L_MQ) "Base.moq"
+	@echo -e $(L_MQ) "$(notdir $@) $(GRAY)($^)$(RESET)"
 	@$(MQ) Package.conf $(Lib) \
 		$(MQ2)
 
 
 
 $(Lib)/libJConf.so: $(Objs)
-	@echo -e $(L_LD) "libJConf.so $(GRAY)($(notdir $^))$(RESET)"
-	@$(CP) -shared -o $(Lib)/libJConf.so \
+	@echo -e $(L_LD) "$(notdir $@) $(GRAY)($(notdir $^))$(RESET)"
+	@$(CX) -shared -o $@ \
 		$(Objs) $(Links)
 
 
 $(Lib)/libJConf.a: $(Objs)
-	@echo -e $(L_AR) "libJConf.a $(GRAY)($(notdir $^))$(RESET)"
-	@$(AR) rcs $(Lib)/libJConf.a \
+	@echo -e $(L_AR) "$(notdir $@) $(GRAY)($(notdir $^))$(RESET)"
+	@$(AR) rcs $@ \
 		$(Objs)
 
 
 
 $(Tmp)/%.o: */%.cc $(Deps)
-	@echo -e $(L_CP) "$(notdir $@) $(GRAY)($(notdir $<))$(RESET)"
-	@$(CP) -c -DModule=\"$(Module)\" $(Incs) $< \
+	@echo -e $(L_CX) "$(notdir $@) $(GRAY)($(notdir $<))$(RESET)"
+	@$(CX) -c -DModule=\"$(Module)\" $(Incs) $< \
 		-o $@
 

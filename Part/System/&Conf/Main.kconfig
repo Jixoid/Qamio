@@ -21,6 +21,7 @@ source "Part/System/hal.qaos.audio/KConfig/Main.kconfig"
 source "Part/System/hal.qaos.battery/KConfig/Main.kconfig"
 source "Part/System/hal.qaos.display/KConfig/Main.kconfig"
 source "Part/System/hal.qaos.graphic/KConfig/Main.kconfig"
+source "Part/System/hal.qaos.input/KConfig/Main.kconfig"
 
 source "Part/System/com.qaos.composer.display/KConfig/Main.kconfig"
 

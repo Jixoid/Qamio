@@ -23,7 +23,7 @@ Srcs = $(shell ls | grep "^lib.") $(shell ls | grep "^hal.") $(shell ls | grep "
 
 # Targets
 	
-Build: Basis
+Build:
 
 	@set -e; \
 	for target in $(Plan); do \
@@ -37,10 +37,6 @@ Build: Basis
 		echo -e "  🧩 $(ORANGE)$$target$(RESET)"; \
 		make -C $$target Build; \
 	done
-
-
-Basis:
-	@mkdir -p $(Out)/{Moq,Pkg,Conf}
 
 
 Clean:

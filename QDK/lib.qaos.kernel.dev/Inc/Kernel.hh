@@ -135,8 +135,8 @@ namespace qaos::kernel
 
 
   // Memory
-  point alloc(uPtr Size);
-  point rlloc(uPtr Size, point Point);
+  point alloc(u0 Size);
+  point rlloc(u0 Size, point Point);
   void  dispo(point Point);
 
 }

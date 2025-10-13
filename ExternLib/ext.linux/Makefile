@@ -24,7 +24,7 @@ Clean:
 
 # Files
 $(STAMP): $(DIR)
-	@echo "  - 🔨 Compiling (-j$(shell nproc))"
+	@echo -e $(L_BLD) "$(notdir $(DIR)) $(GRAY)(-j$(shell nproc))$(RESET)"
 	
 	@konsole -e bash -c " \
 		cd $(DIR) && \
@@ -49,12 +49,11 @@ $(STAMP): $(DIR)
 
 
 $(DIR): $(TARBALL)
-	@echo "  - ⚙️ Extract and Configure"
-
+	@echo -e $(L_EXT) "$(notdir $(TARBALL))"
 	@tar -xf $(TARBALL) -C $(Out)
-
 	@mv $(DIR)-* $(DIR)
 
+	@echo -e $(L_CFG) "$(notdir $(DIR))"
 	@konsole -e bash -c " \
 		cd $(DIR) && \
 		\
@@ -69,16 +68,16 @@ $(TARBALL):
 	@mkdir -p $(Out)
 	@mkdir -p $(Lib)
 
-	@echo "  - 🌐 https://www.kernel.org/pub/linux/kernel/v6.x"
-	@echo "  - 🌟 Thanks to kernel.org"
+	@echo "    🌐 https://www.kernel.org/pub/linux/kernel/v6.x"
+	@echo "    🌟 Thanks to kernel.org"
 	
 	@set -e; \
 	if [ ! -f "$(TARBALL)" ]; then \
-		echo -e "  - ⬇️ Downloading\033[1A"; \
+		echo -e $(L_DWL) "linux \e[1A"; \
 		\
-		echo "  - ⬇️ Downloading linux-$(VER)"; \
+		echo -e $(L_DWL) "linux-$(VER).tar.xz"; \
 		curl --progress-bar -L https://www.kernel.org/pub/linux/kernel/v6.x/linux-$(VER).tar.xz -o "$(TARBALL)"; \
 		\
-		echo -ne "\033[1A\033[2K"; \
+		echo -ne "\e[1A\e[2K"; \
 	fi
 

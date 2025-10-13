@@ -111,6 +111,7 @@ namespace hal::display
   };
 
   using sDriver = gsDriver<point>;
+  
 
   struct sHAL
   {

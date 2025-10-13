@@ -94,72 +94,88 @@ namespace hal::graphic
 
   };
 
-  struct point2d
+
+  template<typename _t>
+  struct poit2
   {
-    f32 X,Y;
+    _t X,Y;
   };
 
-  struct size2d
+  using poit2_f32 = poit2<f32>;
+  using poit2_i32 = poit2<i32>;
+
+  template<typename _t>
+  struct size2
   {
-    f32 W,H;
+    _t W,H;
   };
 
-  struct rect2d
+  using size2_f32 = size2<f32>;
+  using size2_i32 = size2<i32>;
+  using size2_u32 = size2<u32>;
+
+
+  template<typename _t>
+  struct rect2
   {
-    f32 X,Y,W,H;
+    _t
+      X1,Y1,
+      X2,Y2;
   };
+
+  using rect2_f32 = rect2<f32>;
+  using rect2_i32 = rect2<i32>;
 
 
   template <typename __S>
   struct gsDriver
   {
     // New / Dis
-    __S      (*New)(u32 Index, u16 Width, u16 Height);
-    void     (*Dis)(__S);
+    __S  (*New)(u32 Index, u16 Width, u16 Height);
+    void (*Dis)(__S);
 
     // New With
-    __S      (*New_With_Mem)(u32 Index, u16 Width, u16 Height, point Buffer);
-    __S      (*New_With_Sur)(u32 Index, __S Sample);
-    __S      (*New_With_Png)(u32 Index, const char* Path);
-    __S      (*New_With_Bmp)(u32 Index, const char* Path);
+    __S (*New_With_Mem)(u32 Index, u16 Width, u16 Height, point Buffer);
+    __S (*New_With_Sur)(u32 Index, __S Sample);
+    __S (*New_With_Png)(u32 Index, const char* Path);
+    __S (*New_With_Bmp)(u32 Index, const char* Path);
 
-    // API
-    color    (*Pixel)  (__S, point2d Point);
-    void     (*Clear)  (__S);
-
-    // Size
-    size2d   (*SizeGet)(__S);
-    void     (*SizeSet)(__S, u16 Width, u16 Height);
-    
     // Pre Config
-    void     (*Set_Source_RGB) (__S, color Color);
-    void     (*Set_Source_RGBA)(__S, color Color);
-    void     (*Set_Source_Sur) (__S, __S Src, point2d Point);
+    void (*Set_Color)  (__S, color Color);
+    void (*Set_Source) (__S, __S Src);
+    void (*Set_FontSize)  (__S, f32 Size);
+    void (*Set_LineSize)  (__S, f32 Size);
 
-    void     (*Set_Font_Size)  (__S, f32 Size);
+    // Func
+    void (*Get_Size)(__S, size2_i32 *Ret);
+    void (*Set_Size)(__S, u16 Width, u16 Height);
+    void (*Set_Pos) (__S, poit2_f32 Val);
+    void (*Set_rPos)(__S, poit2_f32 Val);
 
 
-    // Basis
-    void     (*Basis_Move)(__S, point2d Point);
+    // Draw
+    void (*Draw_Rect)(__S, rect2_f32 Rect);
+    void (*Draw_RectRound)(__S, rect2_f32 Rect, f32 Radius);
+    void (*Draw_RectRound4)(__S, rect2_f32 Rect, f32 R_LT, f32 R_LB, f32 R_RT, f32 R_RB);
+    void (*Draw_Line)(__S, poit2_f32 P1, poit2_f32 P2);
+    void (*Draw_ToLine)(__S, poit2_f32 P);
+    void (*Draw_Arc)(__S, poit2_f32 Point, f32 Radius, f32 Ang1, f32 Ang2);
+    void (*Draw_Text)(__S, const char* Text);
 
-    void     (*Basis_Line)(__S, point2d Point);
-    void     (*Basis_Rect)(__S, rect2d Rect);
-    void     (*Basis_Arc) (__S, point2d Point, f32 Round, f32 Angle1, f32 Angle2);
+    void (*Calc_Text)(__S, const char* Text, size2_f32 *Ret);  
 
-    void     (*Basis_RectR)(__S, rect2d Rect, f32 Round);
     
-
-    // Text
-    size2d   (*Text_Size)(__S, const char* Text);  
-    void     (*Text)     (__S, const char* Text);
+    // API
+    void  (*Stroke) (__S);
+    void  (*Fill)   (__S);
+    void  (*Paint)  (__S);
+    void  (*Paint_A)(__S, f32 Alpha);
+    void  (*Clip)   (__S);
+    void  (*Clip_Reset)(__S);
     
-    
-    // OK
-    void     (*Flush)  (__S);
-    void     (*Paint)  (__S);
-    void     (*Paint_A)(__S, f32 Alpha);
-    void     (*Fill)   (__S);
-    void     (*Stroke) (__S);
+    color (*Pixel)  (__S, poit2_i32 Point);
+    void  (*Clear)  (__S);
+    void  (*Flush)  (__S);
   };
 
   using sDriver = gsDriver<point>;

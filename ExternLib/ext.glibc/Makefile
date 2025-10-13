@@ -24,7 +24,8 @@ Clean:
 
 # Files
 $(STAMP): $(DIR)
-	@echo "  - 🔨 Compiling (-j$(shell nproc))"
+	@echo -e $(L_BLD) "$(notdir $(DIR)) $(GRAY)(-j$(shell nproc))$(RESET)"
+
 	@konsole -e bash -c " \
 		cd $(DIR)/build && \
 		\
@@ -48,12 +49,11 @@ $(STAMP): $(DIR)
 
 
 $(DIR): $(TARBALL)
-	@echo "  - ⚙️ Extract and Configure"
-
+	@echo -e $(L_EXT) "$(notdir $(TARBALL))"
 	@tar -xf $(TARBALL) -C $(Out)
-
 	@mv $(DIR)-* $(DIR)
 
+	@echo -e $(L_CFG) "$(notdir $(DIR))"
 	@konsole -e bash -c " \
 		cd $(DIR) && \
 		\
@@ -72,15 +72,15 @@ $(TARBALL):
 	@mkdir -p $(Out)
 	@mkdir -p $(Lib)
 
-	@echo "  - 🌐 https://ftp.gnu.org/gnu/glibc"
-	@echo "  - 🌟 Thanks to gnu.org"
+	@echo "    🌐 https://ftp.gnu.org/gnu/glibc"
+	@echo "    🌟 Thanks to gnu.org"
 	
 	@set -e; \
 	if [ ! -f "$(TARBALL)" ]; then \
-		echo -e "  - ⬇️ Downloading\033[1A"; \
+		echo -e $(L_DWL) "glibc \e[1A"; \
 		\
-		echo "  - ⬇️ Downloading glibc-$(VER)"; \
+		echo -e $(L_DWL) "glibc-$(VER).tar.xz"; \
 		curl --progress-bar -L https://ftp.gnu.org/gnu/glibc/glibc-$(VER).tar.xz -o "$(TARBALL)"; \
 		\
-		echo -ne "\033[1A\033[2K"; \
+		echo -ne "\e[1A\e[2K"; \
 	fi

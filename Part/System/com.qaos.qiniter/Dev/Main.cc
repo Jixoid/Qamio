@@ -52,7 +52,7 @@ namespace fs = std::filesystem;
 
 
 // Global
-void SysCtl_Shutdown()
+[[noreturn]] void SysCtl_Shutdown()
 {
   cout << "----- Power Off -----" << endl;
   reboot(LINUX_REBOOT_CMD_POWER_OFF);
@@ -60,7 +60,7 @@ void SysCtl_Shutdown()
   exit(0);
 }
 
-void PANIC(string Msg)
+[[noreturn]] void PANIC(string Msg)
 {
   cout << endl;
 
@@ -283,7 +283,7 @@ char** build_args(const vector<string>& params)
   return argv;
 }
 
-void Main()
+int Main()
 {
   printf("\033[2J\033[H");
   cout << "\033[1;34m""QIniter""\033[0m" << endl;
@@ -323,17 +323,17 @@ void Main()
 
   if (Systems.size() == 0)
     PANIC("No ""\033[1;33m""SYSTEM""\033[0m"" found to boot from");
-  if (Systems.size() == 1)
+  ef (Systems.size() == 1)
     Sys = Systems[0];
 
   if (Vendors.size() == 0)
     PANIC("No ""\033[1;33m""VENDOR""\033[0m"" found to boot from");
-  if (Vendors.size() == 1)
+  ef (Vendors.size() == 1)
     Ven = Vendors[0];
 
   if (Products.size() == 0)
     PANIC("No ""\033[1;33m""PRODUCT""\033[0m"" found to boot from");
-  if (Products.size() == 1)
+  ef (Products.size() == 1)
     Pro = Products[0];
 
   
@@ -380,11 +380,22 @@ void Main()
 
   //ActivateModule("/System/Moq/com.qaos.kernel", "Kernel");
 
-  for (string Part: {"System", "Vendor", "Product"})
-    for (const auto &Entry: fs::directory_iterator("/"+Part+"/Pkg"))
-      if (Entry.is_directory())
-        ActivateModule(Part, Entry.path().filename().string());
-      
+  {
+    vector<pair<string, string>> Pkgs;
+
+    for (string Part: {"System", "Vendor", "Product"})
+      for (const auto &Entry: fs::directory_iterator("/"+Part+"/Pkg"))
+        if (Entry.is_directory())
+          Pkgs.push_back({Part, Entry.path().filename().string()});
+  
+
+    for (u0 i = 0; i < Pkgs.size(); i++)
+    {
+      //cout << "[" "\033[1;34m" << i << "\033[1;30m" "/" "\033[1;32m" << Pkgs.size() << "\033[0m" "] " << Pkgs[i].second << endl;
+
+      ActivateModule(Pkgs[i].first, Pkgs[i].second);
+    }
+  }
 
   TermUp();
   cout << "[ ""\033[1;32m""OK""\033[0m"" ]" << endl;
@@ -409,13 +420,21 @@ void Main()
 
   if(execve(Args[0], Args, Envs) != 0)
     PANIC("Kernel can't started");
+
+  el
+  {
+    cout << flush;
+    cerr << flush;
+  }
+
+  return 1;
 }
 
 
 int main()
 {
   try {
-    Main();
+    return Main();
   } 
   catch(exception &e) {
     cerr << "An exception was encountered" << endl;
