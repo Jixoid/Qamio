@@ -63,24 +63,24 @@ composer::display::sDriver DRV = {
 
   #define Self ((__sess*)__Self)
 
-  .New = [](idU UID) -> composer::display::sess
+  .New = [](idU UID) -> point
   {
     // New
     __sess *Ret = new __sess();
     
 
     // Ret
-    return (composer::display::sess)Ret;
+    return (point)Ret;
   },
 
-  .Dis = [](composer::display::sess __Self)
+  .Dis = [](point __Self)
   {
     // Dis
     delete Self;
   },
 
 
-  .AddDisplay = [](composer::display::sess __Self, hal::display::sess DispSess) -> bool
+  .AddDisplay = [](point __Self, hal::display::sess DispSess) -> bool
   {
     // Graphic
     if (Graphic->Count() == 0)
@@ -90,7 +90,7 @@ composer::display::sDriver DRV = {
     if (Display->DRV.IsConnected(DispSess))
       return false;
 
-    if (! Display->DRV.Connect(DispSess, 0, hal::display::format::iXRGB_8888, 2))
+    if (!Display->DRV.Connect(DispSess, 0, hal::display::format::iXRGB_8888, 2))
       return false;
   
 
@@ -121,17 +121,17 @@ composer::display::sDriver DRV = {
   },
 
 
-  .DisplayC = [](composer::display::sess __Self) -> u32
+  .DisplayC = [](point __Self) -> u32
   {
     return Self->Display.size();
   },
 
-  .DisplayG = [](composer::display::sess __Self, u32 Index) -> hal::graphic::sess
+  .DisplayG = [](point __Self, u32 Index) -> hal::graphic::sess
   {
     return Self->Display[Index].Buf2;
   },
 
-  .DisplaySwap = [](composer::display::sess __Self, u32 Index)
+  .DisplaySwap = [](point __Self, u32 Index)
   {
     auto Cac = Self->Display[Index].Buf1;
     Self->Display[Index].Buf1 = Self->Display[Index].Buf2;

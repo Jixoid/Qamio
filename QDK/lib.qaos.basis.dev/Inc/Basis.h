@@ -41,9 +41,6 @@ typedef  uint32_t  u32;
 typedef  uint64_t  u64;
 
 
-// Char
-typedef  char  c8;
-
 
 // System
 #if __WORDSIZE == 64

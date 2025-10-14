@@ -63,7 +63,7 @@ $(Out)/Base.moqs: $(Out)/Base.moq
 
 
 $(Out)/Base.moq: Package.conf $(Lib)/libJConf.a $(Lib)/libJConf.so
-	@echo -e $(L_MQ) "$(notdir $@) $(GRAY)($^)$(RESET)"
+	@echo -e $(L_MQ) "$(notdir $@) $(GRAY)($(notdir $^))$(RESET)"
 	@$(MQ) Package.conf $(Lib) \
 		$(MQ2)
 

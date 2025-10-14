@@ -19,7 +19,7 @@ include ../../../Make.inc
 Module = $(notdir $(CURDIR))
 
 Srcs = \
-	Dev/Main.pp
+	Dev/Main.cc
 
 Dirs = \
 	$(QDK)/lib.qaos.basis.dev/Inc \
@@ -34,7 +34,7 @@ Links = \
 
 Incs = $(foreach dir,$(Dirs),-I$(dir))
 
-Deps = $(foreach dir,$(Dirs),$(wildcard $(dir)/*.hpp))
+Deps = $(foreach dir,$(Dirs),$(wildcard $(dir)/*.hh))
 
 Objs = $(addprefix $(Tmp)/, $(basename $(notdir $(Srcs))))
 Objs:= $(addsuffix .o, $(Objs))

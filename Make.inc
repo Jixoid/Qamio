@@ -79,6 +79,20 @@ else ifeq ($(CONFIG_Arch_P64), y)
 endif
 
 
+ifeq ($(CONFIG_Debug), y)
+  Debug = "-g"
+else
+  Debug = ""
+endif
+
+
+ifeq ($(CONFIG_Sanitizer), y)
+  Sanitizer = "-fsanitize=address,leak,undefined,bounds"
+else
+  Sanitizer = ""
+endif
+
+
 
 # Params
 GOut = !Out
@@ -91,8 +105,7 @@ Mod = $(Out)/Mod
 
 
 #--target=$(CTarget) -I/usr/include/c++/15 -I/usr/include/c++/15/$(CTarget)-redhat-linux/
-CArg = -fPIC -IInc $(_O_Level) \
-   \
+CArg = -fPIC -IInc $(_O_Level) $(Debug) \
   \
   $(addprefix -D,$(shell cat $(Locate)/def.list)) \
   \
@@ -102,23 +115,11 @@ CArg = -fPIC -IInc $(_O_Level) \
   \
   -Wno-unused-command-line-argument
 
-PArg = -fPIC -FuInc $(_O_Level) \
-  -P$(PTarget) \
-  \
-  $(addprefix -d,$(shell cat $(Locate)/def.list)) \
-  \
-  -Sh+ \
-  -k--dynamic-linker=/System/Moq/lib.qaos.bootstrap/Lib/ld-qamio.elf \
-  -k--rpath=/System/Moq/lib.qaos.bootstrap/Lib \
-  -k--export-dynamic \
-  \
-  -v0ew
-
 
 
 CC = clang    $(CArg) $(CONFIG_CC_Params) -std=c23
-CX = clang++  $(CArg) $(CONFIG_CP_Params) -std=c++23
-PP = fpc      $(PArg) $(CONFIG_PP_Params) -Mobjfpc
+CX = clang++  $(CArg) $(Sanitizer) $(CONFIG_CP_Params) -std=c++23
+CX_NDBG = clang++  $(CArg) $(CONFIG_CP_Params) -std=c++23
 
 AR = $(CTarget)-linux-gnu-ar $(CONFIG_AR_Params)
 LD = $(CTarget)-linux-gnu-ld $(CONFIG_LD_Params)
@@ -137,7 +138,6 @@ L_BLD = "    🛠️ $(GRAY)BLD$(RESET)"
 
 L_CC = "    ⚙️ $(GRAY)CC$(RESET)"
 L_CX = "    ⚙️ $(GRAY)CX$(RESET)"
-L_PP = "    ⚙️ $(GRAY)PP$(RESET)"
 
 L_AR = "    🔗 $(GRAY)AR$(RESET)"
 L_LD = "    🔗 $(GRAY)LD$(RESET)"

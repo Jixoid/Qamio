@@ -75,12 +75,12 @@ $(Out)/Base.moq: Package.conf $(Bin)/Main.elf
 
 $(Bin)/Main.elf: $(Objs)
 	@echo -e $(L_LD) "$(notdir $@) $(GRAY)($(notdir $^))$(RESET)"
-	@$(CX) -static -o $@ \
+	@$(CX_NDBG) -static -o $@ \
 		$(Objs) $(Links)
 
 
 
 $(Tmp)/%.o: */%.cc $(Deps)
 	@echo -e $(L_CX) "$(notdir $@) $(GRAY)($(notdir $<))$(RESET)"
-	@$(CX) -c -DModule=\"$(Module)\" $(Incs) $< -o $@
+	@$(CX_NDBG) -c -DModule=\"$(Module)\" $(Incs) $< -o $@
 

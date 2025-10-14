@@ -57,17 +57,17 @@ struct __screenSess
 
   struct __sBuf
   {
-    point Map;
-    u64   Size;
+    point Map  = Nil;
+    u64   Size = 0;
 
-    u32   FbId;
-    u32   Handle;
-    u32   Pitch;
+    u32   FbId   = 0;
+    u32   Handle = 0;
+    u32   Pitch  = 0;
 
     display::bufstate State = display::bufstate::sReady; // u8
 
     u8 __pad[3]; // padding
-  } *Buf;
+  } *Buf = Nil;
   
   u8 BufC;
   u8 ActiveBuf = 0;
@@ -291,12 +291,12 @@ display::sDriver DRV = {
 
     // Buffer
     Self->BufC = BufCount;
-    Self->Buf = (decltype(Self->Buf))malloc(sizeof(decltype(Self->Buf)) *BufCount);
+    Self->Buf = (__screenSess::__sBuf*)malloc(sizeof(__screenSess::__sBuf) *BufCount);
     if (Self->Buf == Nil)
       Log2("Out of memory", kernel::lPanic);
 
 
-    for (int i = 0; i <= BufCount-1; ++i)
+    for (int i = 0; i < BufCount; i++)
     {
       // Create Buffer
       drm_mode_create_dumb CReq = {

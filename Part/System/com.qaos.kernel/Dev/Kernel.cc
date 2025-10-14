@@ -157,7 +157,7 @@ void LoadKMod(string Pkg, string Mod)
 
   // Open file
   ifstream File(FPath, ios::binary | ios::ate);
-  if (! File.is_open())
+  if (!File.is_open())
     Log2("File can't open: " +FPath, kernel::lPanic);
     
 
@@ -168,7 +168,7 @@ void LoadKMod(string Pkg, string Mod)
 
   // Malloc
   void *MData = malloc(Size);
-  if (!MData)
+  if (MData == Nil)
     Log2("Out of memory: " +FPath, kernel::lPanic);
 
 
@@ -205,9 +205,12 @@ void lkmLoadModules()
   
   jc_arr CMods = jc_StcGet(Conf, "Mods");
   if (!jc_IsArr(CMods))
+  {
+    jc_DisStc(Conf);
     Log2("Corrupt config file: /Product/Conf/Modules.conf -> CMods", kernel::lPanic);
+  }
   
-  
+
   for (u32 i = 0; i < jc_ArrC(CMods); i++)
   {
     jc_obj Cac;
@@ -215,14 +218,20 @@ void lkmLoadModules()
 
     jc_stc Item = jc_ArrGet(CMods, i);
     if (!jc_IsStc(Item))
+    {
+      jc_DisStc(Conf);
       Log2("Corrupt config file: /Product/Conf/Modules.conf -> CMods["+to_string(i)+"]", kernel::lPanic);
+    }
 
 
     // .Pkg
     Cac = jc_StcGet(Item, "Pkg");
     if (!jc_IsVal(Cac))
+    {
+      jc_DisStc(Conf);
       Log2("Corrupt config file: /Product/Conf/Modules.conf -> CMods["+to_string(i)+"].Pkg", kernel::lPanic);
-    
+    }
+
     CStr = jc_ValGet(Cac);
     string Pkg = string(CStr);
     jc_DisStr(CStr);
@@ -231,8 +240,11 @@ void lkmLoadModules()
     // .Mod
     Cac = jc_StcGet(Item, "Mod");
     if (!jc_IsVal(Cac))
+    {
+      jc_DisStc(Conf);
       Log2("Corrupt config file: /Product/Conf/Modules.conf -> CMods["+to_string(i)+"].Mod", kernel::lPanic);
-    
+    }
+
     CStr = jc_ValGet(Cac);
     string Mod = string(CStr);
     jc_DisStr(CStr);
@@ -240,7 +252,6 @@ void lkmLoadModules()
 
     Mods.push_back({ Pkg, Mod });
   }
-
 
   jc_DisStc(Conf);
 
@@ -273,8 +284,12 @@ void MountFS()
 
   jc_arr CMounts = jc_StcGet(Conf, "Mounts");
   if (!jc_IsArr(CMounts))
+  {
+    jc_DisStc(Conf);
     Log2("Corrupt config file: /System/Conf/Mount.conf -> Mounts", kernel::lPanic);
-    
+  }
+
+
 
   for (u32 i = 0; i < jc_ArrC(CMounts); i++)
   {
@@ -283,7 +298,10 @@ void MountFS()
 
     jc_stc Item = jc_ArrGet(CMounts, i);
     if (!jc_IsStc(Item))
+    {
+      jc_DisStc(Conf);
       Log2("Corrupt config file: /System/Conf/Mount.conf -> Mounts["+to_string(i)+"]", kernel::lPanic);
+    }
 
 
     sMount M;
@@ -291,7 +309,10 @@ void MountFS()
     // .FS
     Cac = jc_StcGet(Item, "FS");
     if (!jc_IsVal(Cac))
+    {
+      jc_DisStc(Conf);
       Log2("Corrupt config file: /System/Conf/Mount.conf -> Mounts["+to_string(i)+"].FS", kernel::lPanic);
+    }
     
     CStr = jc_ValGet(Cac);
     M.FS = string(CStr);
@@ -301,7 +322,10 @@ void MountFS()
     // .Path
     Cac = jc_StcGet(Item, "Path");
     if (!jc_IsVal(Cac))
+    {
+      jc_DisStc(Conf);
       Log2("Corrupt config file: /System/Conf/Mount.conf -> Mounts["+to_string(i)+"].Path", kernel::lPanic);
+    }
     
     CStr = jc_ValGet(Cac);
     M.Path = string(CStr);
@@ -311,7 +335,10 @@ void MountFS()
     // .File
     Cac = jc_StcGet(Item, "File");
     if (!jc_IsVal(Cac))
+    {
+      jc_DisStc(Conf);
       Log2("Corrupt config file: /System/Conf/Mount.conf -> Mounts["+to_string(i)+"].File", kernel::lPanic);
+    }
     
     CStr = jc_ValGet(Cac);
     M.File = string(CStr);
@@ -321,7 +348,10 @@ void MountFS()
     // .Data
     Cac = jc_StcGet(Item, "Data");
     if (!jc_IsVal(Cac))
+    {
+      jc_DisStc(Conf);
       Log2("Corrupt config file: /System/Conf/Mount.conf -> Mounts["+to_string(i)+"].Data", kernel::lPanic);
+    }
     
     CStr = jc_ValGet(Cac);
     M.Data = string(CStr);
@@ -331,7 +361,10 @@ void MountFS()
     // .Flag
     Cac = jc_StcGet(Item, "Flag");
     if (!jc_IsVal(Cac))
+    {
+      jc_DisStc(Conf);
       Log2("Corrupt config file: /System/Conf/Mount.conf -> Mounts["+to_string(i)+"].Flag", kernel::lPanic);
+    }
     
     CStr = jc_ValGet(Cac);
     M.Flag = stoull(string(CStr));
@@ -361,7 +394,8 @@ void MountFS()
 
 void __FastNucControl()
 {
-  vector<string> Nucs, Provides;
+  vector<string> Provides;
+  vector<pair<string,string>> Nucs;
 
 
   // Get list
@@ -371,28 +405,44 @@ void __FastNucControl()
       {
         string Pkg = Entry.path().filename().string();
         
-        Nucs.push_back("/"+Part+"/Moq/"+Pkg);
+        Nucs.push_back({Part, Pkg});
       }
 
 
   // Read all Provides
-  for (string &Pkg: Nucs)
+  for (auto &[Part, Pkg]: Nucs)
   {
-    string FPath = Pkg+"/Package.conf";
+    string FPath = "/"+Part+"/Moq/"+Pkg+"/Package.conf";
 
     jc_stc Conf = jc_Parse(FPath.c_str());
     if (Conf == Nil)
-      Log2(FPath+" not opened", kernel::lPanic);
+    {
+      Log2("Not opened: " +Part+"::"+Pkg+"/Package.conf", kernel::lWarn);
+      continue;
+    }
 
     if (!jc_IsStc(Conf))
-      Log2("Corrupt config file: "+FPath, kernel::lPanic);
+    {
+      jc_DisStc(Conf);
+      Log2("Corrupt config file: " +Part+"::"+Pkg+"/Package.conf", kernel::lWarn);
+      continue;
+    }
+
 
 
     auto Pro = jc_StcGet(Conf, "Provides");
     if (Pro == Nil)
     {
       jc_DisStc(Conf);
-      Log2(FPath+" not readed", kernel::lPanic);
+      Log2(Part+"::"+Pkg+"/Package.conf" " -> Provides is not found", kernel::lWarn);
+      continue;
+    }
+
+    if (!jc_IsArr(Pro))
+    {
+      jc_DisStc(Conf);
+      Log2(Part+"::"+Pkg+"/Package.conf" " -> Provides is not array", kernel::lWarn);
+      continue;
     }
 
 
@@ -402,29 +452,46 @@ void __FastNucControl()
       
       Provides.push_back(string(Obj));
 
-      kernel::dispo(Obj);
+      jc_DisStr(Obj);
     }
 
+    jc_DisStc(Conf);
   }
 
 
   // Read one by one Requires
-  for (string &Pkg: Nucs)
+  for (auto &[Part, Pkg]: Nucs)
   {
-    string FPath = Pkg+"/Package.conf";
+    string FPath = "/"+Part+"/Moq/"+Pkg+"/Package.conf";
 
     jc_stc Conf = jc_Parse(FPath.c_str());
     if (Conf == Nil)
     {
-      if (Conf != Nil) jc_DisStc(Conf);
-      Log2(FPath+" not opened", kernel::lPanic);
+      Log2("Not opened: " +Part+"::"+Pkg+"/Package.conf", kernel::lPanic);
+      continue;
     }
+
+    if (!jc_IsStc(Conf))
+    {
+      jc_DisStc(Conf);
+      Log2("Corrupt config file: " +Part+"::"+Pkg+"/Package.conf", kernel::lPanic);
+      continue;
+    }
+
 
     auto Req = jc_StcGet(Conf, "Requires");
     if (Req == Nil)
     {
       jc_DisStc(Conf);
-      Log2(FPath+" not readed", kernel::lPanic);
+      Log2(Part+"::"+Pkg+"/Package.conf" "-> Provides is not found", kernel::lPanic);
+      continue;
+    }
+
+    if (!jc_IsArr(Req))
+    {
+      jc_DisStc(Conf);
+      Log2(Part+"::"+Pkg+"/Package.conf" " -> Provides is not array", kernel::lPanic);
+      continue;
     }
 
 
@@ -436,10 +503,12 @@ void __FastNucControl()
       
       Requires.push_back(string(Obj));
 
-      kernel::dispo(Obj);
+      jc_DisStr(Obj);
     }
 
     jc_DisStc(Conf);
+
+
 
 
     // Control
@@ -453,8 +522,6 @@ void __FastNucControl()
 
       __Req_Skip: {}
     }
-
-
 
   }
 
@@ -490,7 +557,6 @@ void Main()
 
 
   cout << "----- Start -----" << endl;
-
 
   // Mount
   MountFS();

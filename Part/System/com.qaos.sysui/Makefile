@@ -29,6 +29,7 @@ Dirs = \
 	$(QDK)/com.qaos.user.dev/Inc \
 	$(QDK)/hal.qaos.display.dev/Inc \
 	$(QDK)/hal.qaos.graphic.dev/Inc \
+	$(QDK)/hal.qaos.input.dev/Inc \
 	$(QDK)/com.qaos.composer.display.dev/Inc \
 	$(QDK)/fwk.qaos.argon.dev/Inc
 

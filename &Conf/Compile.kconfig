@@ -1,4 +1,4 @@
-menu "Compile (GCC G++ FPC ...)"
+menu "Compile (CC CX LD ...)"
 
 
 choice
@@ -29,15 +29,11 @@ endchoice
 
 
 config CC_Params
-	string "GCC Extra Params"
+	string "CC Extra Params"
 	default ""
 
-config CP_Params
-	string "G++ Extra Params"
-	default ""
-
-config PP_Params
-	string "FPC Extra Params"
+config CX_Params
+	string "CX Extra Params"
 	default ""
 
 config AR_Params
@@ -49,6 +45,15 @@ config LD_Params
 	default ""
 
 
+config Debug
+	bool "Debug"
+	default n
+
+config Sanitizer
+	bool "Sanitizer"
+	default n
+	
+	
 choice
 	prompt "Optimization level"
 	default Optimize_Level_2

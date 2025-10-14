@@ -33,18 +33,19 @@ namespace com::composer::display
   inline const char* Domain = "com.composer.display";
   
 
-  using sess = struct {}*;
-
-  struct sDriver
+  template <typename __S>
+  struct gsDriver
   {
-    sess  (*New)(idU UID);
-    void  (*Dis)(sess);
+    __S   (*New)(idU UID);
+    void  (*Dis)(__S);
 
-    bool  (*AddDisplay)(sess, hal::display::sess);
+    bool  (*AddDisplay)(__S, hal::display::sess);
 
-    u32                (*DisplayC)(sess);
-    hal::graphic::sess (*DisplayG)(sess, u32 Index);
-    void               (*DisplaySwap)(sess, u32 Index);
+    u32                (*DisplayC)(__S);
+    hal::graphic::sess (*DisplayG)(__S, u32 Index);
+    void               (*DisplaySwap)(__S, u32 Index);
   };
+
+  using sDriver = gsDriver<point>;
   
 }

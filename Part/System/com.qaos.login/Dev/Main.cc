@@ -72,9 +72,9 @@ login::sDriver DRV = {
       return false;
     };
 
-
     idU ExitUID = 0;
 
+    
 
     // Auto Login
     if (fs::exists("/Data/Conf/AutoLogin.conf"))
@@ -83,6 +83,7 @@ login::sDriver DRV = {
 
       if (auto X = jc_StcGet(ALogin, "Name"); X == Nil)
         goto _l_AL_Err;
+
       el
       {
         if (char *V = jc_ValGet(X); V == Nil)
@@ -90,7 +91,7 @@ login::sDriver DRV = {
         el
         {
           string UName = string(V);
-          kernel::dispo(V);
+          jc_DisStr(V);
 
           for (auto &[UID, Usr]: Users)
             if (Usr == UName)

@@ -30,6 +30,7 @@
 
 #include "HAL/Display.hh"
 #include "HAL/Graphic.hh"
+#include "HAL/Input.hh"
 
 #include "FWK/Argon.hh"
 
@@ -54,6 +55,7 @@ composer::display::sDriver *Comp_Display;
 
 display::sHAL *Display;
 graphic::sHAL *Graphic;
+input::sHAL   *Input;
 
 
 struct bi_form
@@ -65,9 +67,6 @@ struct bi_form
 };
 
 vector<bi_form> Forms;
-
-
-graphic::poit2_i32 CursorPos = {0,0};
 
 
 
@@ -124,6 +123,15 @@ void MessageHandler(bool *Started)
 
 
 
+graphic::poit2_i32 CursorPos = {0,0};
+
+void MHandler_REL(i16 X, i16 Y)
+{
+  CursorPos.X += X;
+  CursorPos.Y += Y;
+}
+
+
 
 idP StartApp(string FPath)
 {
@@ -174,7 +182,6 @@ sysui::sDriver DRV = {
     if (Display->DRV.Count() == 0)
       Log2("No screen found", kernel::lWarn);
 
-    
     auto DisSess = Comp_Display->New(UID);
 
     for (u32 i = 0; i < Display->DRV.Count(); i++)
@@ -190,6 +197,15 @@ sysui::sDriver DRV = {
 
     }
     
+
+    // Start Input
+    for (u32 i = 0; i < Input->DRV.Count(); i++)
+    {
+      auto Cac = Input->DRV.Start(i);
+    
+      Input->DRV.AddHandlerREL(Cac, &MHandler_REL);
+    }     
+
 
     
     // Run Server
@@ -350,6 +366,11 @@ extern "C" kernel::nucStd NucStd
     Graphic = (decltype(Graphic))kernel::NucGet(graphic::Domain);
     if (Graphic == Nil)
       Log2("Depency: "+ string(graphic::Domain) +" is not found", kernel::lPanic);
+
+
+    Input = (decltype(Input))kernel::NucGet(input::Domain);
+    if (Input == Nil)
+      Log2("Depency: "+ string(input::Domain) +" is not found", kernel::lPanic);
 
   },
 

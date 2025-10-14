@@ -110,7 +110,7 @@ extern "C" jc_val  jc_NewVal()
 
 extern "C" void    jc_DisVal(jc_val __Obj)
 {
-  delete Obj;
+  delete (cVal*)Obj;
 }
 
 
@@ -121,7 +121,7 @@ extern "C" jc_stc  jc_NewStc()
 
 extern "C" void    jc_DisStc(jc_stc __Obj)
 {
-  delete Obj;
+  delete (cStc*)Obj;
 }
 
 
@@ -132,7 +132,7 @@ extern "C" jc_arr  jc_NewArr()
 
 extern "C" void    jc_DisArr(jc_arr __Obj)
 {
-  delete Obj;
+  delete (cArr*)Obj;
 }
 
 
@@ -624,7 +624,7 @@ extern "C" jc_stc jc_ParseRaw(const char* FPath)
     // Load Value
     i16 Tmp;
 
-    Stream.read((c8*)(&Tmp), sizeof(i16));
+    Stream.read((char*)(&Tmp), sizeof(i16));
     Ret->Val.resize(Tmp);
     Stream.read(&Ret->Val[0], Tmp);
 
@@ -639,7 +639,7 @@ extern "C" jc_stc jc_ParseRaw(const char* FPath)
 
     // Size
     i16 Child;
-    Stream.read((c8*)(&Child), sizeof(i16));
+    Stream.read((char*)(&Child), sizeof(i16));
 
 
     // Read Sub
@@ -648,7 +648,7 @@ extern "C" jc_stc jc_ParseRaw(const char* FPath)
 
       // Read Magic
       i16 Tmp;
-      Stream.read((c8*)(&Tmp), sizeof(i8));
+      Stream.read((char*)(&Tmp), sizeof(i8));
 
 
       // Select Reader
@@ -686,7 +686,7 @@ extern "C" jc_stc jc_ParseRaw(const char* FPath)
 
     // Size
     i16 Child;
-    Stream.read((c8*)(&Child), sizeof(i16));
+    Stream.read((char*)(&Child), sizeof(i16));
 
 
     // Read Sub
@@ -696,13 +696,13 @@ extern "C" jc_stc jc_ParseRaw(const char* FPath)
       i16 Tmp;
       string Key;
 
-      Stream.read((c8*)(&Tmp), sizeof(i16));
+      Stream.read((char*)(&Tmp), sizeof(i16));
       Key.resize(Tmp);
       Stream.read(&Key[0], Tmp);
       
 
       // Read Magic
-      Stream.read((c8*)(&Tmp), sizeof(i8));
+      Stream.read((char*)(&Tmp), sizeof(i8));
 
       // Select Reader
       switch (Tmp)
@@ -736,7 +736,7 @@ extern "C" jc_stc jc_ParseBin(const char* FPath)
     
 
   // Magic
-  c8 Buf[10+7];
+  char Buf[10+7];
   File.read(&Buf[0], 10+7);
 
 
@@ -862,25 +862,25 @@ extern "C" bool jc_WriteRaw(const char* FPath, jc_stc Data)
   void __WriteBin_Val(ofstream &Stream, cVal *Content)
   {
     // Magic
-    Stream.write((c8*)(&_c_Val), sizeof(i8));
+    Stream.write((char*)(&_c_Val), sizeof(i8));
 
 
     // Save Value
     i16 Tmp = Content->Val.size();
 
-    Stream.write((c8*)(&Tmp), sizeof(i16));
+    Stream.write((char*)(&Tmp), sizeof(i16));
     Stream.write(&Content->Val[0], Tmp);
   }
 
   void __WriteBin_Arr(ofstream &Stream, cArr *Content)
   {
     // Magic
-    Stream.write((c8*)(&_c_Arr), sizeof(i8));
+    Stream.write((char*)(&_c_Arr), sizeof(i8));
 
     // Size
     i16 Tmp = Content->Arr.size();
 
-    Stream.write((c8*)(&Tmp), sizeof(i16));
+    Stream.write((char*)(&Tmp), sizeof(i16));
 
 
     // Write Sub
@@ -903,12 +903,12 @@ extern "C" bool jc_WriteRaw(const char* FPath, jc_stc Data)
   {
     // Magic
     if (! NoMagic)
-      Stream.write((c8*)(&_c_Stc), sizeof(i8));
+      Stream.write((char*)(&_c_Stc), sizeof(i8));
 
     // Size
     i16 Tmp = Content->Stc.size();
 
-    Stream.write((c8*)(&Tmp), sizeof(i16));
+    Stream.write((char*)(&Tmp), sizeof(i16));
 
 
     // Write Sub
@@ -916,7 +916,7 @@ extern "C" bool jc_WriteRaw(const char* FPath, jc_stc Data)
     {
       // Name
       Tmp = Key.size();
-      Stream.write((c8*)(&Tmp), sizeof(i16));
+      Stream.write((char*)(&Tmp), sizeof(i16));
       Stream.write(&Key[0], Tmp);
       
 

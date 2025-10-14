@@ -1,4 +1,13 @@
 
+## v0.4.5:0 [Daily Alpha]
+ - Fixed: ".optional" for hal.qaos.input
+ - Added: Free Pascal support only for the frameworks
+ - Added: SysUI cursor
+ - Fixed:
+   - All known bugs
+   - System stability
+
+___
 ### v0.4.4:2 [Daily Alpha]
  - Reorganized: Make style, Make syntax
  - Added:
