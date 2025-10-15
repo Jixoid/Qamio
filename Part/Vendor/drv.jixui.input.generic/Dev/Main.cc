@@ -30,6 +30,8 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <linux/input.h>
+#include <xkbcommon/xkbcommon.h>
+
 
 using namespace std;
 using namespace jix;
@@ -58,9 +60,10 @@ struct __inputSess
   bool Active = false;
   thread *Thread = Nil;
 
-  vector<input::inputHandlerREL> IH_REL;
-  vector<input::inputHandlerWHL> IH_WHL;
-  vector<input::inputHandlerABS> IH_ABS;
+  vector<input::handlerREL> IH_REL;
+  vector<input::handlerWHL> IH_WHL;
+  vector<input::handlerABS> IH_ABS;
+  vector<input::handlerKEY> IH_KEY;
 
   u32 A_X, A_Y;
 };
@@ -74,6 +77,53 @@ struct __input
 
 vector<__input> OpenInput;
 
+
+
+struct xkb_context *Ctx = Nil;
+struct xkb_keymap *Keymap = Nil;
+struct xkb_state *State = Nil;
+bool Control = false;
+
+char KeyBuf[8];
+
+
+void xkb_translate(u32 Code, int Pressed, input::handlerKEY Handler)
+{
+  memset(&KeyBuf[0], 0, sizeof(KeyBuf));
+  
+  // Utf 8
+  int N = xkb_state_key_get_utf8(State, Code +8, KeyBuf, sizeof(KeyBuf));
+
+  // Get Sym
+  auto KSym = xkb_state_key_get_one_sym(State, Code +8);
+
+  // Shift update
+  if (KSym == XKB_KEY_Control_L || KSym == XKB_KEY_Control_R)
+    Control = (Pressed == 1);
+  el
+    xkb_state_update_key(State, Code +8, (Pressed == 1) ? XKB_KEY_DOWN:XKB_KEY_UP);
+
+
+  // Shift prepare
+  input::shiftStateSet RState = 0;
+  
+  if (Control)
+    RState |= input::shiftStates::ssCtrl;
+
+  if (xkb_state_mod_index_is_active(State, xkb_keymap_mod_get_index(Keymap, XKB_MOD_NAME_SHIFT), XKB_STATE_MODS_DEPRESSED))
+    RState |= input::shiftStates::ssShift;
+
+  if (xkb_state_mod_index_is_active(State, xkb_keymap_mod_get_index(Keymap, XKB_MOD_NAME_ALT), XKB_STATE_MODS_DEPRESSED))
+    RState |= input::shiftStates::ssAlt;
+
+  if (xkb_state_mod_index_is_active(State, xkb_keymap_mod_get_index(Keymap, XKB_VMOD_NAME_SUPER), XKB_STATE_MODS_DEPRESSED))
+    RState |= input::shiftStates::ssSuper;
+
+  if (xkb_state_mod_index_is_active(State, xkb_keymap_mod_get_index(Keymap, XKB_VMOD_NAME_LEVEL3), XKB_STATE_MODS_DEPRESSED))
+    RState |= input::shiftStates::ssAltGr;
+  
+  Handler(&KeyBuf[0], KSym, RState);
+}
 
 
 void Handler(__inputSess *Session) { while (Session->Active)
@@ -90,10 +140,13 @@ void Handler(__inputSess *Session) { while (Session->Active)
 
 
   // Keypad
-  // Not supported yet //
   if (Ev.type == EV_KEY)
-    cout << "Device.Keypad " << (u0)Session << ", " << Ev.code << " Durum: " << Ev.value << endl;
-  
+  {
+    if (Session->IH_KEY.size() != 0)
+      for (auto &X: Session->IH_KEY)
+        xkb_translate(Ev.code, Ev.value, X);
+  }
+
 
   // Mouse
   ef (Ev.type == EV_REL)
@@ -308,41 +361,53 @@ input::sDriver DRV = {
   },
 
 
-  .AddHandlerREL = [](point __Self, input::inputHandlerREL Handler)
+  .AddHandlerREL = [](point __Self, input::handlerREL Handler)
   {
     if (std::find(Self->IH_REL.begin(), Self->IH_REL.end(), Handler) == Self->IH_REL.end())
       Self->IH_REL.push_back(Handler);
   },
 
-  .AddHandlerWHL = [](point __Self, input::inputHandlerWHL Handler)
+  .AddHandlerWHL = [](point __Self, input::handlerWHL Handler)
   {
     if (std::find(Self->IH_WHL.begin(), Self->IH_WHL.end(), Handler) == Self->IH_WHL.end())
       Self->IH_WHL.push_back(Handler);
   },
 
-  .AddHandlerABS = [](point __Self, input::inputHandlerABS Handler)
+  .AddHandlerABS = [](point __Self, input::handlerABS Handler)
   {
     if (std::find(Self->IH_ABS.begin(), Self->IH_ABS.end(), Handler) == Self->IH_ABS.end())
       Self->IH_ABS.push_back(Handler);
   },
 
+  .AddHandlerKEY = [](point __Self, input::handlerKEY Handler)
+  {
+    if (std::find(Self->IH_KEY.begin(), Self->IH_KEY.end(), Handler) == Self->IH_KEY.end())
+      Self->IH_KEY.push_back(Handler);
+  },
 
-  .DelHandlerREL = [](point __Self, input::inputHandlerREL Handler)
+
+  .DelHandlerREL = [](point __Self, input::handlerREL Handler)
   {
     if (auto X = std::find(Self->IH_REL.begin(), Self->IH_REL.end(), Handler); X != Self->IH_REL.end())
       Self->IH_REL.erase(X);
   },
 
-  .DelHandlerWHL = [](point __Self, input::inputHandlerWHL Handler)
+  .DelHandlerWHL = [](point __Self, input::handlerWHL Handler)
   {
     if (auto X = std::find(Self->IH_WHL.begin(), Self->IH_WHL.end(), Handler); X != Self->IH_WHL.end())
       Self->IH_WHL.erase(X);
   },
 
-  .DelHandlerABS = [](point __Self, input::inputHandlerABS Handler)
+  .DelHandlerABS = [](point __Self, input::handlerABS Handler)
   {
     if (auto X = std::find(Self->IH_ABS.begin(), Self->IH_ABS.end(), Handler); X != Self->IH_ABS.end())
       Self->IH_ABS.erase(X);
+  },
+
+  .DelHandlerKEY = [](point __Self, input::handlerKEY Handler)
+  {
+    if (auto X = std::find(Self->IH_KEY.begin(), Self->IH_KEY.end(), Handler); X != Self->IH_KEY.end())
+      Self->IH_KEY.erase(X);
   },
 
 
@@ -362,6 +427,20 @@ extern "C" kernel::nucStd NucStd
 
   .Load = []()
   {
+    setenv("XKB_CONFIG_ROOT", "/System/Moq/lib.qaos.xkb/XKB", 1);
+
+    struct xkb_rule_names Name = {
+      .rules = "evdev",
+      .model = "pc105",
+      .layout = "tr",
+      .variant = "",
+      .options = Nil,
+    };
+
+    Ctx = xkb_context_new(XKB_CONTEXT_NO_FLAGS);
+    Keymap = xkb_keymap_new_from_names(Ctx, &Name, XKB_KEYMAP_COMPILE_NO_FLAGS);
+    State = xkb_state_new(Keymap);
+
     DRV.Reset();
   },
 
@@ -369,6 +448,10 @@ extern "C" kernel::nucStd NucStd
   {
     if (HAL != Nil)
       HAL->DelDriver(&DRV);
+
+    xkb_state_unref(State);
+    xkb_keymap_unref(Keymap);
+    xkb_context_unref(Ctx);
   },
 
 

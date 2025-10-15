@@ -126,35 +126,45 @@ input::sHAL HAL = {
     },
 
 
-    .AddHandlerREL = [](input::sess Sess, input::inputHandlerREL Handler)
+    .AddHandlerREL = [](input::sess Sess, input::handlerREL Handler)
     {
       ((input::sDriver*)Sess.Drv)->AddHandlerREL(Sess.Obj, Handler);
     },
     
-    .AddHandlerWHL = [](input::sess Sess, input::inputHandlerWHL Handler)
+    .AddHandlerWHL = [](input::sess Sess, input::handlerWHL Handler)
     {
       ((input::sDriver*)Sess.Drv)->AddHandlerWHL(Sess.Obj, Handler);
     },
 
-    .AddHandlerABS = [](input::sess Sess, input::inputHandlerABS Handler)
+    .AddHandlerABS = [](input::sess Sess, input::handlerABS Handler)
     {
       ((input::sDriver*)Sess.Drv)->AddHandlerABS(Sess.Obj, Handler);
     },
 
+    .AddHandlerKEY = [](input::sess Sess, input::handlerKEY Handler)
+    {
+      ((input::sDriver*)Sess.Drv)->AddHandlerKEY(Sess.Obj, Handler);
+    },
 
-    .DelHandlerREL = [](input::sess Sess, input::inputHandlerREL Handler)
+
+    .DelHandlerREL = [](input::sess Sess, input::handlerREL Handler)
     {
       ((input::sDriver*)Sess.Drv)->DelHandlerREL(Sess.Obj, Handler);
     },
     
-    .DelHandlerWHL = [](input::sess Sess, input::inputHandlerWHL Handler)
+    .DelHandlerWHL = [](input::sess Sess, input::handlerWHL Handler)
     {
       ((input::sDriver*)Sess.Drv)->DelHandlerWHL(Sess.Obj, Handler);
     },
 
-    .DelHandlerABS = [](input::sess Sess, input::inputHandlerABS Handler)
+    .DelHandlerABS = [](input::sess Sess, input::handlerABS Handler)
     {
       ((input::sDriver*)Sess.Drv)->DelHandlerABS(Sess.Obj, Handler);
+    },
+
+    .DelHandlerKEY = [](input::sess Sess, input::handlerKEY Handler)
+    {
+      ((input::sDriver*)Sess.Drv)->DelHandlerKEY(Sess.Obj, Handler);
     },
 
   },

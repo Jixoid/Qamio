@@ -35,10 +35,26 @@ namespace hal::input
     point Obj;
   };
 
+
+  enum shiftStates: u32
+  {
+    ssLeft     = (u32)1 << 0,
+    ssRight    = (u32)1 << 1,
+    ssMiddle   = (u32)1 << 2,
+    
+    ssCtrl     = (u32)1 << 3,
+    ssShift    = (u32)1 << 4,
+    ssAlt      = (u32)1 << 5,
+    ssSuper    = (u32)1 << 6,
+    ssAltGr    = (u32)1 << 7,
+  };
+  using shiftStateSet = u32;
+
   
-  using inputHandlerREL = void (*)(i16 X, i16 Y);
-  using inputHandlerWHL = void (*)(i16 W, i16 H);
-  using inputHandlerABS = void (*)(u32 X, u32 Y);
+  using handlerREL = void (*)(i16 X, i16 Y);
+  using handlerWHL = void (*)(i16 W, i16 H);
+  using handlerABS = void (*)(u32 X, u32 Y);
+  using handlerKEY = void (*)(char *utf8, u32 KeyCode, shiftStateSet State);
 
 
   template <typename __S>
@@ -52,13 +68,15 @@ namespace hal::input
 
     bool (*IsValid)(__S);
 
-    void (*AddHandlerREL)(__S, inputHandlerREL Handler);
-    void (*AddHandlerWHL)(__S, inputHandlerWHL Handler);
-    void (*AddHandlerABS)(__S, inputHandlerABS Handler);
+    void (*AddHandlerREL)(__S, handlerREL Handler);
+    void (*AddHandlerWHL)(__S, handlerWHL Handler);
+    void (*AddHandlerABS)(__S, handlerABS Handler);
+    void (*AddHandlerKEY)(__S, handlerKEY Handler);
 
-    void (*DelHandlerREL)(__S, inputHandlerREL Handler);
-    void (*DelHandlerWHL)(__S, inputHandlerWHL Handler);
-    void (*DelHandlerABS)(__S, inputHandlerABS Handler);
+    void (*DelHandlerREL)(__S, handlerREL Handler);
+    void (*DelHandlerWHL)(__S, handlerWHL Handler);
+    void (*DelHandlerABS)(__S, handlerABS Handler);
+    void (*DelHandlerKEY)(__S, handlerKEY Handler);
   };
 
   using sDriver = gsDriver<point>;

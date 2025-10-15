@@ -28,7 +28,8 @@ Dirs = \
 	$(QDK)/hal.qaos.input.dev/Inc
 
 Links = \
-	-L$(SYS)/lib.qaos.jconf/$(Lib)        -lJConf  -Wl,-rpath,/System/Moq/lib.qaos.jconf/Lib
+	-L$(SYS)/lib.qaos.jconf/$(Lib)  -lJConf  		 -Wl,-rpath,/System/Moq/lib.qaos.jconf/Lib \
+	-L$(SYS)/lib.qaos.xkb/$(Lib)    -lxkbcommon  -Wl,-rpath,/System/Moq/lib.qaos.xkb/Lib
 
 
 Incs = $(foreach dir,$(Dirs),-I$(dir))

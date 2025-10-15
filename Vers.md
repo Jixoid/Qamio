@@ -1,4 +1,9 @@
 
+### v0.4.5:1 [Daily Alpha]
+ - Added: Keypad events
+ - Added: libxkb for keypad layout
+
+___
 ## v0.4.5:0 [Daily Alpha]
  - Fixed: ".optional" for hal.qaos.input
  - Added: Free Pascal support only for the frameworks

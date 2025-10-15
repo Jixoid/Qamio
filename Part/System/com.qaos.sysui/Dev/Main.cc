@@ -131,6 +131,11 @@ void MHandler_REL(i16 X, i16 Y)
   CursorPos.Y += Y;
 }
 
+void KHandler_KEY(char *utf8, u32 KeyCode, input::shiftStateSet State)
+{
+  cout << "Key: " << utf8 << hex << ", KeyCode: " << KeyCode << " , State: " << (u32)State << endl;
+}
+
 
 
 idP StartApp(string FPath)
@@ -204,7 +209,8 @@ sysui::sDriver DRV = {
       auto Cac = Input->DRV.Start(i);
     
       Input->DRV.AddHandlerREL(Cac, &MHandler_REL);
-    }     
+      Input->DRV.AddHandlerKEY(Cac, &KHandler_KEY);
+    }
 
 
     
