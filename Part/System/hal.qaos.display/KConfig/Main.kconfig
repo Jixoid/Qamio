@@ -11,12 +11,12 @@
 
 
 
-menu "hal.display (qaos)"
-
-
-config HAL_display
-	bool "Enable"
+menuconfig HAL_display
+	bool "Display"
 	default y
 
+config HAL_display_debug
+	depends on HAL_display
+	bool "Debug"
+	default n
 
-endmenu

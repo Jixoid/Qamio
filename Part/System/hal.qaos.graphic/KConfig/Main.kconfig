@@ -11,12 +11,12 @@
 
 
 
-menu "hal.graphic (qaos)"
-
-
-config HAL_graphic
-	bool "Enable"
+menuconfig HAL_graphic
+	bool "Graphic"
 	default y
 
+config HAL_graphic_debug
+	depends on HAL_graphic
+	bool "Debug"
+	default n
 
-endmenu

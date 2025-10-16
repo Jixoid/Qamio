@@ -13,6 +13,7 @@
 
 #include <iostream>
 #include <vector>
+#include <unordered_map>
 #include <bits/stdc++.h>
 
 #include "Basis.h"
@@ -23,7 +24,6 @@
 
 using namespace std;
 using namespace jix;
-
 using namespace hal;
 using namespace qaos;
 
@@ -34,22 +34,27 @@ using namespace qaos;
 
 
 // Global
-vector<battery::sDriver*> Drivers;
+unordered_map<battery::sDriver*, battery::sinfo*> Drivers;
 
 
 battery::sHAL HAL = {
 
-  .RegDriver = [](battery::sDriver *Driver) -> bool
+  .RegDriver = [](battery::sDriver *Driver, battery::sinfo *Info) -> bool
   {
     // If already exists
-    if (find(Drivers.begin(), Drivers.end(), Driver) != Drivers.end())
+    auto X = Drivers.find(Driver);
+    
+    if (X != Drivers.end())
       return false;
 
+
     // Push
-    Drivers.push_back(Driver);
+    Drivers[Driver] = Info;
 
     // Log
-    Log2(format("RegDriver({}): 0x{:X}", battery::Domain, (u0)Driver), kernel::lDebug);
+    #ifdef CONFIG_HAL_battery_debug
+      Log2(format("RegDrv: {}", Info->Name), kernel::lDebug);
+    #endif
 
     return true;
   },
@@ -57,26 +62,29 @@ battery::sHAL HAL = {
   .DelDriver = [](battery::sDriver *Driver) -> bool
   {
     // If not exits
-    auto X = find(Drivers.begin(), Drivers.end(), Driver);
+    auto X = Drivers.find(Driver);
 
     if (X == Drivers.end())
       return false;
+
+    // Log
+    #ifdef CONFIG_HAL_battery_debug
+      Log2(format("DelDrv: {}", X->second->Name), kernel::lDebug);
+    #endif
     
     // Del
     Drivers.erase(X);
-
-    // Log
-    Log2(format("DelDriver({}): 0x{:X}", battery::Domain, (u0)Driver), kernel::lDebug);
 
     return true;
   },
 
 
   .DRV = {
+    
     .Reset = []()
     {
       for (auto &X: Drivers)
-        ((hal::battery::sDriver*)X)->Reset();
+        ((hal::battery::sDriver*)X.first)->Reset();
     },
 
     .Count = []() -> u32
@@ -84,28 +92,48 @@ battery::sHAL HAL = {
       u32 Ret = 0;
 
       for (auto &X: Drivers)
-        Ret += ((hal::battery::sDriver*)X)->Count();
+        Ret += ((hal::battery::sDriver*)X.first)->Count();
 
       return Ret;
     },
   
-    .Get   = [](u32 Index) -> battery::battery_Info
+    
+    .Start = [](u32 Index) -> battery::sess
     {
       u32 Offset = 0;
 
       for (auto &X: Drivers)
       {
-        u32 Count = ((battery::sDriver*)X)->Count();
+        u32 Count = ((battery::sDriver*)X.first)->Count();
 
         if (Index < Offset +Count)
-          return ((battery::sDriver*)X)->Get(Index - Offset);
+          return
+            {
+              .Drv = X.first,
+              .Obj = ((battery::sDriver*)X.first)->Start(Index - Offset)
+            };
 
         Offset += Count;
       }
 
+      return battery::sess();
+    },
 
-      // Geçersiz index → default nesne döndür, ya da assert/log yap
-      return battery::battery_Info{};
+    .Stop = [](battery::sess Sess)
+    {
+      ((battery::sDriver*)Sess.Drv)->Stop(Sess.Obj);
+    },
+
+
+    .IsValid = [](battery::sess Sess) -> bool
+    {
+      return ((battery::sDriver*)Sess.Drv)->IsValid(Sess.Obj);
+    },
+
+
+    .Get   = [](battery::sess Sess) -> battery::battery_Info
+    {
+      return ((battery::sDriver*)Sess.Drv)->Get(Sess.Obj);
     },
   
   },

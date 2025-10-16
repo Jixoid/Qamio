@@ -11,15 +11,7 @@
 
 
 
-choice
-  prompt "Display Driver"
-  default DRV_JIXUI_display_generic
-
-config DRV_JIXUI_display_none
-  bool "None"
-
-config DRV_JIXUI_display_generic
-	bool "Generic"
-
-endchoice
+menuconfig BootAnim_Active
+	bool "BootAnim"
+	default y
 

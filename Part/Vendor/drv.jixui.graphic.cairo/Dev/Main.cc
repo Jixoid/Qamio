@@ -465,6 +465,9 @@ graphic::sDriver DRV = {
   #undef Src
 };
 
+graphic::sinfo INF = {
+  .Name = "JixUI cairo graphic driver",
+};
 
 
 
@@ -596,7 +599,7 @@ extern "C" kernel::nucStd NucStd
 
   .Push_Drv = []()
   {
-    HAL->RegDriver(&DRV);
+    HAL->RegDriver(&DRV, &INF);
   },
 
 };

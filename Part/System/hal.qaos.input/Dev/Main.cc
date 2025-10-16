@@ -13,6 +13,7 @@
 
 #include <iostream>
 #include <vector>
+#include <unordered_map>
 #include <atomic>
 #include <bits/stdc++.h>
 
@@ -35,23 +36,27 @@ using namespace qaos;
 
 
 // Global
-vector<input::sDriver*> Drivers;
+unordered_map<input::sDriver*, input::sinfo*> Drivers;
 
 
 
 input::sHAL HAL = {
 
-  .RegDriver = [](input::sDriver *Driver) -> bool
+  .RegDriver = [](input::sDriver *Driver, input::sinfo *Info) -> bool
   {
     // If already exists
-    if (find(Drivers.begin(), Drivers.end(), Driver) != Drivers.end())
+    auto X = Drivers.find(Driver);
+    
+    if (X != Drivers.end())
       return false;
 
     // Push
-    Drivers.push_back(Driver);
+    Drivers[Driver] = Info;
 
     // Log
-    Log2(format("RegDriver({}): 0x{:X}", input::Domain, (u0)Driver), kernel::lDebug);
+    #ifdef CONFIG_HAL_input_debug
+      Log2(format("RegDrv: {}", Info->Name), kernel::lDebug);
+    #endif
 
     return true;
   },
@@ -59,16 +64,19 @@ input::sHAL HAL = {
   .DelDriver = [](input::sDriver *Driver) -> bool
   {
     // If not exits
-    auto X = find(Drivers.begin(), Drivers.end(), Driver);
+    auto X = Drivers.find(Driver);
 
     if (X == Drivers.end())
       return false;
     
+    // Log
+    #ifdef CONFIG_HAL_input_debug
+      Log2(format("DelDrv: {}", X->second->Name), kernel::lDebug);
+    #endif
+    
     // Del
     Drivers.erase(X);
 
-    // Log
-    Log2(format("DelDriver({}): 0x{:X}", input::Domain, (u0)Driver), kernel::lDebug);
 
     return true;
   },
@@ -79,7 +87,7 @@ input::sHAL HAL = {
     .Reset = []()
     {
       for (auto &X: Drivers)
-        ((hal::input::sDriver*)X)->Reset();
+        ((hal::input::sDriver*)X.first)->Reset();
     },
 
     .Count = []() -> u32
@@ -87,7 +95,7 @@ input::sHAL HAL = {
       u32 Ret = 0;
 
       for (auto &X: Drivers)
-        Ret += ((hal::input::sDriver*)X)->Count();
+        Ret += ((hal::input::sDriver*)X.first)->Count();
 
       return Ret;
     },
@@ -99,13 +107,13 @@ input::sHAL HAL = {
 
       for (auto &X: Drivers)
       {
-        u32 Count = ((input::sDriver*)X)->Count();
+        u32 Count = ((input::sDriver*)X.first)->Count();
 
         if (Index < Offset +Count)
           return
             {
-              .Drv = X,
-              .Obj = ((input::sDriver*)X)->Start(Index - Offset)
+              .Drv = X.first,
+              .Obj = ((input::sDriver*)X.first)->Start(Index - Offset)
             };
 
         Offset += Count;

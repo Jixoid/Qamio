@@ -36,6 +36,7 @@
 #include "Neon.h"
 
 #include "COM/Login.hh"
+#include "COM/BootAnim.hh"
 
 
 using namespace std;
@@ -60,24 +61,6 @@ void SysCtl_Shutdown()
   reboot(LINUX_REBOOT_CMD_POWER_OFF);
 
   exit(0);
-}
-
-void Start(char* Path)
-{
-  pid_t Pid = fork();
-  
-  if (Pid == 0) {
-
-    char* __argv[] = {Path, Nil};
-
-    execve(Path, __argv, NULL);
-    
-    _exit(1);
-  } else if (Pid > 0)
-    waitpid(Pid, NULL, 0);
-
-  else
-    perror("fork failed");
 }
 
 
@@ -533,20 +516,6 @@ void __FastNucControl()
 
 void Main()
 {
-  cout << "----- Hello -----" << endl;
-  {
-    struct utsname Buf;
-
-    if (uname(&Buf) != 0)
-      Log2("Kernel information could not be obtained", kernel::lPanic);
-
-
-    cout << "Linux " << Buf.release << endl;
-  }
-  cout << endl;
-
-
-
   #ifdef CONFIG_Kernel_FastNucControl
 
   cout << "----- Fast Nuc Control -----" << endl;
@@ -576,6 +545,16 @@ void Main()
   NucMng.Pop();
   NucMng.Push_Drv();
   NucMng.Load();
+
+
+  bootanim::sDriver *BootAnim = (decltype(BootAnim))kernel::NucGet(bootanim::Domain);
+  if (BootAnim == Nil)
+    Log2("Depency: "+ string(bootanim::Domain) +" is not found", kernel::lPanic);
+
+  BootAnim->Start();
+
+  usleep(300'000);
+
   NucMng.Start();
 
 
@@ -586,6 +565,7 @@ void Main()
   if (Login == Nil)
     Log2("Depency: "+ string(login::Domain) +" is not found", kernel::lPanic);
   
+  BootAnim->Stop();
   Login->Start();
 
 

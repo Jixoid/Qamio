@@ -1,4 +1,10 @@
 
+### v0.4.5:2 [Daily Alpha]
+ - Reorganized: KConfig
+ - Added: Boot Animation
+ - Added: JixUI generic battery driver
+
+___
 ### v0.4.5:1 [Daily Alpha]
  - Added: Keypad events
  - Added: libxkb for keypad layout

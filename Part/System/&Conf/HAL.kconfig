@@ -11,13 +11,12 @@
 
 
 
-menu "Vendor (JixUI v0.2.0)"
+menu "HALs"
 
-
-source "Part/Vendor/&Conf/Battery.kconfig"
-source "Part/Vendor/&Conf/Display.kconfig"
-source "Part/Vendor/&Conf/Graphic.kconfig"
-source "Part/Vendor/&Conf/Input.kconfig"
-
+source "Part/System/hal.qaos.audio/KConfig/Main.kconfig"
+source "Part/System/hal.qaos.battery/KConfig/Main.kconfig"
+source "Part/System/hal.qaos.display/KConfig/Main.kconfig"
+source "Part/System/hal.qaos.graphic/KConfig/Main.kconfig"
+source "Part/System/hal.qaos.input/KConfig/Main.kconfig"
 
 endmenu

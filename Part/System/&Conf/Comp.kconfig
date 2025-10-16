@@ -11,15 +11,8 @@
 
 
 
-choice
-  prompt "Display Driver"
-  default DRV_JIXUI_display_generic
+menu "Composers"
 
-config DRV_JIXUI_display_none
-  bool "None"
+source "Part/System/com.qaos.composer.display/KConfig/Main.kconfig"
 
-config DRV_JIXUI_display_generic
-	bool "Generic"
-
-endchoice
-
+endmenu

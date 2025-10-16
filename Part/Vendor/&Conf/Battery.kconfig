@@ -12,13 +12,13 @@
 
 
 choice
-  prompt "Display Driver"
-  default DRV_JIXUI_display_generic
+  prompt "Battery Driver"
+  default DRV_JIXUI_battery_generic
 
-config DRV_JIXUI_display_none
+config DRV_JIXUI_battery_none
   bool "None"
 
-config DRV_JIXUI_display_generic
+config DRV_JIXUI_battery_generic
 	bool "Generic"
 
 endchoice

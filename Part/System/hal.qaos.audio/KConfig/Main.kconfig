@@ -11,12 +11,12 @@
 
 
 
-menu "hal.audio (qaos)"
-
-
-config HAL_audio
-	bool "Enable"
+menuconfig HAL_audio
+	bool "Audio"
 	default y
 
+config HAL_audio_debug
+	depends on HAL_audio
+	bool "Debug"
+	default n
 
-endmenu

@@ -11,12 +11,12 @@
 
 
 
-menu "hal.input (qaos)"
-
-
-config HAL_input
-	bool "Enable"
+menuconfig HAL_input
+	bool "Input"
 	default y
 
+config HAL_input_debug
+	depends on HAL_input
+	bool "Debug"
+	default n
 
-endmenu

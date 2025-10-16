@@ -13,6 +13,7 @@
 
 #include <iostream>
 #include <vector>
+#include <unordered_map>
 #include <bits/stdc++.h>
 
 #include "Basis.h"
@@ -34,22 +35,28 @@ using namespace qaos;
 
 
 // Global
-vector<graphic::sDriver*> Drivers;
+unordered_map<graphic::sDriver*, graphic::sinfo*> Drivers;
+vector<graphic::sDriver*> DrvsList;
 
 
 graphic::sHAL HAL = {
 
-  .RegDriver = [](graphic::sDriver *Driver) -> bool
+  .RegDriver = [](graphic::sDriver *Driver, graphic::sinfo *Info) -> bool
   {
     // If already exists
-    if (find(Drivers.begin(), Drivers.end(), Driver) != Drivers.end())
+    auto X = Drivers.find(Driver);
+    
+    if (X != Drivers.end())
       return false;
 
     // Push
-    Drivers.push_back(Driver);
+    Drivers[Driver] = Info;
+    DrvsList.push_back(Driver);
 
     // Log
-    Log2(format("RegDriver({}): 0x{:X}", graphic::Domain, (u0)Driver), kernel::lDebug);
+    #ifdef CONFIG_HAL_graphic_debug
+      Log2(format("RegDrv: {}", Info->Name), kernel::lDebug);
+    #endif
 
     return true;
   },
@@ -57,17 +64,20 @@ graphic::sHAL HAL = {
   .DelDriver = [](graphic::sDriver *Driver) -> bool
   {
     // If not exits
-    auto X = find(Drivers.begin(), Drivers.end(), Driver);
+    auto X = Drivers.find(Driver);
 
     if (X == Drivers.end())
       return false;
-    
-    // Del
-    Drivers.erase(X);
 
     // Log
-    Log2(format("DelDriver({}): 0x{:X}", graphic::Domain, (u0)Driver), kernel::lDebug);
+    #ifdef CONFIG_HAL_graphic_debug
+      Log2(format("DelDrv: {}", X->second->Name), kernel::lDebug);
+    #endif
 
+    // Del
+    DrvsList.erase(find(DrvsList.begin(), DrvsList.end(), X->first));
+    Drivers.erase(X);
+    
     return true;
   },
 
@@ -88,8 +98,8 @@ graphic::sHAL HAL = {
 
 
       return graphic::sess{
-        .Drv = Drivers[Index],
-        .Obj = Drivers[Index]->New(0, Width, Height),
+        .Drv = DrvsList[Index],
+        .Obj = DrvsList[Index]->New(0, Width, Height),
       };
     },
 
@@ -107,20 +117,20 @@ graphic::sHAL HAL = {
 
 
       return graphic::sess{
-        .Drv = Drivers[Index],
-        .Obj = Drivers[Index]->New_With_Mem(0, Width, Height, Buffer),
+        .Drv = DrvsList[Index],
+        .Obj = DrvsList[Index]->New_With_Mem(0, Width, Height, Buffer),
       };
     },
 
     .New_With_Sur = [](u32 Index, graphic::sess Sample) -> graphic::sess
     {
-      if (Drivers.size() <= Index && Drivers[Index] != Sample.Drv)
+      if (Drivers.size() <= Index && DrvsList[Index] != Sample.Drv)
         return graphic::sess();
 
 
       return graphic::sess{
-        .Drv = Drivers[Index],
-        .Obj = Drivers[Index]->New_With_Sur(0, Sample.Obj),
+        .Drv = DrvsList[Index],
+        .Obj = DrvsList[Index]->New_With_Sur(0, Sample.Obj),
       };
     },
 
@@ -131,8 +141,8 @@ graphic::sHAL HAL = {
 
 
       return graphic::sess{
-        .Drv = Drivers[Index],
-        .Obj = Drivers[Index]->New_With_Png(0, Path),
+        .Drv = DrvsList[Index],
+        .Obj = DrvsList[Index]->New_With_Png(0, Path),
       };
     },
 
@@ -143,8 +153,8 @@ graphic::sHAL HAL = {
 
 
       return graphic::sess{
-        .Drv = Drivers[Index],
-        .Obj = Drivers[Index]->New_With_Bmp(0, Path),
+        .Drv = DrvsList[Index],
+        .Obj = DrvsList[Index]->New_With_Bmp(0, Path),
       };
     },
 

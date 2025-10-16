@@ -11,12 +11,12 @@
 
 
 
-menu "hal.battery (qaos)"
-
-
-config HAL_battery
-	bool "Enable"
+menuconfig HAL_battery
+	bool "Battery"
 	default y
 
+config HAL_battery_debug
+	depends on HAL_battery
+	bool "Debug"
+	default n
 
-endmenu

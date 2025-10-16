@@ -11,7 +11,7 @@
 
 
 
-menu "com.kernel (qaos, Amethyst)"
+menu "Kernel"
 
 
 config Kernel_FastNucControl

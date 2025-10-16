@@ -50,6 +50,7 @@ config Debug
 	default n
 
 config Sanitizer
+	depends on Debug
 	bool "Sanitizer"
 	default n
 	

@@ -264,7 +264,7 @@ Start:
 		-usb \
 		\
 		-kernel  !Dev/Linux-$(Arch).elf \
-		-append "root=/dev/sda rw  selinux=0  init=/Qiniter.elf  console=ttyS0  loglevel=0" \
+		-append "root=/dev/sda rw  selinux=0  console=ttyS0  loglevel=0" \
 		\
 		-drive file=!Dev/Image/Disk1.img,format=raw \
 		-device virtio-gpu \

@@ -14,36 +14,27 @@
 include ../../../Make.inc
 
 
-# Config
+# Info
 
 Module = $(notdir $(CURDIR))
 
 Srcs = \
-	Dev/Kernel.cc \
-	Modules/Modules.cc
+	Dev/Main.cc
 
 Dirs = \
 	$(QDK)/lib.qaos.basis.dev/Inc \
 	$(QDK)/lib.qaos.kernel.dev/Inc \
-	$(QDK)/lib.qaos.jconf.dev/Inc \
-	$(QDK)/lib.qaos.neon.dev/Inc \
-	$(QDK)/com.qaos.bootanim.dev/Inc \
-	$(QDK)/com.qaos.login.dev/Inc
+	$(QDK)/hal.qaos.battery.dev/Inc
 
 Links = \
-	-Wl,-rpath,/System/Moq/lib.qaos.bootstrap/Lib \
-	-L$(SYS)/lib.qaos.jconf/$(Lib) -lJConf -Wl,-rpath,/System/Moq/lib.qaos.jconf/Lib \
-	-L$(SYS)/lib.qaos.neon/$(Lib)  -lNeon  -Wl,-rpath,/System/Moq/lib.qaos.neon/Lib
 
 
 Incs = $(foreach dir,$(Dirs),-I$(dir))
-Incs+= -IModules
 
 Deps = $(foreach dir,$(Dirs),$(wildcard $(dir)/*.hpp))
 
 Objs = $(addprefix $(Tmp)/, $(basename $(notdir $(Srcs))))
 Objs:= $(addsuffix .o, $(Objs))
-
 
 
 
@@ -55,8 +46,8 @@ Build: Basis $(Out)/Base.moqs
 Basis:
 	@mkdir -p $(Out)
 	@mkdir -p $(Tmp)
-	@mkdir -p $(Bin)
-	
+	@mkdir -p $(Nuc)
+
 
 Clean:
 	@rm -rf $(Out)
@@ -72,21 +63,23 @@ $(Out)/Base.moqs: $(Out)/Base.moq
 	@tar -cf $@  -C $(Out) Base.moq Base.sig
 
 
-$(Out)/Base.moq: Package.conf $(Bin)/Main.elf
+$(Out)/Base.moq: Package.conf $(Nuc)/Main.qo
 	@echo -e $(L_MQ) "$(notdir $@) $(GRAY)($(notdir $^))$(RESET)"
-	@$(MQ) Package.conf $(Bin) \
+	@$(MQ) Package.conf $(Nuc) $(EXT)/ext.libdrm/$(Lib) \
 		$(MQ2)
+		
 
 
 
-$(Bin)/Main.elf: $(Objs)
+$(Nuc)/Main.qo: $(Objs)
 	@echo -e $(L_LD) "$(notdir $@) $(GRAY)($(notdir $^))$(RESET)"
-	@$(CX) -o $@ \
+	@$(CX) -shared -o $@ \
 		$(Objs) $(Links)
 
 
 
 $(Tmp)/%.o: */%.cc $(Deps)
 	@echo -e $(L_CX) "$(notdir $@) $(GRAY)($(notdir $<))$(RESET)"
-	@$(CX) -c -DModule=\"$(Module)\" $(Incs) $< -o $@
+	@$(CX) -c -DModule=\"$(Module)\" $(Incs) $< \
+		-o $@
 

@@ -28,6 +28,13 @@ namespace hal::battery
 {
   inline const char* Domain = "hal.battery";
   
+
+  struct sess
+  {
+    point Drv;
+    point Obj;
+  };
+
   enum battery_Status: u8
   {
     bsUnknown     = 0,
@@ -46,20 +53,34 @@ namespace hal::battery
 
 
 
-  struct sDriver
+  template <typename __S>
+  struct gsDriver
   {
     void  (*Reset)();
     u32   (*Count)();
 
-    battery_Info (*Get)(u32 Index);
+    __S  (*Start)(u32 Index);
+    void (*Stop)(__S);
+
+    bool (*IsValid)(__S);
+
+    battery_Info (*Get)(__S);
   };
+
+  using sDriver = gsDriver<point>;
+
+  struct sinfo
+  {
+    const char *Name = Nil;
+  };
+
 
   struct sHAL
   {
-    bool  (*RegDriver)(sDriver *Driver);
+    bool  (*RegDriver)(sDriver *Driver, sinfo *Info);
     bool  (*DelDriver)(sDriver *Driver);
 
-    sDriver DRV;
+    gsDriver<battery::sess> DRV;
   };
 
 }

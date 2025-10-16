@@ -112,10 +112,15 @@ namespace hal::display
 
   using sDriver = gsDriver<point>;
   
+  struct sinfo
+  {
+    const char *Name = Nil;
+  };
+
 
   struct sHAL
   {
-    bool  (*RegDriver)(sDriver *Driver);
+    bool  (*RegDriver)(sDriver *Driver, sinfo *Info);
     bool  (*DelDriver)(sDriver *Driver);
 
     gsDriver<display::sess> DRV;

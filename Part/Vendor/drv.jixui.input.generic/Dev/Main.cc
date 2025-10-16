@@ -414,6 +414,9 @@ input::sDriver DRV = {
   #undef Self
 };
 
+input::sinfo INF = {
+  .Name = "JixUI generic input driver",
+};
 
 
 
@@ -473,7 +476,7 @@ extern "C" kernel::nucStd NucStd
 
   .Push_Drv = []()
   {
-    HAL->RegDriver(&DRV);
+    HAL->RegDriver(&DRV, &INF);
   },
 
 };

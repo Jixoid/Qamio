@@ -184,7 +184,7 @@ display::sDriver DRV = {
           .Sess  = Nil,
         });
 
-      Log("Finded screen ["+string(X.Dev)+"]: " +to_string(X.Res->count_connectors));
+      Log2("Finded screen ["+string(X.Dev)+"]: " +to_string(X.Res->count_connectors), kernel::lDebug);
     }
     
   },
@@ -452,6 +452,9 @@ display::sDriver DRV = {
   #undef Self
 };
 
+display::sinfo INF = {
+  .Name = "JixUI generic display driver",
+};
 
 
 
@@ -493,7 +496,7 @@ extern "C" kernel::nucStd NucStd
 
   .Push_Drv = []()
   {
-    HAL->RegDriver(&DRV);
+    HAL->RegDriver(&DRV, &INF);
   },
 
 };

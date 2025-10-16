@@ -28,8 +28,8 @@ Dirs = \
 	$(QDK)/hal.qaos.display.dev/Inc
 
 Links = \
-	-L$(SYS)/lib.qaos.jconf/$(Lib)        -lJConf  -Wl,-rpath,/System/Moq/lib.qaos.jconf/Lib \
-	-L$(VND)/drv.jixui.display.drm/$(Lib) -ldrm    -Wl,-rpath,/Vendor/Moq/drv.jixui.display.drm/Lib
+	-L$(SYS)/lib.qaos.jconf/$(Lib)            -lJConf  -Wl,-rpath,/System/Moq/lib.qaos.jconf/Lib \
+	-L$(VND)/drv.jixui.display.generic/$(Lib) -ldrm    -Wl,-rpath,/Vendor/Moq/drv.jixui.display.generic/Lib
 
 
 Incs = $(foreach dir,$(Dirs),-I$(dir))

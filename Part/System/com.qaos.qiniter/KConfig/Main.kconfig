@@ -11,7 +11,7 @@
 
 
 
-menu "com.qiniter (qaos, Qiniter)"
+menu "Qiniter"
 
 
 config QInit_MsgDebug

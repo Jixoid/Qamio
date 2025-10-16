@@ -11,12 +11,8 @@
 
 
 
-menu "com.composer.display (qaos)"
+menuconfig Composer_display
 	depends on HAL_display
-
-config COM_composer_display
-	bool "Enable"
+	bool "Display"
 	default y
 
-
-endmenu

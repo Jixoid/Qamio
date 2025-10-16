@@ -13,6 +13,7 @@
 
 #include <iostream>
 #include <vector>
+#include <unordered_map>
 #include <bits/stdc++.h>
 
 #include "Basis.h"
@@ -34,22 +35,26 @@ using namespace qaos;
 
 
 // Global
-vector<display::sDriver*> Drivers;
+unordered_map<display::sDriver*, display::sinfo*> Drivers;
 
 
 display::sHAL HAL = {
 
-  .RegDriver = [](display::sDriver *Driver) -> bool
+  .RegDriver = [](display::sDriver *Driver, display::sinfo *Info) -> bool
   {
     // If already exists
-    if (find(Drivers.begin(), Drivers.end(), Driver) != Drivers.end())
+    auto X = Drivers.find(Driver);
+    
+    if (X != Drivers.end())
       return false;
 
     // Push
-    Drivers.push_back(Driver);
+    Drivers[Driver] = Info;
 
     // Log
-    Log2(format("RegDriver({}): 0x{:X}", display::Domain, (u0)Driver), kernel::lDebug);
+    #ifdef CONFIG_HAL_display_debug
+      Log2(format("RegDrv: {}", Info->Name), kernel::lDebug);
+    #endif
 
     return true;
   },
@@ -57,17 +62,19 @@ display::sHAL HAL = {
   .DelDriver = [](display::sDriver *Driver) -> bool
   {
     // If not exits
-    auto X = find(Drivers.begin(), Drivers.end(), Driver);
+    auto X = Drivers.find(Driver);
 
     if (X == Drivers.end())
       return false;
-    
-    // Del
-    Drivers.erase(X);
 
     // Log
-    Log2(format("DelDriver({}): 0x{:X}", display::Domain, (u0)Driver), kernel::lDebug);
+    #ifdef CONFIG_HAL_display_debug
+      Log2(format("DelDrv: {}", X->second->Name), kernel::lDebug);
+    #endif
 
+    // Del
+    Drivers.erase(X);
+    
     return true;
   },
 
@@ -76,7 +83,7 @@ display::sHAL HAL = {
     .Reset = []()
     {
       for (auto &X: Drivers)
-        ((display::sDriver*)X)->Reset();
+        ((display::sDriver*)X.first)->Reset();
     },
 
     .Count = []() -> u32
@@ -84,7 +91,7 @@ display::sHAL HAL = {
       u32 Ret = 0;
 
       for (auto &X: Drivers)
-        Ret += ((display::sDriver*)X)->Count();
+        Ret += ((display::sDriver*)X.first)->Count();
 
       return Ret;
     },
@@ -97,13 +104,13 @@ display::sHAL HAL = {
 
       for (auto &X: Drivers)
       {
-        u32 Count = ((display::sDriver*)X)->Count();
+        u32 Count = ((display::sDriver*)X.first)->Count();
 
         if (Index < Offset +Count)
           return
             {
-              .Drv = X,
-              .Obj = ((display::sDriver*)X)->Start(Index - Offset)
+              .Drv = X.first,
+              .Obj = ((display::sDriver*)X.first)->Start(Index - Offset)
             };
 
         Offset += Count;
